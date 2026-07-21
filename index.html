@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Plan Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html[data-theme="light"]{
+    --bg-0: #F7FAFF;
+    --bg-1: #EFF4FC;
+    --surface: rgba(255,255,255,0.60);
+    --surface-strong: rgba(255,255,255,0.78);
+    --border: rgba(37,99,235,0.16);
+    --text: #101B34;
+    --text-dim: #475569;
+    --text-faint: #93A1B8;
+    --accent-a: #2563EB;
+    --accent-b: #38BDF8;
+    --accent-grad: linear-gradient(120deg, #2563EB, #38BDF8);
+    --shadow: 0 20px 50px rgba(37,99,235,0.14);
+    --field-bg: rgba(255,255,255,0.60);
+    --field-border: rgba(37,99,235,0.14);
+    --field-focus: #2563EB;
+    --text-on-accent: #F7FAFF;
+    --scroll-thumb: rgba(37,99,235,0.20);
+  }
+
+  html[data-theme="dark"]{
+    --bg-0: #0A0E1A;
+    --bg-1: #121A2E;
+    --surface: rgba(255,255,255,0.055);
+    --surface-strong: rgba(255,255,255,0.10);
+    --border: rgba(255,255,255,0.13);
+    --text: #EEF1F8;
+    --text-dim: #8D96AC;
+    --text-faint: #5C6478;
+    --accent-a: #7DD3FC;
+    --accent-b: #A78BFA;
+    --accent-grad: linear-gradient(120deg, #7DD3FC, #A78BFA);
+    --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    --field-bg: rgba(255,255,255,0.05);
+    --field-border: rgba(255,255,255,0.13);
+    --field-focus: #7DD3FC;
+    --text-on-accent: #0A0E1A;
+    --scroll-thumb: rgba(255,255,255,0.14);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Inter', 'Noto Sans Tibetan', sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(1100px 700px at 12% -8%, rgba(37,99,235,0.10), transparent 60%),
+      radial-gradient(900px 600px at 105% 10%, rgba(56,189,248,0.12), transparent 55%),
+      radial-gradient(800px 700px at 50% 115%, rgba(167,139,250,0.06), transparent 55%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, var(--bg-0));
+    background-attachment:fixed;
+    transition:background .4s ease, color .3s ease;
+    position:relative;
+    overflow-x:hidden;
+  }
+  html[data-theme="dark"] body{
+    background:
+      radial-gradient(1100px 700px at 12% -8%, rgba(125,211,252,0.16), transparent 60%),
+      radial-gradient(900px 600px at 105% 10%, rgba(167,139,250,0.14), transparent 55%),
+      radial-gradient(800px 700px at 50% 115%, rgba(56,189,248,0.08), transparent 55%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, var(--bg-0));
+  }
+  html[data-lang="dz"] body{ font-family:'Noto Sans Tibetan','Inter',sans-serif; }
+
+  h1,h2,h3,.display{ font-family:'Fraunces','Noto Sans Tibetan',serif; letter-spacing:0.01em; }
+  html[data-lang="dz"] h1, html[data-lang="dz"] h2, html[data-lang="dz"] h3, html[data-lang="dz"] .display{
+    font-family:'Noto Sans Tibetan', 'Fraunces', serif;
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  .app{ position:relative; z-index:1; max-width:1360px; margin:0 auto; padding:22px 28px 64px; }
+
+  /* ---------- header ---------- */
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:14px 20px; border-radius:20px;
+    background:var(--surface); border:1px solid var(--border);
+    backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    box-shadow:var(--shadow); margin-bottom:22px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand svg{ width:32px; height:32px; flex-shrink:0; color:var(--accent-a); }
+  .brand-text h1{
+    margin:0; font-size:22px; font-weight:700; letter-spacing:0.01em;
+    background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .brand-text span{ font-size:11.5px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; }
+
+  .controls{ display:flex; align-items:center; gap:10px; }
+  .toggle{
+    display:flex; align-items:center; gap:6px; background:var(--field-bg); border:1px solid var(--field-border);
+    padding:4px; border-radius:999px; cursor:pointer; user-select:none;
+  }
+  .toggle button{
+    border:none; background:transparent; color:var(--text-dim); font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:999px; cursor:pointer; transition:all .25s ease; font-family:inherit;
+  }
+  .toggle button.active{ background:var(--accent-grad); color:var(--text-on-accent); box-shadow:0 4px 14px rgba(37,99,235,0.25); }
+  .icon-btn{
+    width:38px; height:38px; border-radius:12px; border:1px solid var(--field-border); background:var(--field-bg);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .icon-btn:hover{ transform:translateY(-1px); background:var(--surface-strong); }
+  .icon-btn svg{ width:17px; height:17px; }
+
+  /* ---------- tabs ---------- */
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; }
+  .tab{
+    padding:10px 18px; border-radius:12px; border:1px solid var(--field-border); background:var(--field-bg);
+    color:var(--text-dim); font-weight:600; font-size:14px; cursor:pointer; font-family:inherit;
+    transition:all .2s ease;
+  }
+  .tab.active{ background:var(--accent-grad); border-color:transparent; color:var(--text-on-accent); box-shadow:0 4px 14px rgba(37,99,235,0.22); }
+
+  /* ---------- layout ---------- */
+  .grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:980px){ .grid{ grid-template-columns:1fr; } }
+
+  .glass{
+    background:var(--surface); border:1px solid var(--border); border-radius:22px;
+    backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); box-shadow:var(--shadow);
+    padding:26px;
+  }
+  .glass::before{ content:''; }
+
+  .section-title{
+    display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--accent-a); margin:26px 0 12px;
+  }
+  .section-title:first-child{ margin-top:0; }
+  .section-title .rule{ flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent); }
+
+  label{ display:block; font-size:12.5px; font-weight:600; color:var(--text-dim); margin-bottom:6px; }
+  .field{ margin-bottom:14px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row3{ display:grid; grid-template-columns:1.3fr .8fr 1fr; gap:12px; }
+  @media (max-width:560px){ .row2,.row3{ grid-template-columns:1fr; } }
+
+  input[type=text], textarea, select{
+    width:100%; background:var(--field-bg); border:1px solid var(--field-border); color:var(--text);
+    padding:10px 12px; border-radius:11px; font-family:inherit; font-size:14px; resize:vertical;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  input[type=text]:focus, textarea:focus, select:focus{
+    outline:none; border-color:var(--field-focus); background:var(--surface-strong);
+  }
+  textarea{ min-height:74px; line-height:1.5; }
+  ::placeholder{ color:var(--text-faint); }
+
+  .list-row{ display:flex; gap:8px; margin-bottom:8px; align-items:center; }
+  .list-row input{ flex:1; }
+  .mini-btn{
+    width:34px; height:34px; flex-shrink:0; border-radius:9px; border:1px solid var(--field-border);
+    background:var(--field-bg); color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .mini-btn:hover{ color:var(--accent-a); border-color:var(--accent-a); }
+  .add-link{
+    display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px dashed var(--field-border);
+    color:var(--accent-a); font-weight:600; font-size:13px; padding:8px 12px; border-radius:10px; cursor:pointer;
+    font-family:inherit;
+  }
+  .add-link:hover{ background:var(--field-bg); }
+
+  .phase-card{
+    border:1px solid var(--field-border); background:var(--field-bg); border-radius:16px; padding:16px; margin-bottom:14px;
+  }
+  .phase-head{ display:flex; gap:10px; align-items:flex-end; margin-bottom:10px; }
+  .phase-head .field{ margin-bottom:0; flex:1; }
+  .phase-head .time-field{ max-width:120px; }
+  .phase-hint{ font-size:11.5px; color:var(--text-faint); margin-top:6px; }
+
+  .btn-row{ display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+  .btn{
+    border:none; padding:12px 20px; border-radius:12px; font-weight:700; font-size:14px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; font-family:inherit; transition:transform .15s ease, filter .15s ease;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary{ background:var(--accent-grad); color:var(--text-on-accent); box-shadow:0 6px 20px rgba(56,189,248,0.25); }
+  .btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+  .btn-ghost{ background:var(--field-bg); border:1px solid var(--field-border); color:var(--text); }
+  .btn-ghost:hover{ background:var(--surface-strong); }
+  .btn svg{ width:16px; height:16px; }
+
+  /* ---------- preview / document ---------- */
+  .preview-wrap{ position:sticky; top:20px; }
+  .doc{
+    background:#ffffff; color:#101B34; border-radius:16px; overflow:hidden;
+    box-shadow:0 18px 40px rgba(15,23,42,0.28); border:1px solid rgba(15,23,42,0.06);
+  }
+  .doc-ribbon{
+    background:linear-gradient(120deg, #2563EB, #38BDF8 85%);
+    color:#F7FAFF; padding:20px 24px 18px; position:relative; overflow:hidden;
+  }
+  .doc-ribbon::after{
+    content:''; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.30), transparent 70%);
+  }
+  .doc-ribbon .eyebrow{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.8; margin-bottom:6px; }
+  .doc-ribbon h2{ margin:0 0 4px; font-size:22px; color:#ffffff; }
+  .doc-ribbon .sub{ font-size:13px; opacity:.9; }
+  .doc-body{ padding:22px 24px 26px; font-size:13.6px; line-height:1.62; }
+  .doc-meta{ display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; margin-bottom:16px; font-size:13px; }
+  .doc-meta div b{ color:#2563EB; font-weight:700; }
+  .doc-h{
+    font-family:'Fraunces','Noto Sans Tibetan',serif; font-size:14.5px; font-weight:700; color:#1D4ED8;
+    margin:16px 0 6px; padding-bottom:4px; border-bottom:1px solid rgba(37,99,235,0.2);
+    display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  }
+  .doc-h .time{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:#0369A1; background:rgba(56,189,248,0.16); padding:2px 9px; border-radius:999px; white-space:nowrap; }
+  .doc-p{ margin:0 0 8px; }
+  .doc-ul{ margin:0 0 10px; padding-left:0; list-style:none; }
+  .doc-ul li{ position:relative; padding-left:20px; margin-bottom:5px; }
+  .doc-ul li::before{ content:''; position:absolute; left:0; top:6px; width:9px; height:9px; background:linear-gradient(120deg,#2563EB,#38BDF8); border-radius:2px; transform:rotate(45deg); }
+  .doc-sub{ font-weight:700; color:#1E3A8A; margin:8px 0 4px; }
+  .doc-empty{ color:#94A3B8; font-style:italic; }
+  .doc a{ color:#2563EB; }
+
+  /* ---------- saved plans ---------- */
+  .saved-toolbar{ display:flex; gap:10px; margin-bottom:18px; align-items:center; flex-wrap:wrap; }
+  .saved-toolbar input{ max-width:320px; }
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:16px; }
+  .plan-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:18px;
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .plan-card .tag{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-a); font-weight:700; }
+  .plan-card h3{ margin:0; font-size:16.5px; color:var(--text); }
+  .plan-card .meta{ font-size:12.5px; color:var(--text-dim); }
+  .plan-card .actions{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .plan-card .actions .icon-btn{ width:32px; height:32px; }
+  .plan-card .actions .icon-btn svg{ width:15px; height:15px; }
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--text-dim);
+  }
+  .empty-state svg{ width:52px; height:52px; margin-bottom:14px; opacity:.5; }
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--accent-grad); color:var(--text-on-accent); padding:12px 20px; border-radius:12px; font-weight:700; font-size:13.5px;
+    box-shadow:0 12px 30px rgba(0,0,0,.3); transition:all .3s ease; z-index:50; pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--scroll-thumb); border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--accent-a); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
+        <path d="M24 10c-3 4-3 6 0 8c3-2 3-4 0-8Z M24 30c-3 4-3 6 0 8c3-2 3-4 0-8Z M10 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M30 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M17 17c1 4 3 5 6 3c-1-4-3-5-6-3Z M31 17c-1 4-3 5-6 3c1-4 3-5 6-3Z M17 31c1-4 3-5 6-3c-1 4-3 5-6 3Z M31 31c-1-4-3-5-6-3c1 4 3 5 6 3Z" fill="currentColor"/>
+      </svg>
+      <div class="brand-text">
+        <h1 data-i18n="appTitle">Lesson Plan Studio</h1>
+        <span data-i18n="appTagline">Crafted for the classroom</span>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="toggle" id="langToggle">
+        <button data-val="en" class="active">EN</button>
+        <button data-val="dz">རྫོང་ཁ</button>
+      </div>
+      <div class="icon-btn" id="themeToggle" title="Toggle theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="new" data-i18n="tabNew">New Plan</button>
+    <button class="tab" data-tab="saved" data-i18n="tabSaved">Saved Plans</button>
+  </div>
+
+  <!-- ============ NEW PLAN VIEW ============ -->
+  <div id="view-new">
+    <div class="grid">
+
+      <!-- FORM -->
+      <div class="glass" id="formPane">
+
+        <div class="section-title"><span data-i18n="secBasics">Lesson Details</span><span class="rule"></span></div>
+        <div class="field">
+          <label data-i18n="lessonTitle">Lesson Title</label>
+          <input type="text" id="f_title" placeholder="e.g. Introduction to Information Literacy">
+        </div>
+        <div class="row3">
+          <div class="field"><label data-i18n="subject">Subject</label><input type="text" id="f_subject" placeholder="ICT"></div>
+          <div class="field"><label data-i18n="class">Class</label><input type="text" id="f_class" placeholder="VI"></div>
+          <div class="field"><label data-i18n="duration">Duration</label><input type="text" id="f_duration" placeholder="50 minutes"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label data-i18n="strand">Strand</label><input type="text" id="f_strand" placeholder="Safety and Ethics"></div>
+          <div class="field"><label data-i18n="teacher">Teacher</label><input type="text" id="f_teacher" placeholder="Optional"></div>
+        </div>
+        <div class="field">
+          <label data-i18n="competency">Competency</label>
+          <textarea id="f_competency" placeholder="Exhibit good practices of..."></textarea>
+        </div>
+        <div class="field">
+          <label data-i18n="topic">Topic</label>
+          <input type="text" id="f_topic" placeholder="Topic of the lesson">
+        </div>
+
+        <div class="section-title"><span data-i18n="secObjectives">Objectives</span><span class="rule"></span></div>
+        <div id="objectivesList"></div>
+        <button class="add-link" data-add="objectives">+ <span data-i18n="addObjective">Add objective</span></button>
+
+        <div class="section-title"><span data-i18n="secPrior">Prior Knowledge</span><span class="rule"></span></div>
+        <div id="priorList"></div>
+        <button class="add-link" data-add="prior">+ <span data-i18n="addPrior">Add point</span></button>
+
+        <div class="section-title"><span data-i18n="secDescription">Lesson Description</span><span class="rule"></span></div>
+        <div class="field">
+          <textarea id="f_description" style="min-height:90px" placeholder="A short overview of how the lesson unfolds..."></textarea>
+        </div>
+
+        <div class="section-title"><span data-i18n="secStages">Lesson Stages</span><span class="rule"></span></div>
+        <div id="phasesList"></div>
+        <button class="add-link" data-add="phase">+ <span data-i18n="addPhase">Add stage</span></button>
+        <div class="phase-hint" data-i18n="phaseHint">Tip: start a line with "- " for a bullet point, or "## " for a bold sub‑heading (e.g. Activity 1).</div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnSave">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            <span data-i18n="save">Save Plan</span>
+          </button>
+          <button class="btn btn-ghost" id="btnExport">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span data-i18n="exportWord">Export to Word</span>
+          </button>
+          <button class="btn btn-ghost" id="btnNew">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-i18n="newBtn">Clear</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="preview-wrap">
+        <div class="section-title" style="margin-top:0"><span data-i18n="preview">Preview</span><span class="rule"></span></div>
+        <div class="doc" id="docPreview"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ SAVED PLANS VIEW ============ -->
+  <div id="view-saved" style="display:none">
+    <div class="saved-toolbar">
+      <input type="text" id="searchSaved" placeholder="Search saved plans...">
+    </div>
+    <div id="savedGrid" class="card-grid"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+/* ---------------- i18n ---------------- */
+const I18N = {
+  en:{
+    appTitle:"Lesson Plan Studio", appTagline:"Crafted for the classroom",
+    tabNew:"New Plan", tabSaved:"Saved Plans",
+    secBasics:"Lesson Details", lessonTitle:"Lesson Title", subject:"Subject", class:"Class", duration:"Duration",
+    strand:"Strand", teacher:"Teacher", competency:"Competency", topic:"Topic",
+    secObjectives:"Objectives", addObjective:"Add objective",
+    secPrior:"Prior Knowledge", addPrior:"Add point",
+    secDescription:"Lesson Description",
+    secStages:"Lesson Stages", addPhase:"Add stage",
+    phaseHint:'Tip: start a line with "- " for a bullet point, or "## " for a bold sub-heading (e.g. Activity 1).',
+    save:"Save Plan", exportWord:"Export to Word", newBtn:"Clear",
+    preview:"Preview",
+    stageName:"Stage name", stageTime:"Time", stageContent:"Content",
+    savedEmpty:"No saved lesson plans yet — save one from “New Plan” to see it here.",
+    open:"Open", duplicate:"Duplicate", del:"Delete", exportShort:"Word",
+    confirmDelete:"Delete this lesson plan? This can't be undone.",
+    savedToast:"Lesson plan saved", deletedToast:"Lesson plan deleted", duplicatedToast:"Duplicated",
+    docUntitled:"Untitled Lesson", docSubject:"Subject", docClass:"Class", docDuration:"Duration", docStrand:"Strand",
+    docCompetency:"Competency", docTopic:"Topic", docObjectives:"Objectives",
+    docPrior:"Prior Knowledge", docDescription:"Lesson Description",
+    emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
+    searchPlaceholder:"Search saved plans..."
+  },
+  dz:{
+    appTitle:"སློབ་ཚན་འཆར་གཞི།", appTagline:"སློབ་ཚན་གྱི་དོན་ལུ་བཟོ་བཏོན་འབད་ཡོད།",
+    tabNew:"འཆར་གཞི་གསརཔ།", tabSaved:"ཉར་བཞགཔའི་འཆར་གཞི།",
+    secBasics:"སློབ་ཚན་གྱི་གནད་དོན།", lessonTitle:"སློབ་ཚན་གྱི་མགོ་མིང་།", subject:"སློབ་རིག", class:"སློབ་རིམ།", duration:"དུས་ཚོད།",
+    strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ནུས་པ།", topic:"བརྗོད་དོན།",
+    secObjectives:"དམིགས་ཡུལ།", addObjective:"དམིགས་ཡུལ་ཁ་སྣོན།",
+    secPrior:"སྔོན་ཤེས།", addPrior:"གནད་དོན་ཁ་སྣོན།",
+    secDescription:"སློབ་ཚན་གྱི་འགྲེལ་བཤད།",
+    secStages:"སློབ་ཚན་གྱི་རིམ་པ།", addPhase:"རིམ་པ་ཁ་སྣོན།",
+    phaseHint:'གྲོགས་རམ: ཚིག་གྲལ་ "- " ལས་འགོ་བཙུགས་པ་ཅིན་ཚུད་ཚིག་ཅིག་འབྱུང་། "## " ལས་འགོ་བཙུགས་པ་ཅིན་མགོ་མིང་ཚོགས་པ་ཞིག་འབྱུང་།',
+    save:"ཉར་ཚགས།", exportWord:"Word ལུ་བཏོན།", newBtn:"གསར་བསྐྲུན།",
+    preview:"སྔོན་ལྟ།",
+    stageName:"རིམ་པའི་མིང་།", stageTime:"དུས་ཚོད།", stageContent:"ནང་དོན།",
+    savedEmpty:"ད་ལྟོའི་བར་ན་ཉར་བཞགཔའི་འཆར་གཞི་མིན་འདུག། \u201cའཆར་གཞི་གསརཔ\u201d་ནང་ལས་ཉར་བཞག.",
+    open:"ཁ་ཕྱེ།", duplicate:"འདྲ་བཤུས།", del:"བསུབ།", exportShort:"Word",
+    confirmDelete:"འཆར་གཞི་འདི་བསུབ་ནི་ཨིན་ན? ཕྱིར་འབདཝ་མི་ཚུགས།",
+    savedToast:"འཆར་གཞི་ཉར་ཚགས་འབད་ཡི།", deletedToast:"འཆར་གཞི་བསུབ་ཡི།", duplicatedToast:"འདྲ་བཤུས་འབད་ཡི།",
+    docUntitled:"མིང་མེད་པའི་སློབ་ཚན།", docSubject:"སློབ་རིག", docClass:"སློབ་རིམ།", docDuration:"དུས་ཚོད།", docStrand:"ཡན་ལག",
+    docCompetency:"ནུས་པ།", docTopic:"བརྗོད་དོན།", docObjectives:"དམིགས་ཡུལ།",
+    docPrior:"སྔོན་ཤེས།", docDescription:"འགྲེལ་བཤད།",
+    emptyPreviewHint:"ཐོ་བཀོད་བྱང་བུ་བཀང་སྟེ་སློབ་ཚན་འཆར་གཞི་འདི་གུ་བལྟ།",
+    searchPlaceholder:"ཉར་བཞགཔའི་འཆར་གཞི་འཚོལ་ཞིབ..."
+  }
+};
+let lang = 'en';
+function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
+function applyI18n(){
+  document.documentElement.setAttribute('data-lang', lang);
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.getElementById('searchSaved').placeholder = t('searchPlaceholder');
+  renderObjectives(); renderPrior(); renderPhases(); renderPreview(); renderSaved();
+}
+
+/* ---------------- icons ---------------- */
+const ICONS = {
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>'
+};
+
+/* ---------------- state ---------------- */
+function blankPlan(){
+  return {
+    id: 'lp_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    title:'', subject:'', className:'', duration:'', strand:'', teacher:'',
+    competency:'', topic:'',
+    objectives:[''],
+    prior:[''],
+    description:'',
+    phases:[
+      {name:'Introduction', time:'10 mins', content:''},
+      {name:'Learning Experiences', time:'35 mins', content:''},
+      {name:'Assessment / Closure', time:'5 mins', content:''},
+      {name:'Do It Yourself', time:'', content:''}
+    ],
+    createdAt: Date.now(), updatedAt: Date.now()
+  };
+}
+let plan = blankPlan();
+let savedPlans = [];
+let editingExistingId = null;
+
+/* ---------------- storage ---------------- */
+async function loadSaved(){
+  try{
+    const res = await window.storage.get('lessonplans', false);
+    savedPlans = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    savedPlans = [];
+  }
+}
+async function persistSaved(){
+  try{
+    await window.storage.set('lessonplans', JSON.stringify(savedPlans), false);
+    return true;
+  }catch(e){
+    console.error('storage error', e);
+    return false;
+  }
+}
+
+/* ---------------- form <-> plan sync ---------------- */
+const simpleFields = ['title','subject','className','duration','strand','teacher','competency','topic','description'];
+const fieldIdMap = {title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',strand:'f_strand',teacher:'f_teacher',competency:'f_competency',topic:'f_topic',description:'f_description'};
+
+function bindSimpleFields(){
+  simpleFields.forEach(key=>{
+    const el = document.getElementById(fieldIdMap[key]);
+    el.value = plan[key] || '';
+    el.oninput = ()=>{ plan[key] = el.value; renderPreview(); };
+  });
+}
+
+function renderObjectives(){ renderStringList('objectivesList','objectives'); }
+function renderPrior(){ renderStringList('priorList','prior'); }
+
+function renderStringList(containerId, key){
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  plan[key].forEach((val, i)=>{
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    const input = document.createElement('input');
+    input.type = 'text'; input.value = val;
+    input.placeholder = (key==='objectives') ? '...' : '...';
+    input.oninput = ()=>{ plan[key][i] = input.value; renderPreview(); };
+    const del = document.createElement('button');
+    del.className='mini-btn'; del.type='button';
+    del.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS.trash+'</svg>';
+    del.onclick = ()=>{ plan[key].splice(i,1); if(plan[key].length===0) plan[key].push(''); renderStringList(containerId,key); renderPreview(); };
+    row.appendChild(input); row.appendChild(del);
+    wrap.appendChild(row);
+  });
+}
+
+function renderPhases(){
+  const wrap = document.getElementById('phasesList');
+  wrap.innerHTML = '';
+  plan.phases.forEach((ph, i)=>{
+    const card = document.createElement('div');
+    card.className = 'phase-card';
+    card.innerHTML = `
+      <div class="phase-head">
+        <div class="field"><label>${t('stageName')}</label><input type="text" class="ph-name" value="${escAttr(ph.name)}"></div>
+        <div class="field time-field"><label>${t('stageTime')}</label><input type="text" class="ph-time" value="${escAttr(ph.time)}" placeholder="10 mins"></div>
+        <button class="mini-btn ph-del" type="button" title="${t('del')}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
+      </div>
+      <div class="field"><label>${t('stageContent')}</label><textarea class="ph-content" style="min-height:110px" placeholder="- point one&#10;## Activity 1: ...&#10;- point two">${escHtml(ph.content)}</textarea></div>
+    `;
+    card.querySelector('.ph-name').oninput = e=>{ plan.phases[i].name = e.target.value; renderPreview(); };
+    card.querySelector('.ph-time').oninput = e=>{ plan.phases[i].time = e.target.value; renderPreview(); };
+    card.querySelector('.ph-content').oninput = e=>{ plan.phases[i].content = e.target.value; renderPreview(); };
+    card.querySelector('.ph-del').onclick = ()=>{ plan.phases.splice(i,1); renderPhases(); renderPreview(); };
+    wrap.appendChild(card);
+  });
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
+
+/* ---------------- content parsing for preview/export ---------------- */
+function linkify(text){
+  return text.replace(/(https?:\/\/[^\s]+)/g, url=>`<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+}
+function inlineBold(text){
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+function renderContentBlock(raw){
+  if(!raw || !raw.trim()) return `<p class="doc-empty">—</p>`;
+  const lines = raw.split('\n');
+  let html = ''; let ulOpen = false;
+  const closeUl = ()=>{ if(ulOpen){ html += '</ul>'; ulOpen=false; } };
+  lines.forEach(line=>{
+    const trimmed = line.trim();
+    if(trimmed === ''){ closeUl(); return; }
+    if(trimmed.startsWith('## ')){
+      closeUl();
+      html += `<div class="doc-sub">${inlineBold(linkify(escHtml(trimmed.slice(3))))}</div>`;
+    } else if(trimmed.startsWith('- ') || trimmed.startsWith('• ')){
+      if(!ulOpen){ html += '<ul class="doc-ul">'; ulOpen = true; }
+      html += `<li>${inlineBold(linkify(escHtml(trimmed.slice(2))))}</li>`;
+    } else {
+      closeUl();
+      html += `<p class="doc-p">${inlineBold(linkify(escHtml(trimmed)))}</p>`;
+    }
+  });
+  closeUl();
+  return html;
+}
+function renderBulletArray(arr){
+  const items = arr.filter(x=>x && x.trim());
+  if(items.length===0) return `<p class="doc-empty">—</p>`;
+  return `<ul class="doc-ul">${items.map(i=>`<li>${inlineBold(linkify(escHtml(i)))}</li>`).join('')}</ul>`;
+}
+
+/* ---------------- preview ---------------- */
+function renderPreview(){
+  const p = plan;
+  const html = `
+    <div class="doc-ribbon">
+      <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
+      <h2>${escHtml(p.title) || t('docUntitled')}</h2>
+      <div class="sub">${escHtml(p.topic || '')}</div>
+    </div>
+    <div class="doc-body">
+      <div class="doc-meta">
+        <div><b>${t('docSubject')}:</b> ${escHtml(p.subject)||'—'}</div>
+        <div><b>${t('docClass')}:</b> ${escHtml(p.className)||'—'}</div>
+        <div><b>${t('docDuration')}:</b> ${escHtml(p.duration)||'—'}</div>
+        <div><b>${t('docStrand')}:</b> ${escHtml(p.strand)||'—'}</div>
+      </div>
+
+      <div class="doc-h">${t('docCompetency')}</div>
+      ${renderContentBlock(p.competency)}
+
+      <div class="doc-h">${t('docObjectives')}</div>
+      ${renderBulletArray(p.objectives)}
+
+      <div class="doc-h">${t('docPrior')}</div>
+      ${renderBulletArray(p.prior)}
+
+      <div class="doc-h">${t('docDescription')}</div>
+      ${renderContentBlock(p.description)}
+
+      ${p.phases.map(ph=>`
+        <div class="doc-h"><span>${escHtml(ph.name)||'—'}</span>${ph.time? `<span class="time">${escHtml(ph.time)}</span>`:''}</div>
+        ${renderContentBlock(ph.content)}
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('docPreview').innerHTML = html;
+}
+
+/* ---------------- save / new / duplicate / delete ---------------- */
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+async function savePlan(){
+  plan.updatedAt = Date.now();
+  const idx = savedPlans.findIndex(p=>p.id===plan.id);
+  if(idx>=0){ savedPlans[idx] = JSON.parse(JSON.stringify(plan)); }
+  else{ savedPlans.unshift(JSON.parse(JSON.stringify(plan))); }
+  const ok = await persistSaved();
+  if(ok){ toast(t('savedToast')); renderSaved(); }
+}
+
+function newPlan(){
+  plan = blankPlan();
+  editingExistingId = null;
+  bindSimpleFields(); renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+}
+
+function loadPlanIntoForm(p){
+  plan = JSON.parse(JSON.stringify(p));
+  editingExistingId = p.id;
+  bindSimpleFields(); renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+  switchTab('new');
+}
+
+async function deletePlan(id){
+  if(!confirm(t('confirmDelete'))) return;
+  savedPlans = savedPlans.filter(p=>p.id!==id);
+  await persistSaved();
+  toast(t('deletedToast'));
+  renderSaved();
+}
+
+async function duplicatePlan(id){
+  const src = savedPlans.find(p=>p.id===id);
+  if(!src) return;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = 'lp_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  copy.title = (copy.title || t('docUntitled')) + ' (copy)';
+  copy.createdAt = Date.now(); copy.updatedAt = Date.now();
+  savedPlans.unshift(copy);
+  await persistSaved();
+  toast(t('duplicatedToast'));
+  renderSaved();
+}
+
+/* ---------------- saved list rendering ---------------- */
+function renderSaved(){
+  const grid = document.getElementById('savedGrid');
+  const q = (document.getElementById('searchSaved').value || '').toLowerCase().trim();
+  const list = savedPlans.filter(p=>{
+    if(!q) return true;
+    return [p.title,p.subject,p.className,p.topic].join(' ').toLowerCase().includes(q);
+  });
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z" opacity=".0"/><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>
+      <div>${t('savedEmpty')}</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p=>{
+    const d = new Date(p.updatedAt||p.createdAt);
+    return `
+    <div class="plan-card">
+      <div class="tag">${escHtml(p.subject)||'—'}${p.className? ' · '+escHtml(p.className):''}</div>
+      <h3>${escHtml(p.title) || t('docUntitled')}</h3>
+      <div class="meta">${escHtml(p.topic)||''}</div>
+      <div class="meta">${d.toLocaleDateString()}</div>
+      <div class="actions">
+        <button class="icon-btn" data-act="open" data-id="${p.id}" title="${t('open')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.edit}</svg></button>
+        <button class="icon-btn" data-act="dup" data-id="${p.id}" title="${t('duplicate')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.copy}</svg></button>
+        <button class="icon-btn" data-act="word" data-id="${p.id}" title="${t('exportShort')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.download}</svg></button>
+        <button class="icon-btn" data-act="del" data-id="${p.id}" title="${t('del')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-act]').forEach(btn=>{
+    const id = btn.getAttribute('data-id');
+    const act = btn.getAttribute('data-act');
+    btn.onclick = ()=>{
+      const p = savedPlans.find(x=>x.id===id);
+      if(act==='open'){ loadPlanIntoForm(p); }
+      else if(act==='dup'){ duplicatePlan(id); }
+      else if(act==='del'){ deletePlan(id); }
+      else if(act==='word'){ exportWord(p); }
+    };
+  });
+}
+
+/* ---------------- word export ---------------- */
+function planToDocHtml(p){
+  const L = I18N[lang];
+  const phasesHtml = p.phases.map(ph=>`
+    <tr>
+      <td style="border:1px solid #93C5FD;padding:10px 12px;width:78%;vertical-align:top;">
+        <div style="font-family:Georgia,serif;font-weight:700;color:#1D4ED8;font-size:12.5pt;margin-bottom:4px;">${escHtml(ph.name)}</div>
+        ${contentToWordHtml(ph.content)}
+      </td>
+      <td style="border:1px solid #93C5FD;padding:10px 12px;width:22%;vertical-align:top;color:#0369A1;font-weight:600;">${escHtml(ph.time)||''}</td>
+    </tr>
+  `).join('');
+
+  return `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head>
+    <meta charset="utf-8">
+    <title>${escHtml(p.title)||L.docUntitled}</title>
+    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+    <style>
+      body{ font-family:Calibri, 'Noto Sans Tibetan', sans-serif; font-size:11pt; color:#101B34; }
+      table{ border-collapse:collapse; width:100%; margin-bottom:14px; }
+      td{ border:1px solid #93C5FD; padding:10px 12px; vertical-align:top; }
+      .hero{ background:#2563EB; color:#F7FAFF; padding:16px 18px; }
+      .hero h1{ font-family:Georgia,serif; font-size:20pt; margin:0 0 4px; }
+      .hero .sub{ font-size:11pt; opacity:.9; }
+      .meta-table td{ font-size:10.5pt; }
+      .sec-title{ font-family:Georgia,serif; font-weight:700; color:#1D4ED8; font-size:12.5pt; margin:14px 0 6px; border-bottom:1px solid #38BDF8; padding-bottom:3px; }
+      ul{ margin:4px 0 8px; padding-left:20px; }
+      li{ margin-bottom:4px; }
+      .sub-h{ font-weight:700; color:#1E3A8A; margin:6px 0 3px; }
+      p{ margin:0 0 6px; }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <h1>${escHtml(p.title)||L.docUntitled}</h1>
+      <div class="sub">${escHtml(p.topic)||''}</div>
+    </div>
+    <table class="meta-table">
+      <tr>
+        <td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td>
+        <td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td>
+      </tr>
+      <tr>
+        <td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td>
+        <td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td>
+      </tr>
+    </table>
+
+    <div class="sec-title">${L.docCompetency}</div>
+    ${contentToWordHtml(p.competency)}
+
+    <div class="sec-title">${L.docObjectives}</div>
+    ${bulletArrayToWordHtml(p.objectives)}
+
+    <div class="sec-title">${L.docPrior}</div>
+    ${bulletArrayToWordHtml(p.prior)}
+
+    <div class="sec-title">${L.docDescription}</div>
+    ${contentToWordHtml(p.description)}
+
+    <div class="sec-title">${L.secStages}</div>
+    <table>${phasesHtml}</table>
+  </body>
+  </html>`;
+}
+function contentToWordHtml(raw){
+  if(!raw || !raw.trim()) return '<p>—</p>';
+  const lines = raw.split('\n'); let html=''; let ulOpen=false;
+  const closeUl = ()=>{ if(ulOpen){ html+='</ul>'; ulOpen=false; } };
+  lines.forEach(line=>{
+    const trimmed = line.trim();
+    if(trimmed===''){ closeUl(); return; }
+    if(trimmed.startsWith('## ')){ closeUl(); html+=`<div class="sub-h">${inlineBold(escHtml(trimmed.slice(3)))}</div>`; }
+    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(!ulOpen){html+='<ul>';ulOpen=true;} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
+    else { closeUl(); html+=`<p>${inlineBold(escHtml(trimmed))}</p>`; }
+  });
+  closeUl();
+  return html;
+}
+function bulletArrayToWordHtml(arr){
+  const items = arr.filter(x=>x && x.trim());
+  if(items.length===0) return '<p>—</p>';
+  return `<ul>${items.map(i=>`<li>${inlineBold(escHtml(i))}</li>`).join('')}</ul>`;
+}
+
+function exportWord(p){
+  const html = planToDocHtml(p);
+  const blob = new Blob(['\ufeff', html], {type:'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (p.title || 'lesson-plan').replace(/[^\w\-]+/g,'_').slice(0,60);
+  a.href = url; a.download = safeName + '.doc';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+
+/* ---------------- tabs / theme / lang wiring ---------------- */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.getAttribute('data-tab')===name));
+  document.getElementById('view-new').style.display = name==='new' ? '' : 'none';
+  document.getElementById('view-saved').style.display = name==='saved' ? '' : 'none';
+  if(name==='saved') renderSaved();
+}
+document.querySelectorAll('.tab').forEach(b=> b.onclick = ()=>switchTab(b.getAttribute('data-tab')) );
+
+function setTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = document.getElementById('themeIcon');
+  icon.innerHTML = theme==='dark' ? ICONS.moon : ICONS.sun;
+}
+let theme = 'dark';
+setTheme(theme);
+document.getElementById('themeToggle').onclick = ()=>{
+  theme = theme==='dark' ? 'light' : 'dark';
+  setTheme(theme);
+};
+
+document.getElementById('langToggle').querySelectorAll('button').forEach(btn=>{
+  btn.onclick = ()=>{
+    lang = btn.getAttribute('data-val');
+    document.getElementById('langToggle').querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
+    applyI18n();
+  };
+});
+
+document.getElementById('btnSave').onclick = savePlan;
+document.getElementById('btnNew').onclick = ()=>{ if(confirm(lang==='dz'?'འཆར་གཞི་གསར་བསྐྲུན་འབད་ནི་ཨིན་ན?':'Start a new blank plan? Unsaved changes will be lost.')) newPlan(); };
+document.getElementById('btnExport').onclick = ()=> exportWord(plan);
+document.getElementById('searchSaved').oninput = renderSaved;
+document.querySelectorAll('.add-link').forEach(btn=>{
+  btn.onclick = ()=>{
+    const kind = btn.getAttribute('data-add');
+    if(kind==='objectives'){ plan.objectives.push(''); renderObjectives(); }
+    else if(kind==='prior'){ plan.prior.push(''); renderPrior(); }
+    else if(kind==='phase'){ plan.phases.push({name:'', time:'', content:''}); renderPhases(); }
+    renderPreview();
+  };
+});
+
+/* ---------------- init ---------------- */
+async function init(){
+  document.getElementById('docPreview').innerHTML = `<div class="doc-body"><p class="doc-empty">${t('emptyPreviewHint')}</p></div>`;
+  bindSimpleFields();
+  renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+  await loadSaved();
+  renderSaved();
+}
+init();
+
+})();
+</script>
+</body>
+</html>
