@@ -192,6 +192,20 @@
   .btn-ghost:hover{ background:var(--surface-strong); }
   .btn svg{ width:16px; height:16px; }
 
+  /* ---------- language-conditional sections ---------- */
+  .show-en, .show-dz{ display:block; }
+  html[data-lang="en"] .show-dz{ display:none !important; }
+  html[data-lang="dz"] .show-en{ display:none !important; }
+
+  /* ---------- Dzongkha row editor (color-coded to mirror the table) ---------- */
+  .dzrow-card{ border:1px solid var(--field-border); background:var(--field-bg); border-radius:16px; padding:16px; margin-bottom:14px; }
+  .dz-tint{ border-left:4px solid transparent; padding-left:12px; border-radius:0 10px 10px 0; }
+  .dz-tint-skill{ border-left-color:#38BDF8; }
+  .dz-tint-teacher{ border-left-color:#F59E0B; }
+  .dz-tint-student{ border-left-color:#22C55E; }
+  .dz-tint-time{ border-left-color:#A78BFA; }
+  .dz-tint-assess{ border-left-color:#2DD4BF; }
+
   /* ---------- preview / document ---------- */
   .preview-wrap{ position:sticky; top:20px; }
   .doc{
@@ -211,6 +225,7 @@
   .doc-ribbon .sub{ font-size:13px; opacity:.9; }
   .doc-body{ padding:22px 24px 26px; font-size:13.6px; line-height:1.62; }
   .doc-meta{ display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; margin-bottom:16px; font-size:13px; }
+  .doc-meta.doc-meta-3{ grid-template-columns:1fr 1fr 1fr; }
   .doc-meta div b{ color:#2563EB; font-weight:700; }
   .doc-h{
     font-family:'Fraunces','Noto Sans Tibetan',serif; font-size:14.5px; font-weight:700; color:#1D4ED8;
@@ -222,9 +237,25 @@
   .doc-ul{ margin:0 0 10px; padding-left:0; list-style:none; }
   .doc-ul li{ position:relative; padding-left:20px; margin-bottom:5px; }
   .doc-ul li::before{ content:''; position:absolute; left:0; top:6px; width:9px; height:9px; background:linear-gradient(120deg,#2563EB,#38BDF8); border-radius:2px; transform:rotate(45deg); }
+  .doc-ol{ margin:0 0 10px; padding-left:22px; }
+  .doc-ol li{ margin-bottom:5px; }
   .doc-sub{ font-weight:700; color:#1E3A8A; margin:8px 0 4px; }
   .doc-empty{ color:#94A3B8; font-style:italic; }
   .doc a{ color:#2563EB; }
+
+  /* Dzongkha colour-coded stage table (mirrors the DDC template) */
+  .doc-dz-table{ width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:12.6px; }
+  .doc-dz-table th, .doc-dz-table td{ border:1px solid #C3D3EA; padding:9px 10px; vertical-align:top; text-align:left; }
+  .doc-dz-table th{ font-family:'Fraunces','Noto Sans Tibetan',serif; font-weight:700; color:#1D3557; font-size:12px; }
+  .doc-dz-table .dzc-0{ background:#F8FAFC; }
+  .doc-dz-table td.dzc-1{ background:#E4F3FC; } .doc-dz-table th.dzc-1{ background:#B9E1F7; }
+  .doc-dz-table td.dzc-2{ background:#FDEEDA; } .doc-dz-table th.dzc-2{ background:#FBD9A2; }
+  .doc-dz-table td.dzc-3{ background:#E3F7E6; } .doc-dz-table th.dzc-3{ background:#BBEAC4; }
+  .doc-dz-table td.dzc-4{ background:#EDE4FA; } .doc-dz-table th.dzc-4{ background:#D3C0F2; }
+  .doc-dz-table td.dzc-5{ background:#DCF6F2; } .doc-dz-table th.dzc-5{ background:#AEE9E1; }
+  .doc-dz-table .doc-ul, .doc-dz-table .doc-ol{ margin-bottom:0; }
+  .doc-dz-table .doc-p:last-child{ margin-bottom:0; }
+  .doc-reflect-box{ min-height:46px; border:1px dashed #B7C6DE; border-radius:8px; background:#F8FAFC; }
 
   /* ---------- saved plans ---------- */
   .saved-toolbar{ display:flex; gap:10px; margin-bottom:18px; align-items:center; flex-wrap:wrap; }
@@ -235,7 +266,8 @@
     backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:var(--shadow);
     display:flex; flex-direction:column; gap:8px;
   }
-  .plan-card .tag{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-a); font-weight:700; }
+  .plan-card .tag{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-a); font-weight:700; display:flex; gap:8px; align-items:center; }
+  .plan-card .tag .fmt{ background:var(--field-bg); border:1px solid var(--field-border); padding:1px 7px; border-radius:999px; }
   .plan-card h3{ margin:0; font-size:16.5px; color:var(--text); }
   .plan-card .meta{ font-size:12.5px; color:var(--text-dim); }
   .plan-card .actions{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
@@ -308,36 +340,78 @@
           <div class="field"><label data-i18n="class">Class</label><input type="text" id="f_class" placeholder="VI"></div>
           <div class="field"><label data-i18n="duration">Duration</label><input type="text" id="f_duration" placeholder="50 minutes"></div>
         </div>
-        <div class="row2">
+        <div class="row3">
+          <div class="field"><label data-i18n="date">Date</label><input type="text" id="f_date" placeholder="21st July, 2026"></div>
           <div class="field"><label data-i18n="strand">Strand</label><input type="text" id="f_strand" placeholder="Safety and Ethics"></div>
           <div class="field"><label data-i18n="teacher">Teacher</label><input type="text" id="f_teacher" placeholder="Optional"></div>
+        </div>
+        <div class="field">
+          <label data-i18n="topic">Topic</label>
+          <input type="text" id="f_topic" placeholder="Topic of the lesson">
         </div>
         <div class="field">
           <label data-i18n="competency">Competency</label>
           <textarea id="f_competency" placeholder="Exhibit good practices of..."></textarea>
         </div>
         <div class="field">
-          <label data-i18n="topic">Topic</label>
-          <input type="text" id="f_topic" placeholder="Topic of the lesson">
+          <label data-i18n="gnh">GNH Principles and Values</label>
+          <textarea id="f_gnh" placeholder="Education, Mindfulness..."></textarea>
+        </div>
+
+        <!-- English-only quick facts -->
+        <div class="show-en">
+          <div class="section-title"><span data-i18n="secEnDetails">Additional Details</span><span class="rule"></span></div>
+          <div class="row3">
+            <div class="field"><label data-i18n="lessonNumber">Lesson Plan Number</label><input type="text" id="f_lessonNumber" placeholder="64"></div>
+            <div class="field"><label data-i18n="period">Period</label><input type="text" id="f_period" placeholder="4th"></div>
+            <div class="field"><label data-i18n="pedagogy">Pedagogy</label><input type="text" id="f_pedagogy" placeholder="Collaborative"></div>
+          </div>
+          <div class="field">
+            <label data-i18n="teachingStrategies">Teaching Strategies</label>
+            <input type="text" id="f_teachingStrategies" placeholder="Discussion, place based">
+          </div>
+        </div>
+
+        <!-- Dzongkha-only quick facts -->
+        <div class="show-dz">
+          <div class="section-title"><span data-i18n="secDzDetails">Additional Details</span><span class="rule"></span></div>
+          <div class="field">
+            <label data-i18n="venue">Venue</label>
+            <input type="text" id="f_venue" placeholder="Classroom">
+          </div>
         </div>
 
         <div class="section-title"><span data-i18n="secObjectives">Objectives</span><span class="rule"></span></div>
         <div id="objectivesList"></div>
         <button class="add-link" data-add="objectives">+ <span data-i18n="addObjective">Add objective</span></button>
 
-        <div class="section-title"><span data-i18n="secPrior">Prior Knowledge</span><span class="rule"></span></div>
-        <div id="priorList"></div>
-        <button class="add-link" data-add="prior">+ <span data-i18n="addPrior">Add point</span></button>
+        <!-- English-only prior knowledge / resources -->
+        <div class="show-en">
+          <div class="section-title"><span data-i18n="secPrior">Prior Knowledge</span><span class="rule"></span></div>
+          <div class="field"><textarea id="f_prior" placeholder="Learners have concept of..."></textarea></div>
 
-        <div class="section-title"><span data-i18n="secDescription">Lesson Description</span><span class="rule"></span></div>
-        <div class="field">
-          <textarea id="f_description" style="min-height:90px" placeholder="A short overview of how the lesson unfolds..."></textarea>
+          <div class="section-title"><span data-i18n="secResources">Resources</span><span class="rule"></span></div>
+          <div class="field"><textarea id="f_resources" placeholder="Board, chalk, laptop, worksheet..."></textarea></div>
         </div>
 
-        <div class="section-title"><span data-i18n="secStages">Lesson Stages</span><span class="rule"></span></div>
-        <div id="phasesList"></div>
-        <button class="add-link" data-add="phase">+ <span data-i18n="addPhase">Add stage</span></button>
-        <div class="phase-hint" data-i18n="phaseHint">Tip: start a line with "- " for a bullet point, or "## " for a bold sub‑heading (e.g. Activity 1).</div>
+        <!-- ===== English stages: free-form phase cards ===== -->
+        <div class="show-en">
+          <div class="section-title"><span data-i18n="secStages">Lesson Stages</span><span class="rule"></span></div>
+          <div id="phasesList"></div>
+          <button class="add-link" data-add="phase">+ <span data-i18n="addPhase">Add stage</span></button>
+          <div class="phase-hint" data-i18n="phaseHint">Tip: start a line with "- " for a bullet point, "1. " for a numbered point, or "## " for a bold sub‑heading (e.g. Activity 1).</div>
+        </div>
+
+        <!-- ===== Dzongkha stages: colour-coded table rows ===== -->
+        <div class="show-dz">
+          <div class="section-title"><span data-i18n="secStagesDz">Lesson Stages (table)</span><span class="rule"></span></div>
+          <div id="dzRowsList"></div>
+          <button class="add-link" data-add="dzrow">+ <span data-i18n="addRow">Add row</span></button>
+          <div class="phase-hint" data-i18n="phaseHintDz">Tip: start a line with "- " for a bullet point inside any box.</div>
+
+          <div class="section-title"><span data-i18n="secReflection">Teaching Reflection</span><span class="rule"></span></div>
+          <div class="field"><textarea id="f_reflection" placeholder="(To be filled after the lesson)"></textarea></div>
+        </div>
 
         <div class="btn-row">
           <button class="btn btn-primary" id="btnSave">
@@ -385,45 +459,61 @@ const I18N = {
     appTitle:"Lesson Plan Studio", appTagline:"Crafted for the classroom",
     tabNew:"New Plan", tabSaved:"Saved Plans",
     secBasics:"Lesson Details", lessonTitle:"Lesson Title", subject:"Subject", class:"Class", duration:"Duration",
-    strand:"Strand", teacher:"Teacher", competency:"Competency", topic:"Topic",
+    date:"Date", strand:"Strand", teacher:"Teacher", competency:"Competency", topic:"Topic", gnh:"GNH Principles and Values",
+    secEnDetails:"Additional Details", lessonNumber:"Lesson Plan Number", period:"Period", pedagogy:"Pedagogy", teachingStrategies:"Teaching Strategies",
+    secDzDetails:"Additional Details", venue:"Venue",
     secObjectives:"Objectives", addObjective:"Add objective",
-    secPrior:"Prior Knowledge", addPrior:"Add point",
-    secDescription:"Lesson Description",
+    secPrior:"Prior Knowledge", secResources:"Resources",
     secStages:"Lesson Stages", addPhase:"Add stage",
-    phaseHint:'Tip: start a line with "- " for a bullet point, or "## " for a bold sub-heading (e.g. Activity 1).',
+    secStagesDz:"Lesson Stages (table)", addRow:"Add row",
+    secReflection:"Teaching Reflection",
+    phaseHint:'Tip: start a line with "- " for a bullet point, "1. " for a numbered point, or "## " for a bold sub-heading (e.g. Activity 1).',
+    phaseHintDz:'Tip: start a line with "- " for a bullet point inside any box.',
     save:"Save Plan", exportWord:"Export to Word", newBtn:"Clear",
     preview:"Preview",
     stageName:"Stage name", stageTime:"Time", stageContent:"Content",
+    colTopic:"Main Topic / Stage", colSkill:"Skill & Objective Focus", colTeacher:"Teacher's Activity & Method",
+    colStudent:"Student's Activity / Learning Experience", colTime:"Duration", colAssessment:"Assessment Tools & Method",
     savedEmpty:"No saved lesson plans yet — save one from “New Plan” to see it here.",
     open:"Open", duplicate:"Duplicate", del:"Delete", exportShort:"Word",
     confirmDelete:"Delete this lesson plan? This can't be undone.",
     savedToast:"Lesson plan saved", deletedToast:"Lesson plan deleted", duplicatedToast:"Duplicated",
     docUntitled:"Untitled Lesson", docSubject:"Subject", docClass:"Class", docDuration:"Duration", docStrand:"Strand",
     docCompetency:"Competency", docTopic:"Topic", docObjectives:"Objectives",
-    docPrior:"Prior Knowledge", docDescription:"Lesson Description",
+    docPrior:"Prior Knowledge", docResources:"Resources", docDescription:"Lesson Description",
+    docLessonNo:"Lesson Plan No.", docPeriod:"Period", docDate:"Date", docPedagogy:"Pedagogy", docTeachingStrategies:"Teaching Strategies",
+    docGNH:"GNH Principles and Values", docVenue:"Venue", docReflection:"Teaching Reflection",
     emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
     searchPlaceholder:"Search saved plans..."
   },
   dz:{
     appTitle:"སློབ་ཚན་འཆར་གཞི།", appTagline:"སློབ་ཚན་གྱི་དོན་ལུ་བཟོ་བཏོན་འབད་ཡོད།",
     tabNew:"འཆར་གཞི་གསརཔ།", tabSaved:"ཉར་བཞགཔའི་འཆར་གཞི།",
-    secBasics:"སློབ་ཚན་གྱི་གནད་དོན།", lessonTitle:"སློབ་ཚན་གྱི་མགོ་མིང་།", subject:"སློབ་རིག", class:"སློབ་རིམ།", duration:"དུས་ཚོད།",
-    strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ནུས་པ།", topic:"བརྗོད་དོན།",
-    secObjectives:"དམིགས་ཡུལ།", addObjective:"དམིགས་ཡུལ་ཁ་སྣོན།",
-    secPrior:"སྔོན་ཤེས།", addPrior:"གནད་དོན་ཁ་སྣོན།",
-    secDescription:"སློབ་ཚན་གྱི་འགྲེལ་བཤད།",
+    secBasics:"སློབ་ཚན་གྱི་གནད་དོན།", lessonTitle:"སློབ་ཚན་གྱི་མགོ་མིང་།", subject:"ཆོས་ཚན།", class:"སློབ་རིམ།", duration:"དུས་ཡུན།",
+    date:"སྤྱི་ཚེས།", strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ནུས་པ།", topic:"བརྗོད་དོན།", gnh:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ/ལྟ་བ།",
+    secEnDetails:"གནད་དོན་ཁ་སྐོང་།", lessonNumber:"སློབ་ཚན་ཨང་།", period:"དུས་ཚོད་ཐེངས།", pedagogy:"སློབ་སྟོན་ཐབས་ལམ།", teachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
+    secDzDetails:"གནད་དོན་ཁ་སྐོང་།", venue:"ས་གོ / སློབ་ཁང་།",
+    secObjectives:"ལས་དོན།", addObjective:"དམིགས་ཡུལ་ཁ་སྣོན།",
+    secPrior:"སྔོན་ཤེས།", secResources:"མཁོ་ཆས།",
     secStages:"སློབ་ཚན་གྱི་རིམ་པ།", addPhase:"རིམ་པ་ཁ་སྣོན།",
+    secStagesDz:"སློབ་ཚན་གྱི་རིམ་པ (ཐིག་ཁྲམ)", addRow:"རིམ་པ་ཁ་སྐོང་།",
+    secReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
     phaseHint:'གྲོགས་རམ: ཚིག་གྲལ་ "- " ལས་འགོ་བཙུགས་པ་ཅིན་ཚུད་ཚིག་ཅིག་འབྱུང་། "## " ལས་འགོ་བཙུགས་པ་ཅིན་མགོ་མིང་ཚོགས་པ་ཞིག་འབྱུང་།',
+    phaseHintDz:'གྲོགས་རམ: ཚིག་གྲལ་ "- " ལས་འགོ་བཙུགས་པ་ཅིན་ཚུད་ཚིག་ཅིག་འབྱུང་།',
     save:"ཉར་ཚགས།", exportWord:"Word ལུ་བཏོན།", newBtn:"གསར་བསྐྲུན།",
     preview:"སྔོན་ལྟ།",
     stageName:"རིམ་པའི་མིང་།", stageTime:"དུས་ཚོད།", stageContent:"ནང་དོན།",
+    colTopic:"དོན་ཚན་གཙོ་བོ།", colSkill:"རིག་རྩལ་དང་དམིགས་གཏད།", colTeacher:"སློབ་དཔོན་གྱི་སྦྱོང་ལཱ་དང་ཐབས་ཤེས།",
+    colStudent:"སློབ་ཕྲུག་གི་སྦྱོང་ལཱ།", colTime:"དུས་ཡུན།", colAssessment:"དབྱེ་ཞིབ་ཀྱི་མཁོ་ཆས་དང་ཐབས་རིག།",
     savedEmpty:"ད་ལྟོའི་བར་ན་ཉར་བཞགཔའི་འཆར་གཞི་མིན་འདུག། \u201cའཆར་གཞི་གསརཔ\u201d་ནང་ལས་ཉར་བཞག.",
     open:"ཁ་ཕྱེ།", duplicate:"འདྲ་བཤུས།", del:"བསུབ།", exportShort:"Word",
     confirmDelete:"འཆར་གཞི་འདི་བསུབ་ནི་ཨིན་ན? ཕྱིར་འབདཝ་མི་ཚུགས།",
     savedToast:"འཆར་གཞི་ཉར་ཚགས་འབད་ཡི།", deletedToast:"འཆར་གཞི་བསུབ་ཡི།", duplicatedToast:"འདྲ་བཤུས་འབད་ཡི།",
-    docUntitled:"མིང་མེད་པའི་སློབ་ཚན།", docSubject:"སློབ་རིག", docClass:"སློབ་རིམ།", docDuration:"དུས་ཚོད།", docStrand:"ཡན་ལག",
-    docCompetency:"ནུས་པ།", docTopic:"བརྗོད་དོན།", docObjectives:"དམིགས་ཡུལ།",
-    docPrior:"སྔོན་ཤེས།", docDescription:"འགྲེལ་བཤད།",
+    docUntitled:"མིང་མེད་པའི་སློབ་ཚན།", docSubject:"ཆོས་ཚན།", docClass:"སློབ་རིམ།", docDuration:"དུས་ཡུན།", docStrand:"ཡན་ལག",
+    docCompetency:"ནུས་པ།", docTopic:"བརྗོད་དོན།", docObjectives:"ལས་དོན།",
+    docPrior:"སྔོན་ཤེས།", docResources:"མཁོ་ཆས།", docDescription:"འགྲེལ་བཤད།",
+    docLessonNo:"སློབ་ཚན་ཨང་།", docPeriod:"དུས་ཚོད་ཐེངས།", docDate:"སྤྱི་ཚེས།", docPedagogy:"སློབ་སྟོན་ཐབས་ལམ།", docTeachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
+    docGNH:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ།", docVenue:"ས་གོ།", docReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
     emptyPreviewHint:"ཐོ་བཀོད་བྱང་བུ་བཀང་སྟེ་སློབ་ཚན་འཆར་གཞི་འདི་གུ་བལྟ།",
     searchPlaceholder:"ཉར་བཞགཔའི་འཆར་གཞི་འཚོལ་ཞིབ..."
   }
@@ -436,7 +526,7 @@ function applyI18n(){
     el.textContent = t(el.getAttribute('data-i18n'));
   });
   document.getElementById('searchSaved').placeholder = t('searchPlaceholder');
-  renderObjectives(); renderPrior(); renderPhases(); renderPreview(); renderSaved();
+  renderObjectives(); renderPhases(); renderDzRows(); renderPreview(); renderSaved();
 }
 
 /* ---------------- icons ---------------- */
@@ -453,16 +543,22 @@ const ICONS = {
 function blankPlan(){
   return {
     id: 'lp_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7),
-    title:'', subject:'', className:'', duration:'', strand:'', teacher:'',
-    competency:'', topic:'',
+    format: lang,
+    title:'', subject:'', className:'', duration:'', date:'', strand:'', teacher:'',
+    competency:'', topic:'', gnh:'',
     objectives:[''],
-    prior:[''],
-    description:'',
-    phases:[
+    // English-only
+    lessonNumber:'', period:'', pedagogy:'', teachingStrategies:'',
+    prior:'', resources:'',
+    phasesEn:[
       {name:'Introduction', time:'10 mins', content:''},
-      {name:'Learning Experiences', time:'35 mins', content:''},
-      {name:'Assessment / Closure', time:'5 mins', content:''},
-      {name:'Do It Yourself', time:'', content:''}
+      {name:'Learning Experience / Activities', time:'35 mins', content:''},
+      {name:'Assessment / Closure', time:'5 mins', content:''}
+    ],
+    // Dzongkha-only
+    venue:'', reflection:'',
+    phasesDz:[
+      {name:'', skillFocus:'', teacherActivity:'', studentActivity:'', time:'', assessment:''}
     ],
     createdAt: Date.now(), updatedAt: Date.now()
   };
@@ -491,19 +587,25 @@ async function persistSaved(){
 }
 
 /* ---------------- form <-> plan sync ---------------- */
-const simpleFields = ['title','subject','className','duration','strand','teacher','competency','topic','description'];
-const fieldIdMap = {title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',strand:'f_strand',teacher:'f_teacher',competency:'f_competency',topic:'f_topic',description:'f_description'};
+const simpleFields = ['title','subject','className','duration','date','strand','teacher','competency','topic','gnh',
+  'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection'];
+const fieldIdMap = {
+  title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',date:'f_date',strand:'f_strand',
+  teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
+  lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
+  prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection'
+};
 
 function bindSimpleFields(){
   simpleFields.forEach(key=>{
     const el = document.getElementById(fieldIdMap[key]);
+    if(!el) return;
     el.value = plan[key] || '';
     el.oninput = ()=>{ plan[key] = el.value; renderPreview(); };
   });
 }
 
 function renderObjectives(){ renderStringList('objectivesList','objectives'); }
-function renderPrior(){ renderStringList('priorList','prior'); }
 
 function renderStringList(containerId, key){
   const wrap = document.getElementById(containerId);
@@ -513,7 +615,7 @@ function renderStringList(containerId, key){
     row.className = 'list-row';
     const input = document.createElement('input');
     input.type = 'text'; input.value = val;
-    input.placeholder = (key==='objectives') ? '...' : '...';
+    input.placeholder = '...';
     input.oninput = ()=>{ plan[key][i] = input.value; renderPreview(); };
     const del = document.createElement('button');
     del.className='mini-btn'; del.type='button';
@@ -524,10 +626,11 @@ function renderStringList(containerId, key){
   });
 }
 
+/* English free-form phase cards */
 function renderPhases(){
   const wrap = document.getElementById('phasesList');
   wrap.innerHTML = '';
-  plan.phases.forEach((ph, i)=>{
+  plan.phasesEn.forEach((ph, i)=>{
     const card = document.createElement('div');
     card.className = 'phase-card';
     card.innerHTML = `
@@ -536,12 +639,45 @@ function renderPhases(){
         <div class="field time-field"><label>${t('stageTime')}</label><input type="text" class="ph-time" value="${escAttr(ph.time)}" placeholder="10 mins"></div>
         <button class="mini-btn ph-del" type="button" title="${t('del')}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
       </div>
-      <div class="field"><label>${t('stageContent')}</label><textarea class="ph-content" style="min-height:110px" placeholder="- point one&#10;## Activity 1: ...&#10;- point two">${escHtml(ph.content)}</textarea></div>
+      <div class="field"><label>${t('stageContent')}</label><textarea class="ph-content" style="min-height:110px" placeholder="- point one&#10;## Activity 1: ...&#10;1. question one">${escHtml(ph.content)}</textarea></div>
     `;
-    card.querySelector('.ph-name').oninput = e=>{ plan.phases[i].name = e.target.value; renderPreview(); };
-    card.querySelector('.ph-time').oninput = e=>{ plan.phases[i].time = e.target.value; renderPreview(); };
-    card.querySelector('.ph-content').oninput = e=>{ plan.phases[i].content = e.target.value; renderPreview(); };
-    card.querySelector('.ph-del').onclick = ()=>{ plan.phases.splice(i,1); renderPhases(); renderPreview(); };
+    card.querySelector('.ph-name').oninput = e=>{ plan.phasesEn[i].name = e.target.value; renderPreview(); };
+    card.querySelector('.ph-time').oninput = e=>{ plan.phasesEn[i].time = e.target.value; renderPreview(); };
+    card.querySelector('.ph-content').oninput = e=>{ plan.phasesEn[i].content = e.target.value; renderPreview(); };
+    card.querySelector('.ph-del').onclick = ()=>{ plan.phasesEn.splice(i,1); renderPhases(); renderPreview(); };
+    wrap.appendChild(card);
+  });
+}
+
+/* Dzongkha colour-coded table-row editor */
+function renderDzRows(){
+  const wrap = document.getElementById('dzRowsList');
+  wrap.innerHTML = '';
+  plan.phasesDz.forEach((row, i)=>{
+    const card = document.createElement('div');
+    card.className = 'dzrow-card';
+    card.innerHTML = `
+      <div class="phase-head">
+        <div class="field"><label>${t('colTopic')}</label><input type="text" class="dz-name" value="${escAttr(row.name)}"></div>
+        <div class="field time-field dz-tint dz-tint-time"><label>${t('colTime')}</label><input type="text" class="dz-time" value="${escAttr(row.time)}" placeholder="15 mins"></div>
+        <button class="mini-btn dz-del" type="button" title="${t('del')}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
+      </div>
+      <div class="row2">
+        <div class="field dz-tint dz-tint-skill"><label>${t('colSkill')}</label><textarea class="dz-skill">${escHtml(row.skillFocus)}</textarea></div>
+        <div class="field dz-tint dz-tint-assess"><label>${t('colAssessment')}</label><textarea class="dz-assess">${escHtml(row.assessment)}</textarea></div>
+      </div>
+      <div class="row2">
+        <div class="field dz-tint dz-tint-teacher"><label>${t('colTeacher')}</label><textarea class="dz-teacher">${escHtml(row.teacherActivity)}</textarea></div>
+        <div class="field dz-tint dz-tint-student"><label>${t('colStudent')}</label><textarea class="dz-student">${escHtml(row.studentActivity)}</textarea></div>
+      </div>
+    `;
+    card.querySelector('.dz-name').oninput = e=>{ plan.phasesDz[i].name = e.target.value; renderPreview(); };
+    card.querySelector('.dz-time').oninput = e=>{ plan.phasesDz[i].time = e.target.value; renderPreview(); };
+    card.querySelector('.dz-skill').oninput = e=>{ plan.phasesDz[i].skillFocus = e.target.value; renderPreview(); };
+    card.querySelector('.dz-assess').oninput = e=>{ plan.phasesDz[i].assessment = e.target.value; renderPreview(); };
+    card.querySelector('.dz-teacher').oninput = e=>{ plan.phasesDz[i].teacherActivity = e.target.value; renderPreview(); };
+    card.querySelector('.dz-student').oninput = e=>{ plan.phasesDz[i].studentActivity = e.target.value; renderPreview(); };
+    card.querySelector('.dz-del').onclick = ()=>{ plan.phasesDz.splice(i,1); renderDzRows(); renderPreview(); };
     wrap.appendChild(card);
   });
 }
@@ -559,23 +695,26 @@ function inlineBold(text){
 function renderContentBlock(raw){
   if(!raw || !raw.trim()) return `<p class="doc-empty">—</p>`;
   const lines = raw.split('\n');
-  let html = ''; let ulOpen = false;
-  const closeUl = ()=>{ if(ulOpen){ html += '</ul>'; ulOpen=false; } };
+  let html = ''; let listMode = null; // null | 'ul' | 'ol'
+  const closeList = ()=>{ if(listMode){ html += listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
   lines.forEach(line=>{
     const trimmed = line.trim();
-    if(trimmed === ''){ closeUl(); return; }
+    if(trimmed === ''){ closeList(); return; }
     if(trimmed.startsWith('## ')){
-      closeUl();
+      closeList();
       html += `<div class="doc-sub">${inlineBold(linkify(escHtml(trimmed.slice(3))))}</div>`;
     } else if(trimmed.startsWith('- ') || trimmed.startsWith('• ')){
-      if(!ulOpen){ html += '<ul class="doc-ul">'; ulOpen = true; }
+      if(listMode!=='ul'){ closeList(); html += '<ul class="doc-ul">'; listMode='ul'; }
       html += `<li>${inlineBold(linkify(escHtml(trimmed.slice(2))))}</li>`;
+    } else if(/^\d+[.)]\s+/.test(trimmed)){
+      if(listMode!=='ol'){ closeList(); html += '<ol class="doc-ol">'; listMode='ol'; }
+      html += `<li>${inlineBold(linkify(escHtml(trimmed.replace(/^\d+[.)]\s+/,''))))}</li>`;
     } else {
-      closeUl();
+      closeList();
       html += `<p class="doc-p">${inlineBold(linkify(escHtml(trimmed)))}</p>`;
     }
   });
-  closeUl();
+  closeList();
   return html;
 }
 function renderBulletArray(arr){
@@ -586,8 +725,66 @@ function renderBulletArray(arr){
 
 /* ---------------- preview ---------------- */
 function renderPreview(){
-  const p = plan;
-  const html = `
+  document.getElementById('docPreview').innerHTML = (lang==='dz') ? previewDz(plan) : previewEn(plan);
+}
+
+function previewEn(p){
+  return `
+    <div class="doc-ribbon">
+      <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
+      <h2>${escHtml(p.title) || t('docUntitled')}</h2>
+      <div class="sub">${escHtml(p.topic || '')}</div>
+    </div>
+    <div class="doc-body">
+      <div class="doc-meta doc-meta-3">
+        <div><b>${t('docLessonNo')}:</b> ${escHtml(p.lessonNumber)||'—'}</div>
+        <div><b>${t('docClass')}:</b> ${escHtml(p.className)||'—'}</div>
+        <div><b>${t('docSubject')}:</b> ${escHtml(p.subject)||'—'}</div>
+        <div><b>${t('docPeriod')}:</b> ${escHtml(p.period)||'—'}</div>
+        <div><b>${t('docDuration')}:</b> ${escHtml(p.duration)||'—'}</div>
+        <div><b>${t('docDate')}:</b> ${escHtml(p.date)||'—'}</div>
+        <div><b>${t('docStrand')}:</b> ${escHtml(p.strand)||'—'}</div>
+        <div><b>${t('docPedagogy')}:</b> ${escHtml(p.pedagogy)||'—'}</div>
+        <div><b>${t('docTeachingStrategies')}:</b> ${escHtml(p.teachingStrategies)||'—'}</div>
+      </div>
+
+      <div class="doc-h">${t('docCompetency')}</div>
+      ${renderContentBlock(p.competency)}
+
+      <div class="doc-h">${t('docGNH')}</div>
+      ${renderContentBlock(p.gnh)}
+
+      <div class="doc-h">${t('docObjectives')}</div>
+      ${renderBulletArray(p.objectives)}
+
+      <div class="doc-h">${t('docPrior')}</div>
+      ${renderContentBlock(p.prior)}
+
+      <div class="doc-h">${t('docResources')}</div>
+      ${renderContentBlock(p.resources)}
+
+      ${p.phasesEn.map(ph=>`
+        <div class="doc-h"><span>${escHtml(ph.name)||'—'}</span>${ph.time? `<span class="time">${escHtml(ph.time)}</span>`:''}</div>
+        ${renderContentBlock(ph.content)}
+      `).join('')}
+    </div>
+  `;
+}
+
+function previewDz(p){
+  const rows = p.phasesDz.filter(r=> r.name || r.skillFocus || r.teacherActivity || r.studentActivity || r.time || r.assessment);
+  const tableRows = (rows.length? rows : p.phasesDz).map(r=>`
+    <tr>
+      <td class="dzc-0"><strong>${escHtml(r.name)||'—'}</strong></td>
+      <td class="dzc-1">${renderContentBlock(r.skillFocus)}</td>
+      <td class="dzc-2">${renderContentBlock(r.teacherActivity)}</td>
+      <td class="dzc-3">${renderContentBlock(r.studentActivity)}</td>
+      <td class="dzc-4">${escHtml(r.time)||'—'}</td>
+      <td class="dzc-5">${renderContentBlock(r.assessment)}</td>
+    </tr>
+  `).join('');
+
+  return `
     <div class="doc-ribbon">
       <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
       <h2>${escHtml(p.title) || t('docUntitled')}</h2>
@@ -595,9 +792,11 @@ function renderPreview(){
     </div>
     <div class="doc-body">
       <div class="doc-meta">
-        <div><b>${t('docSubject')}:</b> ${escHtml(p.subject)||'—'}</div>
         <div><b>${t('docClass')}:</b> ${escHtml(p.className)||'—'}</div>
+        <div><b>${t('docSubject')}:</b> ${escHtml(p.subject)||'—'}</div>
+        <div><b>${t('docDate')}:</b> ${escHtml(p.date)||'—'}</div>
         <div><b>${t('docDuration')}:</b> ${escHtml(p.duration)||'—'}</div>
+        <div><b>${t('docVenue')}:</b> ${escHtml(p.venue)||'—'}</div>
         <div><b>${t('docStrand')}:</b> ${escHtml(p.strand)||'—'}</div>
       </div>
 
@@ -607,19 +806,26 @@ function renderPreview(){
       <div class="doc-h">${t('docObjectives')}</div>
       ${renderBulletArray(p.objectives)}
 
-      <div class="doc-h">${t('docPrior')}</div>
-      ${renderBulletArray(p.prior)}
+      <div class="doc-h">${t('docGNH')}</div>
+      ${renderContentBlock(p.gnh)}
 
-      <div class="doc-h">${t('docDescription')}</div>
-      ${renderContentBlock(p.description)}
+      <div class="doc-h">${t('secStagesDz')}</div>
+      <table class="doc-dz-table">
+        <thead><tr>
+          <th class="dzc-0">${t('colTopic')}</th>
+          <th class="dzc-1">${t('colSkill')}</th>
+          <th class="dzc-2">${t('colTeacher')}</th>
+          <th class="dzc-3">${t('colStudent')}</th>
+          <th class="dzc-4">${t('colTime')}</th>
+          <th class="dzc-5">${t('colAssessment')}</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
 
-      ${p.phases.map(ph=>`
-        <div class="doc-h"><span>${escHtml(ph.name)||'—'}</span>${ph.time? `<span class="time">${escHtml(ph.time)}</span>`:''}</div>
-        ${renderContentBlock(ph.content)}
-      `).join('')}
+      <div class="doc-h">${t('docReflection')}</div>
+      ${p.reflection && p.reflection.trim() ? renderContentBlock(p.reflection) : '<div class="doc-reflect-box"></div>'}
     </div>
   `;
-  document.getElementById('docPreview').innerHTML = html;
 }
 
 /* ---------------- save / new / duplicate / delete ---------------- */
@@ -632,6 +838,7 @@ function toast(msg){
 
 async function savePlan(){
   plan.updatedAt = Date.now();
+  plan.format = lang;
   const idx = savedPlans.findIndex(p=>p.id===plan.id);
   if(idx>=0){ savedPlans[idx] = JSON.parse(JSON.stringify(plan)); }
   else{ savedPlans.unshift(JSON.parse(JSON.stringify(plan))); }
@@ -642,13 +849,19 @@ async function savePlan(){
 function newPlan(){
   plan = blankPlan();
   editingExistingId = null;
-  bindSimpleFields(); renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+  bindSimpleFields(); renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
 }
 
 function loadPlanIntoForm(p){
   plan = JSON.parse(JSON.stringify(p));
+  if(!plan.phasesEn) plan.phasesEn = blankPlan().phasesEn;
+  if(!plan.phasesDz) plan.phasesDz = blankPlan().phasesDz;
   editingExistingId = p.id;
-  bindSimpleFields(); renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+  lang = plan.format === 'dz' ? 'dz' : 'en';
+  document.getElementById('langToggle').querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.getAttribute('data-val')===lang));
+  document.documentElement.setAttribute('data-lang', lang);
+  applyI18n();
+  bindSimpleFields(); renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
   switchTab('new');
 }
 
@@ -690,9 +903,10 @@ function renderSaved(){
   }
   grid.innerHTML = list.map(p=>{
     const d = new Date(p.updatedAt||p.createdAt);
+    const fmt = (p.format==='dz') ? 'DZ' : 'EN';
     return `
     <div class="plan-card">
-      <div class="tag">${escHtml(p.subject)||'—'}${p.className? ' · '+escHtml(p.className):''}</div>
+      <div class="tag"><span class="fmt">${fmt}</span>${escHtml(p.subject)||'—'}${p.className? ' · '+escHtml(p.className):''}</div>
       <h3>${escHtml(p.title) || t('docUntitled')}</h3>
       <div class="meta">${escHtml(p.topic)||''}</div>
       <div class="meta">${d.toLocaleDateString()}</div>
@@ -719,83 +933,19 @@ function renderSaved(){
 }
 
 /* ---------------- word export ---------------- */
-function planToDocHtml(p){
-  const L = I18N[lang];
-  const phasesHtml = p.phases.map(ph=>`
-    <tr>
-      <td style="border:1px solid #93C5FD;padding:10px 12px;width:78%;vertical-align:top;">
-        <div style="font-family:Georgia,serif;font-weight:700;color:#1D4ED8;font-size:12.5pt;margin-bottom:4px;">${escHtml(ph.name)}</div>
-        ${contentToWordHtml(ph.content)}
-      </td>
-      <td style="border:1px solid #93C5FD;padding:10px 12px;width:22%;vertical-align:top;color:#0369A1;font-weight:600;">${escHtml(ph.time)||''}</td>
-    </tr>
-  `).join('');
-
-  return `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-  <head>
-    <meta charset="utf-8">
-    <title>${escHtml(p.title)||L.docUntitled}</title>
-    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
-    <style>
-      body{ font-family:Calibri, 'Noto Sans Tibetan', sans-serif; font-size:11pt; color:#101B34; }
-      table{ border-collapse:collapse; width:100%; margin-bottom:14px; }
-      td{ border:1px solid #93C5FD; padding:10px 12px; vertical-align:top; }
-      .hero{ background:#2563EB; color:#F7FAFF; padding:16px 18px; }
-      .hero h1{ font-family:Georgia,serif; font-size:20pt; margin:0 0 4px; }
-      .hero .sub{ font-size:11pt; opacity:.9; }
-      .meta-table td{ font-size:10.5pt; }
-      .sec-title{ font-family:Georgia,serif; font-weight:700; color:#1D4ED8; font-size:12.5pt; margin:14px 0 6px; border-bottom:1px solid #38BDF8; padding-bottom:3px; }
-      ul{ margin:4px 0 8px; padding-left:20px; }
-      li{ margin-bottom:4px; }
-      .sub-h{ font-weight:700; color:#1E3A8A; margin:6px 0 3px; }
-      p{ margin:0 0 6px; }
-    </style>
-  </head>
-  <body>
-    <div class="hero">
-      <h1>${escHtml(p.title)||L.docUntitled}</h1>
-      <div class="sub">${escHtml(p.topic)||''}</div>
-    </div>
-    <table class="meta-table">
-      <tr>
-        <td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td>
-        <td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td>
-      </tr>
-      <tr>
-        <td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td>
-        <td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td>
-      </tr>
-    </table>
-
-    <div class="sec-title">${L.docCompetency}</div>
-    ${contentToWordHtml(p.competency)}
-
-    <div class="sec-title">${L.docObjectives}</div>
-    ${bulletArrayToWordHtml(p.objectives)}
-
-    <div class="sec-title">${L.docPrior}</div>
-    ${bulletArrayToWordHtml(p.prior)}
-
-    <div class="sec-title">${L.docDescription}</div>
-    ${contentToWordHtml(p.description)}
-
-    <div class="sec-title">${L.secStages}</div>
-    <table>${phasesHtml}</table>
-  </body>
-  </html>`;
-}
 function contentToWordHtml(raw){
   if(!raw || !raw.trim()) return '<p>—</p>';
-  const lines = raw.split('\n'); let html=''; let ulOpen=false;
-  const closeUl = ()=>{ if(ulOpen){ html+='</ul>'; ulOpen=false; } };
+  const lines = raw.split('\n'); let html=''; let listMode=null;
+  const closeList = ()=>{ if(listMode){ html+= listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
   lines.forEach(line=>{
     const trimmed = line.trim();
-    if(trimmed===''){ closeUl(); return; }
-    if(trimmed.startsWith('## ')){ closeUl(); html+=`<div class="sub-h">${inlineBold(escHtml(trimmed.slice(3)))}</div>`; }
-    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(!ulOpen){html+='<ul>';ulOpen=true;} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
-    else { closeUl(); html+=`<p>${inlineBold(escHtml(trimmed))}</p>`; }
+    if(trimmed===''){ closeList(); return; }
+    if(trimmed.startsWith('## ')){ closeList(); html+=`<div class="sub-h">${inlineBold(escHtml(trimmed.slice(3)))}</div>`; }
+    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
+    else if(/^\d+[.)]\s+/.test(trimmed)){ if(listMode!=='ol'){closeList();html+='<ol>';listMode='ol';} html+=`<li>${inlineBold(escHtml(trimmed.replace(/^\d+[.)]\s+/,'')))}</li>`; }
+    else { closeList(); html+=`<p>${inlineBold(escHtml(trimmed))}</p>`; }
   });
-  closeUl();
+  closeList();
   return html;
 }
 function bulletArrayToWordHtml(arr){
@@ -804,8 +954,131 @@ function bulletArrayToWordHtml(arr){
   return `<ul>${items.map(i=>`<li>${inlineBold(escHtml(i))}</li>`).join('')}</ul>`;
 }
 
+const WORD_STYLE = `
+  body{ font-family:Calibri, 'Noto Sans Tibetan', sans-serif; font-size:11pt; color:#101B34; }
+  table{ border-collapse:collapse; width:100%; margin-bottom:14px; }
+  td{ border:1px solid #93C5FD; padding:10px 12px; vertical-align:top; }
+  .hero{ background:#2563EB; color:#F7FAFF; padding:16px 18px; }
+  .hero h1{ font-family:Georgia,serif; font-size:20pt; margin:0 0 4px; }
+  .hero .sub{ font-size:11pt; opacity:.9; }
+  .meta-table td{ font-size:10.5pt; }
+  .sec-title{ font-family:Georgia,serif; font-weight:700; color:#1D4ED8; font-size:12.5pt; margin:14px 0 6px; border-bottom:1px solid #38BDF8; padding-bottom:3px; }
+  ul,ol{ margin:4px 0 8px; padding-left:20px; }
+  li{ margin-bottom:4px; }
+  .sub-h{ font-weight:700; color:#1E3A8A; margin:6px 0 3px; }
+  p{ margin:0 0 6px; }
+  .dz-table th, .dz-table td{ font-size:10pt; }
+  .dz-table .c0{ background:#F8FAFC; } .dz-table th.c0{ background:#EEF2F8; }
+  .dz-table .c1{ background:#E4F3FC; } .dz-table th.c1{ background:#B9E1F7; }
+  .dz-table .c2{ background:#FDEEDA; } .dz-table th.c2{ background:#FBD9A2; }
+  .dz-table .c3{ background:#E3F7E6; } .dz-table th.c3{ background:#BBEAC4; }
+  .dz-table .c4{ background:#EDE4FA; } .dz-table th.c4{ background:#D3C0F2; }
+  .dz-table .c5{ background:#DCF6F2; } .dz-table th.c5{ background:#AEE9E1; }
+  .reflect-box{ min-height:40px; border:1px dashed #B7C6DE; background:#F8FAFC; }
+`;
+
+function wordHeader(p, L){
+  return `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head>
+    <meta charset="utf-8">
+    <title>${escHtml(p.title)||L.docUntitled}</title>
+    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+    <style>${WORD_STYLE}</style>
+  </head>
+  <body>
+    <div class="hero">
+      <h1>${escHtml(p.title)||L.docUntitled}</h1>
+      <div class="sub">${escHtml(p.topic)||''}</div>
+    </div>`;
+}
+
+function planToDocHtmlEN(p){
+  const L = I18N.en;
+  const phasesHtml = p.phasesEn.map(ph=>`
+    <tr>
+      <td style="width:78%;">
+        <div style="font-family:Georgia,serif;font-weight:700;color:#1D4ED8;font-size:12.5pt;margin-bottom:4px;">${escHtml(ph.name)}</div>
+        ${contentToWordHtml(ph.content)}
+      </td>
+      <td style="width:22%;color:#0369A1;font-weight:600;">${escHtml(ph.time)||''}</td>
+    </tr>
+  `).join('');
+
+  return wordHeader(p, L) + `
+    <table class="meta-table">
+      <tr><td><b>${L.docLessonNo}:</b> ${escHtml(p.lessonNumber)||'—'}</td><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td></tr>
+      <tr><td><b>${L.docPeriod}:</b> ${escHtml(p.period)||'—'}</td><td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td><td><b>${L.docDate}:</b> ${escHtml(p.date)||'—'}</td></tr>
+      <tr><td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td><td><b>${L.docPedagogy}:</b> ${escHtml(p.pedagogy)||'—'}</td><td><b>${L.docTeachingStrategies}:</b> ${escHtml(p.teachingStrategies)||'—'}</td></tr>
+    </table>
+
+    <div class="sec-title">${L.docCompetency}</div>
+    ${contentToWordHtml(p.competency)}
+
+    <div class="sec-title">${L.docGNH}</div>
+    ${contentToWordHtml(p.gnh)}
+
+    <div class="sec-title">${L.docObjectives}</div>
+    ${bulletArrayToWordHtml(p.objectives)}
+
+    <div class="sec-title">${L.docPrior}</div>
+    ${contentToWordHtml(p.prior)}
+
+    <div class="sec-title">${L.docResources}</div>
+    ${contentToWordHtml(p.resources)}
+
+    <div class="sec-title">${L.secStages}</div>
+    <table>${phasesHtml}</table>
+  </body>
+  </html>`;
+}
+
+function planToDocHtmlDZ(p){
+  const L = I18N.dz;
+  const rows = p.phasesDz.filter(r=> r.name || r.skillFocus || r.teacherActivity || r.studentActivity || r.time || r.assessment);
+  const src = rows.length ? rows : p.phasesDz;
+  const tableRows = src.map(r=>`
+    <tr>
+      <td class="c0"><strong>${escHtml(r.name)||'—'}</strong></td>
+      <td class="c1">${contentToWordHtml(r.skillFocus)}</td>
+      <td class="c2">${contentToWordHtml(r.teacherActivity)}</td>
+      <td class="c3">${contentToWordHtml(r.studentActivity)}</td>
+      <td class="c4">${escHtml(r.time)||'—'}</td>
+      <td class="c5">${contentToWordHtml(r.assessment)}</td>
+    </tr>
+  `).join('');
+
+  return wordHeader(p, L) + `
+    <table class="meta-table">
+      <tr><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td><td><b>${L.docDate}:</b> ${escHtml(p.date)||'—'}</td></tr>
+      <tr><td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td><td><b>${L.docVenue}:</b> ${escHtml(p.venue)||'—'}</td><td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td></tr>
+    </table>
+
+    <div class="sec-title">${L.docCompetency}</div>
+    ${contentToWordHtml(p.competency)}
+
+    <div class="sec-title">${L.docObjectives}</div>
+    ${bulletArrayToWordHtml(p.objectives)}
+
+    <div class="sec-title">${L.docGNH}</div>
+    ${contentToWordHtml(p.gnh)}
+
+    <div class="sec-title">${L.secStagesDz}</div>
+    <table class="dz-table">
+      <tr>
+        <th class="c0">${L.colTopic}</th><th class="c1">${L.colSkill}</th><th class="c2">${L.colTeacher}</th>
+        <th class="c3">${L.colStudent}</th><th class="c4">${L.colTime}</th><th class="c5">${L.colAssessment}</th>
+      </tr>
+      ${tableRows}
+    </table>
+
+    <div class="sec-title">${L.docReflection}</div>
+    ${p.reflection && p.reflection.trim() ? contentToWordHtml(p.reflection) : '<div class="reflect-box"></div>'}
+  </body>
+  </html>`;
+}
+
 function exportWord(p){
-  const html = planToDocHtml(p);
+  const html = (p.format==='dz') ? planToDocHtmlDZ(p) : planToDocHtmlEN(p);
   const blob = new Blob(['\ufeff', html], {type:'application/msword'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -839,6 +1112,7 @@ document.getElementById('themeToggle').onclick = ()=>{
 document.getElementById('langToggle').querySelectorAll('button').forEach(btn=>{
   btn.onclick = ()=>{
     lang = btn.getAttribute('data-val');
+    plan.format = lang;
     document.getElementById('langToggle').querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
     applyI18n();
   };
@@ -852,8 +1126,8 @@ document.querySelectorAll('.add-link').forEach(btn=>{
   btn.onclick = ()=>{
     const kind = btn.getAttribute('data-add');
     if(kind==='objectives'){ plan.objectives.push(''); renderObjectives(); }
-    else if(kind==='prior'){ plan.prior.push(''); renderPrior(); }
-    else if(kind==='phase'){ plan.phases.push({name:'', time:'', content:''}); renderPhases(); }
+    else if(kind==='phase'){ plan.phasesEn.push({name:'', time:'', content:''}); renderPhases(); }
+    else if(kind==='dzrow'){ plan.phasesDz.push({name:'', skillFocus:'', teacherActivity:'', studentActivity:'', time:'', assessment:''}); renderDzRows(); }
     renderPreview();
   };
 });
@@ -862,7 +1136,7 @@ document.querySelectorAll('.add-link').forEach(btn=>{
 async function init(){
   document.getElementById('docPreview').innerHTML = `<div class="doc-body"><p class="doc-empty">${t('emptyPreviewHint')}</p></div>`;
   bindSimpleFields();
-  renderObjectives(); renderPrior(); renderPhases(); renderPreview();
+  renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
   await loadSaved();
   renderSaved();
 }
