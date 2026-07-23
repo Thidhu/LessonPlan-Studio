@@ -197,33 +197,6 @@ html[data-theme="light"]{
   .dz-tint-time{ border-left-color:#A78BFA; }
   .dz-tint-assess{ border-left-color:#2DD4BF; }
 
-  /* ---------- Dzongkha date picker ---------- */
-  .dz-datepicker{ position:relative; }
-  .dz-date-btn{
-    width:100%; text-align:left; background:var(--field-bg); border:1px solid var(--field-border); color:var(--text);
-    padding:10px 12px; border-radius:11px; font-family:inherit; font-size:14px; cursor:pointer; transition:border-color .2s ease;
-  }
-  .dz-date-btn:hover{ border-color:var(--field-focus); }
-  .dz-cal-popup{
-    position:absolute; top:calc(100% + 6px); left:0; z-index:60; width:270px;
-    background:var(--surface-strong); border:1px solid var(--border); border-radius:14px; padding:12px;
-    box-shadow:var(--shadow); backdrop-filter:blur(20px) saturate(160%); -webkit-backdrop-filter:blur(20px) saturate(160%);
-  }
-  .dz-cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .dz-cal-head button{
-    background:var(--field-bg); border:1px solid var(--field-border); color:var(--text);
-    width:26px; height:26px; border-radius:8px; cursor:pointer; font-size:14px; line-height:1;
-  }
-  .dz-cal-head button:hover{ border-color:var(--accent-a); color:var(--accent-a); }
-  .dz-cal-title{ font-weight:700; font-size:12.5px; text-align:center; }
-  .dz-cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-  .dz-cal-grid .wd{ font-size:9.5px; color:var(--text-faint); text-align:center; padding:4px 0 6px; }
-  .dz-cal-grid .day{ text-align:center; padding:6px 0; border-radius:8px; cursor:pointer; font-size:12px; }
-  .dz-cal-grid .day:hover{ background:var(--field-bg); }
-  .dz-cal-grid .day.today{ border:1px solid var(--accent-a); }
-  .dz-cal-grid .day.selected{ background:var(--accent-grad); color:var(--text-on-accent); font-weight:700; }
-  .dz-cal-grid .day.empty{ visibility:hidden; cursor:default; }
-
   /* ---------- preview / document ---------- */
   .preview-wrap{ position:sticky; top:20px; }
   .doc{
@@ -264,16 +237,9 @@ html[data-theme="light"]{
   .doc a{ color:#2563EB; }
 
   /* Dzongkha colour-coded stage table (mirrors the DDC template) */
-  .doc-dz-table{ width:100%; table-layout:fixed; border-collapse:collapse; margin:6px 0 12px; font-size:12.6px; }
-  .doc-dz-table th, .doc-dz-table td{ border:1px solid #C3D3EA; padding:9px 10px; vertical-align:top; text-align:left;
-    overflow-wrap:break-word; word-break:break-word; hyphens:auto; }
+  .doc-dz-table{ width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:12.6px; }
+  .doc-dz-table th, .doc-dz-table td{ border:1px solid #C3D3EA; padding:9px 10px; vertical-align:top; text-align:left; }
   .doc-dz-table th{ font-family:'Fraunces','Noto Sans Tibetan',serif; font-weight:700; color:#1D3557; font-size:12px; }
-  .doc-dz-table th:nth-child(1), .doc-dz-table td:nth-child(1){ width:13%; }
-  .doc-dz-table th:nth-child(2), .doc-dz-table td:nth-child(2){ width:15%; }
-  .doc-dz-table th:nth-child(3), .doc-dz-table td:nth-child(3){ width:20%; }
-  .doc-dz-table th:nth-child(4), .doc-dz-table td:nth-child(4){ width:20%; }
-  .doc-dz-table th:nth-child(5), .doc-dz-table td:nth-child(5){ width:8%; }
-  .doc-dz-table th:nth-child(6), .doc-dz-table td:nth-child(6){ width:24%; }
   .doc-dz-table .dzc-0{ background:#F8FAFC; }
   .doc-dz-table td.dzc-1{ background:#E4F3FC; } .doc-dz-table th.dzc-1{ background:#B9E1F7; }
   .doc-dz-table td.dzc-2{ background:#FDEEDA; } .doc-dz-table th.dzc-2{ background:#FBD9A2; }
