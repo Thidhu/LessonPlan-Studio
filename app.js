@@ -17,7 +17,7 @@ const I18N = {
     phaseHint:'Tip: start a line with "- " for a bullet point, "1. " for a numbered point, or "## " for a bold sub-heading (e.g. Activity 1).',
     phaseHintDz:'Tip: start a line with "- " for a bullet point inside any box.',
     save:"Save Plan", exportWord:"Export to Word", printBtn:"Print", newBtn:"Clear",
-    preview:"Preview", pickDate:"Select date",
+    preview:"Preview",
     stageName:"Stage name", stageTime:"Time", stageContent:"Content",
     colTopic:"Main Topic / Stage", colSkill:"Skill & Objective Focus", colTeacher:"Teacher's Activity & Method",
     colStudent:"Student's Activity / Learning Experience", colTime:"Duration", colAssessment:"Assessment Tools & Method",
@@ -31,61 +31,50 @@ const I18N = {
     docLessonNo:"Lesson Plan No.", docPeriod:"Period", docDate:"Date", docPedagogy:"Pedagogy", docTeachingStrategies:"Teaching Strategies",
     docGNH:"GNH Principles and Values", docVenue:"Venue", docReflection:"Teaching Reflection",
     emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
-    searchPlaceholder:"Search saved plans..."
+    searchPlaceholder:"Search saved plans...",
+    creditLine:"From Lesson Plan Studio"
   },
   dz:{
-    appTitle:"སློབ་ཚན་འཆར་གཞི།", appTagline:"སློབ་ཚན་གྱི་དོན་ལུ་བཟོ་བཏོན་འབད་ཡོད།",
-    tabNew:"འཆར་གཞི་གསརཔ།", tabSaved:"ཉར་བཞགཔའི་འཆར་གཞི།",
-    secBasics:"སློབ་ཚན་གྱི་གནད་དོན།", lessonTitle:"སློབ་ཚན་གྱི་མགོ་མིང་།", subject:"ཆོས་ཚན།", class:"སློབ་རིམ།", duration:"དུས་ཡུན།",
-    date:"སྤྱི་ཚེས།", strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ནུས་པ།", topic:"བརྗོད་དོན།", gnh:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ/ལྟ་བ།",
-    secEnDetails:"གནད་དོན་ཁ་སྐོང་།", lessonNumber:"སློབ་ཚན་ཨང་།", period:"དུས་ཚོད་ཐེངས།", pedagogy:"སློབ་སྟོན་ཐབས་ལམ།", teachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
-    secDzDetails:"གནད་དོན་ཁ་སྐོང་།", venue:"ས་གོ / སློབ་ཁང་།",
-    secObjectives:"ལས་དོན།", addObjective:"དམིགས་ཡུལ་ཁ་སྣོན།",
-    secPrior:"སྔོན་ཤེས།", secResources:"མཁོ་ཆས།",
+    appTitle:"སློབ་སྟོན་འཆར་གཞི།", appTagline:"སློབ་སྟོན་པ་ཚུ་གི་དོན་ལུ་བཟོ་ཡོད་ཡོདཔ་ཨིན།",
+    tabNew:"འཆར་གཞི་གསརཔ།", tabSaved:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི།",
+    secBasics:"སྤྱིར་བཏང་གནས་ཚུལ།", lessonTitle:"སློབ་ཚན་གྱི་མགོ་མིང་།", subject:"ཆོས་ཚན།", class:"སློབ་རིམ།", duration:"དུས་ཡུན།",
+    date:"སྤྱི་ཚེས།", strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ལྕོགས་གྲུབ།", topic:"དོན་ཚན་/བརྗོད་དོན།", gnh:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ་/ལྟ་བ།",
+    secEnDetails:"གནད་དོན་ཁ་སྐོང་།", lessonNumber:"སློབ་སྟོན་འཆར་གཞི་ཨང་།", period:"ཐུན་ཚན།", pedagogy:"སློབ་སྟོན་ཐབས་ལམ།", teachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
+    secDzDetails:"གནད་དོན་ཁ་སྐོང་།", venue:"ས་གོ",
+    secObjectives:"ལས་དོན།", addObjective:"ལས་དོན་ཁ་སྐོང་།",
+    secPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", secResources:"མཐུན་རྐྱེན།",
     secStages:"སློབ་ཚན་གྱི་རིམ་པ།", addPhase:"རིམ་པ་ཁ་སྣོན།",
-    secStagesDz:"སློབ་ཚན་གྱི་རིམ་པ (ཐིག་ཁྲམ)", addRow:"རིམ་པ་ཁ་སྐོང་།",
+    secStagesDz:"སློབ་སྟོན་གྱི་རིམ་པ།", addRow:"དོན་ཚན་ཁ་སྐོང་།",
     secReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
-    phaseHint:'གྲོགས་རམ: ཚིག་གྲལ་ "- " ལས་འགོ་བཙུགས་པ་ཅིན་ཚུད་ཚིག་ཅིག་འབྱུང་། "## " ལས་འགོ་བཙུགས་པ་ཅིན་མགོ་མིང་ཚོགས་པ་ཞིག་འབྱུང་།',
+    phaseHint:'དོན་ཚན་ཁ་སྐོང་ཡོད་པ་ཅིན་ བཙུགས་ས་ཨིན།',
     phaseHintDz:'གྲོགས་རམ: ཚིག་གྲལ་ "- " ལས་འགོ་བཙུགས་པ་ཅིན་ཚུད་ཚིག་ཅིག་འབྱུང་།',
-    save:"ཉར་ཚགས།", exportWord:"Word ལུ་བཏོན།", printBtn:"དཔར་བསྐྲུན།", newBtn:"གསར་བསྐྲུན།",
-    preview:"སྔོན་ལྟ།", pickDate:"སྤྱི་ཚེས་འདེམས།",
-    stageName:"རིམ་པའི་མིང་།", stageTime:"དུས་ཚོད།", stageContent:"ནང་དོན།",
-    colTopic:"དོན་ཚན་གཙོ་བོ།", colSkill:"རིག་རྩལ་དང་དམིགས་གཏད།", colTeacher:"སློབ་དཔོན་གྱི་སྦྱོང་ལཱ་དང་ཐབས་ཤེས།",
+    save:"Save།", exportWord:"Wordན་ལུ་བཏོན།", printBtn:"དཔར་བསྐྲུན།", newBtn:"གསར་བསྐྲུན།",
+    preview:"སྔོན་ལྟ།",
+    stageName:"གནས་རིམ།", stageTime:"དུས་ཚོད།", stageContent:"ནང་དོན།",
+    colTopic:"དོན་ཚན་གཙོ་བོ།", colSkill:"རིག་རྩལ་དང་དམིགས་གཏད།", colTeacher:"སློབ་དཔོན་གྱི་སྦྱོང་ལཱ་དང་ཐབས་ཤེས།<br>(སློབ་སྟོན་ཐབས་ལམ།)",
     colStudent:"སློབ་ཕྲུག་གི་སྦྱོང་ལཱ།", colTime:"དུས་ཡུན།", colAssessment:"དབྱེ་ཞིབ་ཀྱི་མཁོ་ཆས་དང་ཐབས་རིག།",
-    savedEmpty:"ད་ལྟོའི་བར་ན་ཉར་བཞགཔའི་འཆར་གཞི་མིན་འདུག། \u201cའཆར་གཞི་གསརཔ\u201d་ནང་ལས་ཉར་བཞག.",
-    open:"ཁ་ཕྱེ།", duplicate:"འདྲ་བཤུས།", del:"བསུབ།", exportShort:"Word",
-    confirmDelete:"འཆར་གཞི་འདི་བསུབ་ནི་ཨིན་ན? ཕྱིར་འབདཝ་མི་ཚུགས།",
-    savedToast:"འཆར་གཞི་ཉར་ཚགས་འབད་ཡི།", deletedToast:"འཆར་གཞི་བསུབ་ཡི།", duplicatedToast:"འདྲ་བཤུས་འབད་ཡི།",
-    docUntitled:"མིང་མེད་པའི་སློབ་ཚན།", docSubject:"ཆོས་ཚན།", docClass:"སློབ་རིམ།", docDuration:"དུས་ཡུན།", docStrand:"ཡན་ལག",
-    docCompetency:"ནུས་པ།", docTopic:"བརྗོད་དོན།", docObjectives:"ལས་དོན།",
-    docPrior:"སྔོན་ཤེས།", docResources:"མཁོ་ཆས།", docDescription:"འགྲེལ་བཤད།",
-    docLessonNo:"སློབ་ཚན་ཨང་།", docPeriod:"དུས་ཚོད་ཐེངས།", docDate:"སྤྱི་ཚེས།", docPedagogy:"སློབ་སྟོན་ཐབས་ལམ།", docTeachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
-    docGNH:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ།", docVenue:"ས་གོ།", docReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
-    emptyPreviewHint:"ཐོ་བཀོད་བྱང་བུ་བཀང་སྟེ་སློབ་ཚན་འཆར་གཞི་འདི་གུ་བལྟ།",
-    searchPlaceholder:"ཉར་བཞགཔའི་འཆར་གཞི་འཚོལ་ཞིབ..."
+    savedEmpty:"ད་ལྟོ་ འཆར་གཞི་བསག་བཞག་བཞགཔ་མིན་འདུག། \u201cའཆར་གཞི་གསརཔ\u201dའདི་Saveའབད་བཞག།.",
+    open:"ཁ་ཕྱེ།", duplicate:"འདྲ་བཤུས་རྐྱབ།", del:"བཏོད་གཏང་/Delete", exportShort:"Word",
+    confirmDelete:"འཆར་གཞི་འདི་བཏོན་གཏང་ནི་ཨིན་ན? ལོག་འཐོབ་མི་་ཚུགས།",
+    savedToast:"འཆར་གཞི་འདི་Saveའབད་བཞག་ཡི།", deletedToast:"འཆར་གཞི་བཏོན་བཏང་ཡི།", duplicatedToast:"འདྲ་བཤུས་འབད་ཡི།",
+    docUntitled:"མིང་མེད་པའི་སློབ་སྟོན།", docSubject:"ཆོས་ཚན།", docClass:"སློབ་རིམ།", docDuration:"དུས་ཡུན།", docStrand:"ཡན་ལག",
+    docCompetency:"ལྕོགས་གྲུབ།", docTopic:"དོན་ཚན།", docObjectives:"ལས་དོན།",
+    docPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", docResources:"མཁོ་ཆས།", docDescription:"འགྲེལ་བཤད།",
+    docLessonNo:"སློབ་སྟོན་འཆར་གཞི་ཨང་།", docPeriod:"ཐུན་ཚན།", docDate:"སྤྱི་ཚེས།", docPedagogy:"སློབ་སྟོན་ཐབས་ལམ།", docTeachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
+    docGNH:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་ལྟ་བ་དང་གཞི་རྩ།", docVenue:"ས་གོ།", docReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
+    emptyPreviewHint:"འཆར་གཞི་བཟོ་ནིའི་དོན་ལུ་ གནད་དོན་དང་འཁྲིལ་ ཐིག་ཁྲམ་བཀང་དགོ།",
+    searchPlaceholder:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི་འཚོལ།",
+    creditLine:"From Lesson Plan Studio"
   }
 };
 let lang = 'en';
-const DZ_SUBJECT = 'རྫོང་ཁ';
 function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
-function applySubjectLock(){
-  const el = document.getElementById('f_subject');
-  if(!el) return;
-  if(lang==='dz'){
-    plan.subject = DZ_SUBJECT;
-    el.value = DZ_SUBJECT;
-    el.readOnly = true;
-  } else {
-    el.readOnly = false;
-  }
-}
 function applyI18n(){
   document.documentElement.setAttribute('data-lang', lang);
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     el.textContent = t(el.getAttribute('data-i18n'));
   });
   document.getElementById('searchSaved').placeholder = t('searchPlaceholder');
-  applySubjectLock(); bindDateField();
   renderObjectives(); renderPhases(); renderDzRows(); renderPreview(); renderSaved();
 }
 
@@ -162,12 +151,10 @@ async function persistSaved(){
 }
 
 /* ---------------- form <-> plan sync ---------------- */
-/* 'date' is handled separately by bindDateField() — English uses a native
-   <input type="date">, Dzongkha uses a custom Dzongkha-labelled calendar. */
-const simpleFields = ['title','subject','className','duration','strand','teacher','competency','topic','gnh',
+const simpleFields = ['title','subject','className','duration','date','strand','teacher','competency','topic','gnh',
   'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection'];
 const fieldIdMap = {
-  title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',strand:'f_strand',
+  title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',date:'f_date',strand:'f_strand',
   teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
   lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
   prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection'
@@ -182,8 +169,6 @@ function bindSimpleFields(){
     if(el.tagName==='SELECT'){ el.onchange = handler; }
     else{ el.oninput = handler; }
   });
-  applySubjectLock();
-  bindDateField();
 }
 
 function renderObjectives(){ renderStringList('objectivesList','objectives'); }
@@ -273,99 +258,15 @@ function ordinalSuffix(n){
   switch(n % 10){ case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th'; }
 }
 const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const TIBETAN_DIGITS = {'0':'༠','1':'༡','2':'༢','3':'༣','4':'༤','5':'༥','6':'༦','7':'༧','8':'༨','9':'༩'};
-function toTibetanNumeral(input){ return String(input).replace(/[0-9]/g, d=>TIBETAN_DIGITS[d]); }
-
 function formatDateDisplay(raw, useLang){
   if(!raw) return '';
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
   if(!m) return raw; // not an ISO date (e.g. legacy free-text plan) — show as typed
   const y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
   if(useLang==='dz'){
-    const dd = toTibetanNumeral(String(d).padStart(2,'0'));
-    const mm = toTibetanNumeral(String(mo).padStart(2,'0'));
-    const yy = toTibetanNumeral(y);
-    return dd + '/' + mm + '/' + yy;
+    return String(d).padStart(2,'0') + '/' + String(mo).padStart(2,'0') + '/' + y;
   }
   return d + ordinalSuffix(d) + ' ' + MONTHS_EN[mo-1] + ', ' + y;
-}
-
-/* ---------------- Dzongkha calendar widget ----------------
-   English keeps the native <input type="date">. Dzongkha gets a small
-   custom calendar (Gregorian dates, Dzongkha month/weekday labels) so the
-   picker itself — not just the printed date — reads in Dzongkha. */
-const DZ_MONTHS = ['ཟླ་ ༡ པ','ཟླ་ ༢ པ','ཟླ་ ༣ པ','ཟླ་ ༤ པ','ཟླ་ ༥ པ','ཟླ་ ༦ པ','ཟླ་ ༧ པ','ཟླ་ ༨ པ','ཟླ་ ༩ པ','ཟླ་ ༡༠ པ','ཟླ་ ༡༡ པ','ཟླ་ ༡༢ པ'];
-const DZ_WEEKDAYS = ['ཉི་མ','ཟླ་བ','མིག་དམར','ལྷག་པ','ཕུར་བུ','པ་སངས','སྤེན་པ']; // Sun..Sat
-let dzCalYear = null, dzCalMonth = null;
-
-function pad2(n){ return String(n).padStart(2,'0'); }
-
-function bindDateField(){
-  const enInput = document.getElementById('f_date');
-  if(enInput) enInput.value = plan.date || '';
-  const btn = document.getElementById('dzDateBtn');
-  if(btn) btn.textContent = plan.date ? formatDateDisplay(plan.date,'dz') : t('pickDate');
-}
-
-function dzCalOutsideClick(e){
-  const wrap = document.getElementById('dzDatePicker');
-  if(wrap && !wrap.contains(e.target)) closeDzCal();
-}
-function openDzCal(){
-  const iso = /^\d{4}-\d{2}-\d{2}$/.test(plan.date||'') ? plan.date : null;
-  const today = new Date();
-  if(iso){ dzCalYear = parseInt(iso.slice(0,4),10); dzCalMonth = parseInt(iso.slice(5,7),10)-1; }
-  else { dzCalYear = today.getFullYear(); dzCalMonth = today.getMonth(); }
-  renderDzCal();
-  document.getElementById('dzCalPopup').style.display = 'block';
-  setTimeout(()=>document.addEventListener('click', dzCalOutsideClick, true), 0);
-}
-function closeDzCal(){
-  const popup = document.getElementById('dzCalPopup');
-  if(popup) popup.style.display = 'none';
-  document.removeEventListener('click', dzCalOutsideClick, true);
-}
-function renderDzCal(){
-  const popup = document.getElementById('dzCalPopup');
-  if(!popup) return;
-  const firstDow = new Date(dzCalYear, dzCalMonth, 1).getDay();
-  const daysInMonth = new Date(dzCalYear, dzCalMonth+1, 0).getDate();
-  const todayISO = new Date().toISOString().slice(0,10);
-  let cells = '';
-  for(let i=0;i<firstDow;i++) cells += `<div class="day empty"></div>`;
-  for(let d=1; d<=daysInMonth; d++){
-    const iso = `${dzCalYear}-${pad2(dzCalMonth+1)}-${pad2(d)}`;
-    const cls = ['day'];
-    if(iso===plan.date) cls.push('selected');
-    if(iso===todayISO) cls.push('today');
-    cells += `<div class="${cls.join(' ')}" data-iso="${iso}">${toTibetanNumeral(d)}</div>`;
-  }
-  popup.innerHTML = `
-    <div class="dz-cal-head">
-      <button type="button" id="dzCalPrev">‹</button>
-      <div class="dz-cal-title">${DZ_MONTHS[dzCalMonth]} · ${toTibetanNumeral(dzCalYear)}</div>
-      <button type="button" id="dzCalNext">›</button>
-    </div>
-    <div class="dz-cal-grid">
-      ${DZ_WEEKDAYS.map(w=>`<div class="wd">${w}</div>`).join('')}
-      ${cells}
-    </div>
-  `;
-  popup.querySelector('#dzCalPrev').onclick = (e)=>{ e.stopPropagation(); dzCalMonth--; if(dzCalMonth<0){ dzCalMonth=11; dzCalYear--; } renderDzCal(); };
-  popup.querySelector('#dzCalNext').onclick = (e)=>{ e.stopPropagation(); dzCalMonth++; if(dzCalMonth>11){ dzCalMonth=0; dzCalYear++; } renderDzCal(); };
-  popup.querySelectorAll('.day[data-iso]').forEach(el=>{
-    el.onclick = (e)=>{ e.stopPropagation(); plan.date = el.getAttribute('data-iso'); bindDateField(); closeDzCal(); renderPreview(); };
-  });
-}
-
-/* ---------------- lesson number auto-numbering ---------------- */
-function nextLessonNumber(){
-  let max = 0;
-  savedPlans.forEach(p=>{
-    const n = parseInt(p.lessonNumber, 10);
-    if(!isNaN(n) && n>max) max = n;
-  });
-  return String(max+1);
 }
 
 /* ---------------- content parsing for preview/export ---------------- */
@@ -531,7 +432,6 @@ async function savePlan(){
 
 function newPlan(){
   plan = blankPlan();
-  plan.lessonNumber = nextLessonNumber();
   editingExistingId = null;
   bindSimpleFields(); renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
 }
@@ -653,8 +553,7 @@ const WORD_STYLE = `
   li{ margin-bottom:4px; }
   .sub-h{ font-weight:700; color:#1E3A8A; margin:6px 0 3px; }
   p{ margin:0 0 6px; }
-  .dz-table{ table-layout:fixed; }
-  .dz-table th, .dz-table td{ font-size:10pt; word-wrap:break-word; overflow-wrap:break-word; }
+  .dz-table th, .dz-table td{ font-size:10pt; }
   .dz-table .c0{ background:#F8FAFC; } .dz-table th.c0{ background:#EEF2F8; }
   .dz-table .c1{ background:#E4F3FC; } .dz-table th.c1{ background:#B9E1F7; }
   .dz-table .c2{ background:#FDEEDA; } .dz-table th.c2{ background:#FBD9A2; }
@@ -662,6 +561,7 @@ const WORD_STYLE = `
   .dz-table .c4{ background:#EDE4FA; } .dz-table th.c4{ background:#D3C0F2; }
   .dz-table .c5{ background:#DCF6F2; } .dz-table th.c5{ background:#AEE9E1; }
   .reflect-box{ min-height:40px; border:1px dashed #B7C6DE; background:#F8FAFC; }
+  .credit-line{ text-align:center; font-size:9pt; color:#94A3B8; margin-top:22px; }
 `;
 
 function wordHeader(p, L){
@@ -677,6 +577,10 @@ function wordHeader(p, L){
       <h1>${escHtml(p.title)||L.docUntitled}</h1>
       <div class="sub">${escHtml(p.topic)||''}</div>
     </div>`;
+}
+
+function wordFooter(L){
+  return `<p class="credit-line">${escHtml(L.creditLine)}</p>`;
 }
 
 function planToDocHtmlEN(p){
@@ -716,24 +620,24 @@ function planToDocHtmlEN(p){
 
     <div class="sec-title">${L.secStages}</div>
     <table>${phasesHtml}</table>
+
+    ${wordFooter(L)}
   </body>
   </html>`;
 }
 
 function planToDocHtmlDZ(p){
   const L = I18N.dz;
-  const COLW = ['13%','15%','20%','20%','8%','24%'];
-  const cellStyle = i => `width:${COLW[i]};word-wrap:break-word;overflow-wrap:break-word;`;
   const rows = p.phasesDz.filter(r=> r.name || r.skillFocus || r.teacherActivity || r.studentActivity || r.time || r.assessment);
   const src = rows.length ? rows : p.phasesDz;
   const tableRows = src.map(r=>`
     <tr>
-      <td class="c0" style="${cellStyle(0)}"><strong>${escHtml(r.name)||'—'}</strong></td>
-      <td class="c1" style="${cellStyle(1)}">${contentToWordHtml(r.skillFocus)}</td>
-      <td class="c2" style="${cellStyle(2)}">${contentToWordHtml(r.teacherActivity)}</td>
-      <td class="c3" style="${cellStyle(3)}">${contentToWordHtml(r.studentActivity)}</td>
-      <td class="c4" style="${cellStyle(4)}">${escHtml(r.time)||'—'}</td>
-      <td class="c5" style="${cellStyle(5)}">${contentToWordHtml(r.assessment)}</td>
+      <td class="c0"><strong>${escHtml(r.name)||'—'}</strong></td>
+      <td class="c1">${contentToWordHtml(r.skillFocus)}</td>
+      <td class="c2">${contentToWordHtml(r.teacherActivity)}</td>
+      <td class="c3">${contentToWordHtml(r.studentActivity)}</td>
+      <td class="c4">${escHtml(r.time)||'—'}</td>
+      <td class="c5">${contentToWordHtml(r.assessment)}</td>
     </tr>
   `).join('');
 
@@ -753,16 +657,18 @@ function planToDocHtmlDZ(p){
     ${contentToWordHtml(p.gnh)}
 
     <div class="sec-title">${L.secStagesDz}</div>
-    <table class="dz-table" style="table-layout:fixed;width:100%;">
+    <table class="dz-table">
       <tr>
-        <th class="c0" style="${cellStyle(0)}">${L.colTopic}</th><th class="c1" style="${cellStyle(1)}">${L.colSkill}</th><th class="c2" style="${cellStyle(2)}">${L.colTeacher}</th>
-        <th class="c3" style="${cellStyle(3)}">${L.colStudent}</th><th class="c4" style="${cellStyle(4)}">${L.colTime}</th><th class="c5" style="${cellStyle(5)}">${L.colAssessment}</th>
+        <th class="c0">${L.colTopic}</th><th class="c1">${L.colSkill}</th><th class="c2">${L.colTeacher}</th>
+        <th class="c3">${L.colStudent}</th><th class="c4">${L.colTime}</th><th class="c5">${L.colAssessment}</th>
       </tr>
       ${tableRows}
     </table>
 
     <div class="sec-title">${L.docReflection}</div>
     ${p.reflection && p.reflection.trim() ? contentToWordHtml(p.reflection) : '<div class="reflect-box"></div>'}
+
+    ${wordFooter(L)}
   </body>
   </html>`;
 }
@@ -773,26 +679,9 @@ function planToDocHtmlDZ(p){
    works reliably here) and triggering window.print() once it has loaded.
    This avoids relying on window.print() inside the app's own iframe/tab,
    which some hosts block or ignore. */
-const PRINT_CSS = `
-*{ -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; box-sizing:border-box; }
-html,body{ margin:0; padding:0; }
-body{
-  font-family:'Inter','Noto Sans Tibetan',sans-serif; color:#101B34;
-  display:flex; justify-content:center; padding:34px 18px; min-height:100vh;
-  background:
-    radial-gradient(900px 600px at 10% -10%, rgba(37,99,235,0.20), transparent 60%),
-    radial-gradient(800px 550px at 108% 8%, rgba(56,189,248,0.22), transparent 55%),
-    radial-gradient(700px 600px at 50% 118%, rgba(167,139,250,0.16), transparent 55%),
-    linear-gradient(180deg, #EEF3FC, #E4ECFB 55%, #EEF3FC);
-}
-.doc{
-  width:100%; max-width:820px; border-radius:22px; overflow:hidden;
-  background:rgba(255,255,255,0.62);
-  -webkit-backdrop-filter:blur(18px) saturate(170%); backdrop-filter:blur(18px) saturate(170%);
-  border:1px solid rgba(37,99,235,0.22);
-  box-shadow:0 24px 60px rgba(37,99,235,0.20), 0 4px 18px rgba(15,23,42,0.10);
-}
-.doc-ribbon{background:linear-gradient(120deg, rgba(37,99,235,0.92), rgba(56,189,248,0.88) 85%);
+const PRINT_CSS = `.doc{background:#ffffff; color:#101B34; border-radius:16px; overflow:hidden;
+    box-shadow:0 18px 40px rgba(15,23,42,0.28); border:1px solid rgba(15,23,42,0.06);}
+.doc-ribbon{background:linear-gradient(120deg, #2563EB, #38BDF8 85%);
     color:#F7FAFF; padding:20px 24px 18px; position:relative; overflow:hidden;}
 .doc-ribbon::after{content:''; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%;
     background:radial-gradient(circle, rgba(255,255,255,.30), transparent 70%);}
@@ -804,12 +693,11 @@ body{
 .doc-body{padding:22px 24px 26px; font-size:13.6px; line-height:1.62;}
 .doc-meta{display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; margin-bottom:16px; font-size:13px;}
 .doc-meta.doc-meta-3{grid-template-columns:1fr 1fr 1fr;}
-.doc-meta div{background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.12); border-radius:9px; padding:6px 10px;}
 .doc-meta div b{color:#2563EB; font-weight:700;}
 .doc-h{font-family:'Fraunces','Noto Sans Tibetan',serif; font-size:14.5px; font-weight:700; color:#1D4ED8;
-    margin:16px 0 6px; padding-bottom:4px; border-bottom:1px solid rgba(37,99,235,0.25);
+    margin:16px 0 6px; padding-bottom:4px; border-bottom:1px solid rgba(37,99,235,0.2);
     display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
-.doc-h .time{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:#0369A1; background:rgba(56,189,248,0.20); padding:2px 9px; border-radius:999px; white-space:nowrap;}
+.doc-h .time{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:#0369A1; background:rgba(56,189,248,0.16); padding:2px 9px; border-radius:999px; white-space:nowrap;}
 .doc-p{margin:0 0 8px;}
 .doc-ul{margin:0 0 10px; padding-left:0; list-style:none;}
 .doc-ul li{position:relative; padding-left:20px; margin-bottom:5px;}
@@ -819,34 +707,39 @@ body{
 .doc-sub{font-weight:700; color:#1E3A8A; margin:8px 0 4px;}
 .doc-empty{color:#94A3B8; font-style:italic;}
 .doc a{color:#2563EB;}
-/* Dzongkha colour-coded stage table (mirrors the DDC template), tinted translucent to match the glass panel */
-.doc-dz-table{width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:6px 0 12px; font-size:12.6px; border-radius:10px; overflow:hidden;}
-.doc-dz-table th, .doc-dz-table td{border:1px solid rgba(37,99,235,0.16); padding:9px 10px; vertical-align:top; text-align:left;
-  overflow-wrap:break-word; word-break:break-word; hyphens:auto;}
+/* Dzongkha colour-coded stage table (mirrors the DDC template) */
+  .doc-dz-table{width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:12.6px;}
+.doc-dz-table th, .doc-dz-table td{border:1px solid #C3D3EA; padding:9px 10px; vertical-align:top; text-align:left;}
 .doc-dz-table th{font-family:'Fraunces','Noto Sans Tibetan',serif; font-weight:700; color:#1D3557; font-size:12px;}
-.doc-dz-table th:nth-child(1), .doc-dz-table td:nth-child(1){width:13%;}
-.doc-dz-table th:nth-child(2), .doc-dz-table td:nth-child(2){width:15%;}
-.doc-dz-table th:nth-child(3), .doc-dz-table td:nth-child(3){width:20%;}
-.doc-dz-table th:nth-child(4), .doc-dz-table td:nth-child(4){width:20%;}
-.doc-dz-table th:nth-child(5), .doc-dz-table td:nth-child(5){width:8%;}
-.doc-dz-table th:nth-child(6), .doc-dz-table td:nth-child(6){width:24%;}
-.doc-dz-table .dzc-0{background:rgba(255,255,255,0.35);}
-.doc-dz-table td.dzc-1{background:rgba(56,189,248,0.16);} .doc-dz-table th.dzc-1{background:rgba(56,189,248,0.34);}
-.doc-dz-table td.dzc-2{background:rgba(245,158,11,0.14);} .doc-dz-table th.dzc-2{background:rgba(245,158,11,0.32);}
-.doc-dz-table td.dzc-3{background:rgba(34,197,94,0.14);} .doc-dz-table th.dzc-3{background:rgba(34,197,94,0.32);}
-.doc-dz-table td.dzc-4{background:rgba(167,139,250,0.16);} .doc-dz-table th.dzc-4{background:rgba(167,139,250,0.36);}
-.doc-dz-table td.dzc-5{background:rgba(45,212,191,0.16);} .doc-dz-table th.dzc-5{background:rgba(45,212,191,0.34);}
+.doc-dz-table .dzc-0{background:#F8FAFC;}
+.doc-dz-table td.dzc-1{background:#E4F3FC;}
+.doc-dz-table th.dzc-1{background:#B9E1F7;}
+.doc-dz-table td.dzc-2{background:#FDEEDA;}
+.doc-dz-table th.dzc-2{background:#FBD9A2;}
+.doc-dz-table td.dzc-3{background:#E3F7E6;}
+.doc-dz-table th.dzc-3{background:#BBEAC4;}
+.doc-dz-table td.dzc-4{background:#EDE4FA;}
+.doc-dz-table th.dzc-4{background:#D3C0F2;}
+.doc-dz-table td.dzc-5{background:#DCF6F2;}
+.doc-dz-table th.dzc-5{background:#AEE9E1;}
 .doc-dz-table .doc-ul, .doc-dz-table .doc-ol{margin-bottom:0;}
 .doc-dz-table .doc-p:last-child{margin-bottom:0;}
-.doc-reflect-box{min-height:46px; border:1px dashed rgba(37,99,235,0.35); border-radius:8px; background:rgba(255,255,255,0.35);}
-@media print{
-  body{ padding:0; }
-  .doc{ max-width:none; border-radius:0; box-shadow:none; }
-}
-@page{ margin:10mm; }
+.doc-reflect-box{min-height:46px; border:1px dashed #B7C6DE; border-radius:8px; background:#F8FAFC;}
+.doc-credit{ text-align:center; font-size:11px; color:#94A3B8; padding:10px 24px 18px; letter-spacing:.02em; }
+.doc, .doc *{visibility:visible;}
+.doc{position:absolute; top:0; left:0; width:100%; box-shadow:none; border:none; border-radius:0;}
+  html,body{ margin:0; padding:0; background:#EEF2F8; }
+  body{ font-family:'Inter','Noto Sans Tibetan',sans-serif; display:flex; justify-content:center; padding:24px 12px; }
+  .doc{ width:100%; max-width:820px; box-shadow:none; border:1px solid #E2E8F0; border-radius:0; }
+  @media print{
+    html,body{ background:#fff; padding:0; }
+    .doc{ max-width:none; border:none; }
+  }
+  @page{ margin:14mm; }
 `;
 
 function printPlan(p){
+  const L = (p.format==='dz') ? I18N.dz : I18N.en;
   const bodyHtml = (p.format==='dz') ? previewDz(p) : previewEn(p);
   const docHtml = `<!DOCTYPE html><html lang="${p.format==='dz'?'dz':'en'}"><head><meta charset="utf-8">
 <title>${escHtml(p.title)||'Lesson Plan'}</title>
@@ -854,7 +747,7 @@ function printPlan(p){
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${PRINT_CSS}</style>
 </head><body>
-<div class="doc">${bodyHtml}</div>
+<div class="doc">${bodyHtml}<div class="doc-credit">${escHtml(L.creditLine)}</div></div>
 <script>
   window.onload = function(){
     setTimeout(function(){ window.print(); }, 350);
@@ -915,12 +808,6 @@ document.getElementById('btnNew').onclick = ()=>{ if(confirm(lang==='dz'?'འཆ
 document.getElementById('btnExport').onclick = ()=> exportWord(plan);
 document.getElementById('btnPrint').onclick = ()=> printPlan(plan);
 document.getElementById('searchSaved').oninput = renderSaved;
-document.getElementById('f_date').oninput = (e)=>{ plan.date = e.target.value; renderPreview(); };
-document.getElementById('dzDateBtn').onclick = (e)=>{
-  e.stopPropagation();
-  const popup = document.getElementById('dzCalPopup');
-  if(popup.style.display==='block'){ closeDzCal(); } else { openDzCal(); }
-};
 document.querySelectorAll('.add-link').forEach(btn=>{
   btn.onclick = ()=>{
     const kind = btn.getAttribute('data-add');
@@ -935,7 +822,6 @@ document.querySelectorAll('.add-link').forEach(btn=>{
 async function init(){
   document.getElementById('docPreview').innerHTML = `<div class="doc-body"><p class="doc-empty">${t('emptyPreviewHint')}</p></div>`;
   await loadSaved();
-  if(!plan.lessonNumber){ plan.lessonNumber = nextLessonNumber(); }
   bindSimpleFields();
   renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
   renderSaved();
