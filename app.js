@@ -1,5 +1,30 @@
 (function(){
 
+/* ---------------- Dzongkha font (DDC Joyig) ----------------
+   Place the font file next to index.html/app.js and name it "DDCJoyig.ttf"
+   (or edit DZ_FONT_FILENAME below to match whatever filename you upload). */
+const DZ_FONT_FAMILY = 'DDC Joyig';
+const DZ_FONT_FILENAME = 'DDCJoyig.ttf';
+const DZ_FONT_URL = (function(){
+  try{ return new URL(DZ_FONT_FILENAME, document.baseURI).href; }catch(e){ return DZ_FONT_FILENAME; }
+})();
+function dzFontFaceCss(){
+  return `@font-face{font-family:'${DZ_FONT_FAMILY}';src:url('${DZ_FONT_URL}') format('truetype');font-weight:normal;font-style:normal;font-display:swap;}`;
+}
+function injectDzFont(){
+  const style = document.createElement('style');
+  style.textContent = `
+    ${dzFontFaceCss()}
+    html[data-lang="dz"] body,
+    html[data-lang="dz"] h1, html[data-lang="dz"] h2, html[data-lang="dz"] h3, html[data-lang="dz"] .display,
+    html[data-lang="dz"] .doc-h, html[data-lang="dz"] .doc-sub, html[data-lang="dz"] .doc-dz-table th{
+      font-family:'${DZ_FONT_FAMILY}', 'Noto Sans Tibetan', sans-serif !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+injectDzFont();
+
 /* ---------------- i18n ---------------- */
 const I18N = {
   en:{
@@ -151,16 +176,81 @@ async function persistSaved(){
 }
 
 /* ---------------- form <-> plan sync ---------------- */
-const simpleFields = ['title','subject','className','duration','date','strand','teacher','competency','topic','gnh',
+const simpleFields = ['title','className','duration','date','strand','teacher','competency','topic','gnh',
   'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection'];
 const fieldIdMap = {
-  title:'f_title',subject:'f_subject',className:'f_class',duration:'f_duration',date:'f_date',strand:'f_strand',
+  title:'f_title',className:'f_class',duration:'f_duration',date:'f_date',strand:'f_strand',
   teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
   lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
   prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection'
 };
 
+/* Subjects taught from PP through Class XII in the Bhutanese curriculum (REC). */
+const BHUTAN_SUBJECTS = [
+  'Dzongkha','English','Mathematics','Additional Mathematics','Science','Physics','Chemistry','Biology',
+  'Environmental Studies (EVS)','Social Studies','History','Geography','Economics','Accountancy',
+  'Business Studies / Commerce','Bhutan History, Civics & Citizenship Education',
+  'ICT (Information & Communication Technology)','Computer Science','Agriculture / Food Science (AgFS)',
+  'Arts Education','Health & Physical Education','Design and Technology','Media Studies','Statistics'
+];
+const OTHER_SUBJECT_VALUE = '__other__';
+
+function setupSubjectField(){
+  let select = document.getElementById('f_subject');
+  if(!select || select.tagName !== 'SELECT'){
+    const oldInput = document.getElementById('f_subject');
+    if(!oldInput) return;
+    select = document.createElement('select');
+    select.id = 'f_subject';
+    select.innerHTML = '<option value=""></option>' +
+      BHUTAN_SUBJECTS.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('') +
+      `<option value="${OTHER_SUBJECT_VALUE}">Other (please specify)</option>`;
+    oldInput.replaceWith(select);
+
+    const otherInput = document.createElement('input');
+    otherInput.type = 'text';
+    otherInput.id = 'f_subject_other';
+    otherInput.placeholder = 'Enter subject name';
+    otherInput.style.marginTop = '8px';
+    otherInput.style.display = 'none';
+    select.insertAdjacentElement('afterend', otherInput);
+
+    select.onchange = ()=>{
+      const other = document.getElementById('f_subject_other');
+      if(select.value === OTHER_SUBJECT_VALUE){
+        other.style.display = '';
+        other.value = '';
+        plan.subject = '';
+        other.focus();
+      } else {
+        other.style.display = 'none';
+        plan.subject = select.value;
+      }
+      renderPreview();
+    };
+    otherInput.oninput = ()=>{ plan.subject = otherInput.value; renderPreview(); };
+  }
+  syncSubjectField();
+}
+
+function syncSubjectField(){
+  const select = document.getElementById('f_subject');
+  const otherInput = document.getElementById('f_subject_other');
+  if(!select || !otherInput) return;
+  const known = BHUTAN_SUBJECTS.includes(plan.subject);
+  if(plan.subject && !known){
+    select.value = OTHER_SUBJECT_VALUE;
+    otherInput.value = plan.subject;
+    otherInput.style.display = '';
+  } else {
+    select.value = plan.subject || '';
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+  }
+}
+
 function bindSimpleFields(){
+  setupSubjectField();
   simpleFields.forEach(key=>{
     const el = document.getElementById(fieldIdMap[key]);
     if(!el) return;
@@ -541,7 +631,9 @@ function bulletArrayToWordHtml(arr){
 }
 
 const WORD_STYLE = `
+  ${dzFontFaceCss()}
   body{ font-family:Calibri, 'Noto Sans Tibetan', sans-serif; font-size:11pt; color:#101B34; }
+  body.dz-doc, body.dz-doc .sec-title, body.dz-doc .sub-h, body.dz-doc .dz-table th{ font-family:'${DZ_FONT_FAMILY}', 'Noto Sans Tibetan', sans-serif; }
   table{ border-collapse:collapse; width:100%; margin-bottom:14px; }
   td{ border:1px solid #93C5FD; padding:10px 12px; vertical-align:top; }
   .hero{ background:#2563EB; color:#F7FAFF; padding:16px 18px; }
@@ -564,7 +656,7 @@ const WORD_STYLE = `
   .credit-line{ text-align:center; font-size:9pt; color:#94A3B8; margin-top:22px; }
 `;
 
-function wordHeader(p, L){
+function wordHeader(p, L, isDz){
   return `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
   <head>
     <meta charset="utf-8">
@@ -572,7 +664,7 @@ function wordHeader(p, L){
     <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
     <style>${WORD_STYLE}</style>
   </head>
-  <body>
+  <body${isDz ? ' class="dz-doc"' : ''}>
     <div class="hero">
       <h1>${escHtml(p.title)||L.docUntitled}</h1>
       <div class="sub">${escHtml(p.topic)||''}</div>
@@ -641,7 +733,7 @@ function planToDocHtmlDZ(p){
     </tr>
   `).join('');
 
-  return wordHeader(p, L) + `
+  return wordHeader(p, L, true) + `
     <table class="meta-table">
       <tr><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td><td><b>${L.docDate}:</b> ${escHtml(formatDateDisplay(p.date,'dz'))||'—'}</td></tr>
       <tr><td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td><td><b>${L.docVenue}:</b> ${escHtml(p.venue)||'—'}</td><td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td></tr>
@@ -679,7 +771,9 @@ function planToDocHtmlDZ(p){
    works reliably here) and triggering window.print() once it has loaded.
    This avoids relying on window.print() inside the app's own iframe/tab,
    which some hosts block or ignore. */
-const PRINT_CSS = `.doc{background:#ffffff; color:#101B34; border-radius:16px; overflow:hidden;
+const PRINT_CSS = `${dzFontFaceCss()}
+.doc.dz-doc, .doc.dz-doc .doc-h, .doc.dz-doc .doc-sub, .doc.dz-doc .doc-dz-table th{font-family:'${DZ_FONT_FAMILY}', 'Noto Sans Tibetan', sans-serif;}
+.doc{background:#ffffff; color:#101B34; border-radius:16px; overflow:hidden;
     box-shadow:0 18px 40px rgba(15,23,42,0.28); border:1px solid rgba(15,23,42,0.06);}
 .doc-ribbon{background:linear-gradient(120deg, #2563EB, #38BDF8 85%);
     color:#F7FAFF; padding:20px 24px 18px; position:relative; overflow:hidden;}
@@ -747,7 +841,7 @@ function printPlan(p){
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${PRINT_CSS}</style>
 </head><body>
-<div class="doc">${bodyHtml}<div class="doc-credit">${escHtml(L.creditLine)}</div></div>
+<div class="doc${p.format==='dz' ? ' dz-doc' : ''}">${bodyHtml}<div class="doc-credit">${escHtml(L.creditLine)}</div></div>
 <script>
   window.onload = function(){
     setTimeout(function(){ window.print(); }, 350);
