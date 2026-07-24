@@ -89,7 +89,7 @@ const I18N = {
     docGNH:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་ལྟ་བ་དང་གཞི་རྩ།", docVenue:"ས་གོ།", docReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
     emptyPreviewHint:"འཆར་གཞི་བཟོ་ནིའི་དོན་ལུ་ གནད་དོན་དང་འཁྲིལ་ ཐིག་ཁྲམ་བཀང་དགོ།",
     searchPlaceholder:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི་འཚོལ།",
-    creditLine:"From Lesson Plan Studio"
+    creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། "
   }
 };
 let lang = 'en';
@@ -100,6 +100,7 @@ function applyI18n(){
     el.textContent = t(el.getAttribute('data-i18n'));
   });
   document.getElementById('searchSaved').placeholder = t('searchPlaceholder');
+  bindSimpleFields();
   renderObjectives(); renderPhases(); renderDzRows(); renderPreview(); renderSaved();
 }
 
@@ -176,16 +177,16 @@ async function persistSaved(){
 }
 
 /* ---------------- form <-> plan sync ---------------- */
-const simpleFields = ['title','className','duration','date','strand','teacher','competency','topic','gnh',
+const simpleFields = ['title','className','duration','strand','teacher','competency','topic','gnh',
   'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection'];
 const fieldIdMap = {
-  title:'f_title',className:'f_class',duration:'f_duration',date:'f_date',strand:'f_strand',
+  title:'f_title',className:'f_class',duration:'f_duration',strand:'f_strand',
   teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
   lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
   prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection'
 };
 
-/* Subjects taught from PP through Class XII in the Bhutanese curriculum (REC). */
+/* Subjects taught from PP through Class XII in the Bhutanese curriculum (REC) — English format only. */
 const BHUTAN_SUBJECTS = [
   'Dzongkha','English','Mathematics','Additional Mathematics','Science','Physics','Chemistry','Biology',
   'Environmental Studies (EVS)','Social Studies','History','Geography','Economics','Accountancy',
@@ -194,12 +195,35 @@ const BHUTAN_SUBJECTS = [
   'Arts Education','Health & Physical Education','Design and Technology','Media Studies','Statistics'
 ];
 const OTHER_SUBJECT_VALUE = '__other__';
+const DZONGKHA_SUBJECT_LABEL = 'རྫོང་ཁ།';
 
+/* The Dzongkha-format lesson plan is always for the Dzongkha subject itself,
+   so it gets a fixed pre-filled text field instead of a dropdown. The
+   English-format plan keeps the full subject dropdown. */
 function setupSubjectField(){
+  const existing = document.getElementById('f_subject');
+  if(!existing) return;
+
+  if(lang === 'dz'){
+    if(existing.tagName !== 'INPUT'){
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'f_subject';
+      existing.replaceWith(input);
+      const otherEl = document.getElementById('f_subject_other');
+      if(otherEl) otherEl.remove();
+    }
+    const input = document.getElementById('f_subject');
+    if(!plan.subject) plan.subject = DZONGKHA_SUBJECT_LABEL;
+    input.value = plan.subject;
+    input.oninput = ()=>{ plan.subject = input.value; renderPreview(); };
+    return;
+  }
+
+  // English format: dropdown + "Other" fallback
   let select = document.getElementById('f_subject');
   if(!select || select.tagName !== 'SELECT'){
     const oldInput = document.getElementById('f_subject');
-    if(!oldInput) return;
     select = document.createElement('select');
     select.id = 'f_subject';
     select.innerHTML = '<option value=""></option>' +
@@ -236,7 +260,7 @@ function setupSubjectField(){
 function syncSubjectField(){
   const select = document.getElementById('f_subject');
   const otherInput = document.getElementById('f_subject_other');
-  if(!select || !otherInput) return;
+  if(!select || select.tagName !== 'SELECT' || !otherInput) return;
   const known = BHUTAN_SUBJECTS.includes(plan.subject);
   if(plan.subject && !known){
     select.value = OTHER_SUBJECT_VALUE;
@@ -249,8 +273,100 @@ function syncSubjectField(){
   }
 }
 
+/* ---------------- Dzongkha numerals & pure-Dzongkha date field ---------------- */
+const TIB_DIGITS = ['༠','༡','༢','༣','༤','༥','༦','༧','༨','༩'];
+function toTibetanNumeral(n){
+  return String(n).split('').map(ch => /[0-9]/.test(ch) ? TIB_DIGITS[+ch] : ch).join('');
+}
+
+function buildDzDateSelects(oldEl){
+  const group = document.createElement('div');
+  group.id = 'f_date';
+  group.className = 'dz-date-group';
+  group.style.display = 'flex';
+  group.style.gap = '6px';
+
+  const daySel = document.createElement('select');
+  daySel.className = 'dz-date-day';
+  daySel.innerHTML = '<option value=""></option>' +
+    Array.from({length:31}, (_,i)=>i+1).map(d=>`<option value="${d}">${toTibetanNumeral(String(d).padStart(2,'0'))}</option>`).join('');
+
+  const slash1 = document.createElement('span');
+  slash1.textContent = '/';
+  slash1.style.alignSelf = 'center';
+
+  const monthSel = document.createElement('select');
+  monthSel.className = 'dz-date-month';
+  monthSel.innerHTML = '<option value=""></option>' +
+    Array.from({length:12}, (_,i)=>i+1).map(m=>`<option value="${m}">${toTibetanNumeral(String(m).padStart(2,'0'))}</option>`).join('');
+
+  const slash2 = document.createElement('span');
+  slash2.textContent = '/';
+  slash2.style.alignSelf = 'center';
+
+  const yearSel = document.createElement('select');
+  yearSel.className = 'dz-date-year';
+  const curYear = new Date().getFullYear();
+  const years = [];
+  for(let y = curYear - 3; y <= curYear + 3; y++) years.push(y);
+  yearSel.innerHTML = '<option value=""></option>' +
+    years.map(y=>`<option value="${y}">${toTibetanNumeral(y)}</option>`).join('');
+
+  group.appendChild(daySel); group.appendChild(slash1); group.appendChild(monthSel); group.appendChild(slash2); group.appendChild(yearSel);
+  oldEl.replaceWith(group);
+
+  const commit = ()=>{
+    const d = daySel.value, m = monthSel.value, y = yearSel.value;
+    plan.date = (d && m && y) ? (y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0')) : '';
+    renderPreview();
+  };
+  daySel.onchange = commit; monthSel.onchange = commit; yearSel.onchange = commit;
+}
+
+function syncDzDateSelects(){
+  const group = document.getElementById('f_date');
+  if(!group || group.tagName !== 'DIV') return;
+  const daySel = group.querySelector('.dz-date-day');
+  const monthSel = group.querySelector('.dz-date-month');
+  const yearSel = group.querySelector('.dz-date-year');
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(plan.date || '');
+  if(m){
+    yearSel.value = String(parseInt(m[1],10));
+    monthSel.value = String(parseInt(m[2],10));
+    daySel.value = String(parseInt(m[3],10));
+  } else {
+    yearSel.value=''; monthSel.value=''; daySel.value='';
+  }
+}
+
+function buildEnDateInput(oldEl){
+  const input = document.createElement('input');
+  input.type = 'date';
+  input.id = 'f_date';
+  oldEl.replaceWith(input);
+}
+
+/* The Dzongkha-format plan gets a fully Dzongkha day/month/year picker
+   (Tibetan numerals, no Gregorian digits); the English-format plan keeps
+   the native browser date picker. */
+function setupDateField(){
+  const existing = document.getElementById('f_date');
+  if(!existing) return;
+
+  if(lang === 'dz'){
+    if(existing.tagName !== 'DIV'){ buildDzDateSelects(existing); }
+    syncDzDateSelects();
+  } else {
+    if(existing.tagName !== 'INPUT'){ buildEnDateInput(existing); }
+    const input = document.getElementById('f_date');
+    input.value = plan.date || '';
+    input.onchange = ()=>{ plan.date = input.value; renderPreview(); };
+  }
+}
+
 function bindSimpleFields(){
   setupSubjectField();
+  setupDateField();
   simpleFields.forEach(key=>{
     const el = document.getElementById(fieldIdMap[key]);
     if(!el) return;
@@ -354,7 +470,7 @@ function formatDateDisplay(raw, useLang){
   if(!m) return raw; // not an ISO date (e.g. legacy free-text plan) — show as typed
   const y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
   if(useLang==='dz'){
-    return String(d).padStart(2,'0') + '/' + String(mo).padStart(2,'0') + '/' + y;
+    return toTibetanNumeral(String(d).padStart(2,'0')) + '/' + toTibetanNumeral(String(mo).padStart(2,'0')) + '/' + toTibetanNumeral(y);
   }
   return d + ordinalSuffix(d) + ' ' + MONTHS_EN[mo-1] + ', ' + y;
 }
