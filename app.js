@@ -35,7 +35,7 @@ const I18N = {
     secEnDetails:"Additional Details", lessonNumber:"Lesson Plan Number", period:"Period", pedagogy:"Pedagogy", teachingStrategies:"Teaching Strategies",
     secDzDetails:"Additional Details", venue:"Venue",
     secObjectives:"Objectives", addObjective:"Add objective",
-    secPrior:"Prior Knowledge", secResources:"Resources",
+    secPrior:"Prior Knowledge", secResources:"Resources", secResourcesDz:"Resources",
     secStages:"Lesson Stages", addPhase:"Add stage",
     secStagesDz:"Lesson Stages (table)", addRow:"Add row",
     secReflection:"Teaching Reflection",
@@ -52,7 +52,7 @@ const I18N = {
     savedToast:"Lesson plan saved", deletedToast:"Lesson plan deleted", duplicatedToast:"Duplicated",
     docUntitled:"Untitled Lesson", docSubject:"Subject", docClass:"Class", docDuration:"Duration", docStrand:"Strand",
     docCompetency:"Competency", docTopic:"Topic", docObjectives:"Objectives",
-    docPrior:"Prior Knowledge", docResources:"Resources", docDescription:"Lesson Description",
+    docPrior:"Prior Knowledge", docResources:"Resources", docResourcesDz:"Resources", docDescription:"Lesson Description",
     docLessonNo:"Lesson Plan No.", docPeriod:"Period", docDate:"Date", docPedagogy:"Pedagogy", docTeachingStrategies:"Teaching Strategies",
     docGNH:"GNH Principles and Values", docVenue:"Venue", docReflection:"Teaching Reflection",
     emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
@@ -67,7 +67,7 @@ const I18N = {
     secEnDetails:"གནད་དོན་ཁ་སྐོང་།", lessonNumber:"སློབ་སྟོན་འཆར་གཞི་ཨང་།", period:"ཐུན་ཚན།", pedagogy:"སློབ་སྟོན་ཐབས་ལམ།", teachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
     secDzDetails:"གནད་དོན་ཁ་སྐོང་།", venue:"ས་གོ",
     secObjectives:"ལས་དོན།", addObjective:"ལས་དོན་ཁ་སྐོང་།",
-    secPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", secResources:"མཐུན་རྐྱེན།",
+    secPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", secResources:"མཐུན་རྐྱེན།", secResourcesDz:"སློབ་སྟོན་མཁོ་ཆས་",
     secStages:"སློབ་སྟོན་གྱི་་རིམ་པ།", addPhase:"རིམ་པ་ཁ་སྐོང་།",
     secStagesDz:"སློབ་སྟོན་གྱི་རིམ་པ།", addRow:"དོན་ཚན་ཁ་སྐོང་།",
     secReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
@@ -84,9 +84,10 @@ const I18N = {
     savedToast:"འཆར་གཞི་འདི་Saveའབད་བཞག་ཡི།", deletedToast:"འཆར་གཞི་བཏོན་བཏང་ཡི།", duplicatedToast:"འདྲ་བཤུས་འབད་ཡི།",
     docUntitled:"མིང་མེད་པའི་སློབ་སྟོན།", docSubject:"ཆོས་ཚན།", docClass:"སློབ་རིམ།", docDuration:"དུས་ཡུན།", docStrand:"ཡན་ལག",
     docCompetency:"ལྕོགས་གྲུབ།", docTopic:"དོན་ཚན།", docObjectives:"ལས་དོན།",
-    docPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", docResources:"མཁོ་ཆས།", docDescription:"འགྲེལ་བཤད།",
+    docPrior:"སློབ་སྟོན་ཧེ་མའི་ཤེས་ཚད།", docResources:"མཁོ་ཆས།", docResourcesDz:"སློབ་སྟོན་མཁོ་ཆས་", docDescription:"འགྲེལ་བཤད།",
     docLessonNo:"སློབ་སྟོན་འཆར་གཞི་ཨང་།", docPeriod:"ཐུན་ཚན།", docDate:"སྤྱི་ཚེས།", docPedagogy:"སློབ་སྟོན་ཐབས་ལམ།", docTeachingStrategies:"སློབ་སྟོན་ཐབས་རིག",
     docGNH:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་ལྟ་བ་དང་གཞི་རྩ།", docVenue:"ས་གོ།", docReflection:"སློབ་སྟོན་ཞིབ་འཇུག།",
+    docPlanType:"ཉིན་བསྟར་སློབ་སྟོན་འཆར་གཞི།",
     emptyPreviewHint:"འཆར་གཞི་བཟོ་ནིའི་དོན་ལུ་ གནད་དོན་དང་འཁྲིལ་ ཐིག་ཁྲམ་བཀང་དགོ།",
     searchPlaceholder:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི་འཚོལ།",
     creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། "
@@ -132,7 +133,7 @@ function blankPlan(){
       {name:'Assessment / Closure', time:'5 mins', content:''}
     ],
     // Dzongkha-only
-    venue:'', reflection:'',
+    venue:'', reflection:'', resourcesDz:'',
     phasesDz:[
       {name:'', skillFocus:'', teacherActivity:'', studentActivity:'', time:'', assessment:''}
     ],
@@ -178,12 +179,12 @@ async function persistSaved(){
 
 /* ---------------- form <-> plan sync ---------------- */
 const simpleFields = ['title','className','duration','strand','teacher','competency','topic','gnh',
-  'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection'];
+  'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection','resourcesDz'];
 const fieldIdMap = {
   title:'f_title',className:'f_class',duration:'f_duration',strand:'f_strand',
   teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
   lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
-  prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection'
+  prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection',resourcesDz:'f_resourcesDz'
 };
 
 /* Subjects taught from PP through Class XII in the Bhutanese curriculum (REC) — English format only. */
@@ -371,10 +372,24 @@ function bindSimpleFields(){
     const el = document.getElementById(fieldIdMap[key]);
     if(!el) return;
     el.value = plan[key] || '';
-    const handler = ()=>{ plan[key] = el.value; renderPreview(); };
+    const handler = ()=>{ plan[key] = el.value; if(key==='lessonNumber') syncLessonNumberInputs(); renderPreview(); };
     if(el.tagName==='SELECT'){ el.onchange = handler; }
     else{ el.oninput = handler; }
   });
+  bindLessonNumberDz();
+}
+
+/* The Lesson Plan Number can be shown in both the English and Dzongkha
+   "Additional Details" panels via two separate inputs (f_lessonNumber and
+   f_lessonNumberDz) — keep them in sync so editing either one updates both. */
+function bindLessonNumberDz(){
+  const el = document.getElementById('f_lessonNumberDz');
+  if(!el) return;
+  el.value = plan.lessonNumber || '';
+  el.oninput = ()=>{ plan.lessonNumber = el.value; syncLessonNumberInputs(); renderPreview(); };
+}
+function syncLessonNumberInputs(){
+  document.querySelectorAll('.mirror-lessonNumber').forEach(el=>{ el.value = plan.lessonNumber || ''; });
 }
 
 function renderObjectives(){ renderStringList('objectivesList','objectives'); }
@@ -473,6 +488,16 @@ function formatDateDisplay(raw, useLang){
     return toTibetanNumeral(String(d).padStart(2,'0')) + '/' + toTibetanNumeral(String(mo).padStart(2,'0')) + '/' + toTibetanNumeral(y);
   }
   return d + ordinalSuffix(d) + ' ' + MONTHS_EN[mo-1] + ', ' + y;
+}
+
+/* ---------------- lesson number auto-numbering ---------------- */
+function nextLessonNumber(){
+  let max = 0;
+  savedPlans.forEach(p=>{
+    const n = parseInt(p.lessonNumber, 10);
+    if(!isNaN(n) && n>max) max = n;
+  });
+  return String(max+1);
 }
 
 /* ---------------- content parsing for preview/export ---------------- */
@@ -576,11 +601,13 @@ function previewDz(p){
 
   return `
     <div class="doc-ribbon">
+      <div class="doc-plantype">${escHtml(t('docPlanType'))}</div>
       <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
       <h2>${escHtml(p.title) || t('docUntitled')}</h2>
       <div class="sub">${escHtml(p.topic || '')}</div>
     </div>
     <div class="doc-body">
+      <div class="doc-lessonno"><b>${t('docLessonNo')}:</b> ${escHtml(p.lessonNumber)||'—'}</div>
       <div class="doc-meta">
         <div><b>${t('docClass')}:</b> ${escHtml(p.className)||'—'}</div>
         <div><b>${t('docSubject')}:</b> ${escHtml(p.subject)||'—'}</div>
@@ -598,6 +625,9 @@ function previewDz(p){
 
       <div class="doc-h">${t('docGNH')}</div>
       ${renderContentBlock(p.gnh)}
+
+      <div class="doc-h">${t('docResourcesDz')}</div>
+      ${renderContentBlock(p.resourcesDz)}
 
       <div class="doc-h">${t('secStagesDz')}</div>
       <table class="doc-dz-table">
@@ -638,6 +668,7 @@ async function savePlan(){
 
 function newPlan(){
   plan = blankPlan();
+  plan.lessonNumber = nextLessonNumber();
   editingExistingId = null;
   bindSimpleFields(); renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
 }
@@ -753,6 +784,7 @@ const WORD_STYLE = `
   table{ border-collapse:collapse; width:100%; margin-bottom:14px; }
   td{ border:1px solid #93C5FD; padding:10px 12px; vertical-align:top; }
   .hero{ background:#2563EB; color:#F7FAFF; padding:16px 18px; }
+  .hero .plan-type{ font-size:10.5pt; letter-spacing:.1em; text-transform:uppercase; font-weight:700; opacity:.92; margin-bottom:5px; }
   .hero h1{ font-family:Georgia,serif; font-size:20pt; margin:0 0 4px; }
   .hero .sub{ font-size:11pt; opacity:.9; }
   .meta-table td{ font-size:10.5pt; }
@@ -782,6 +814,7 @@ function wordHeader(p, L, isDz){
   </head>
   <body${isDz ? ' class="dz-doc"' : ''}>
     <div class="hero">
+      ${isDz && L.docPlanType ? `<div class="plan-type">${escHtml(L.docPlanType)}</div>` : ''}
       <h1>${escHtml(p.title)||L.docUntitled}</h1>
       <div class="sub">${escHtml(p.topic)||''}</div>
     </div>`;
@@ -803,7 +836,7 @@ function planToDocHtmlEN(p){
     </tr>
   `).join('');
 
-  return wordHeader(p, L) + `
+  return wordHeader(p, L, false) + `
     <p><b>${L.docLessonNo}:</b> ${escHtml(p.lessonNumber)||'—'}</p>
     <table class="meta-table">
       <tr><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td><td><b>${L.docPeriod}:</b> ${escHtml(p.period)||'—'}</td></tr>
@@ -864,6 +897,9 @@ function planToDocHtmlDZ(p){
     <div class="sec-title">${L.docGNH}</div>
     ${contentToWordHtml(p.gnh)}
 
+    <div class="sec-title">${L.docResourcesDz}</div>
+    ${contentToWordHtml(p.resourcesDz)}
+
     <div class="sec-title">${L.secStagesDz}</div>
     <table class="dz-table">
       <tr>
@@ -895,6 +931,7 @@ const PRINT_CSS = `${dzFontFaceCss()}
     color:#F7FAFF; padding:20px 24px 18px; position:relative; overflow:hidden;}
 .doc-ribbon::after{content:''; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%;
     background:radial-gradient(circle, rgba(255,255,255,.30), transparent 70%);}
+.doc-ribbon .doc-plantype{font-size:11px; letter-spacing:.13em; text-transform:uppercase; font-weight:700; opacity:.92; margin-bottom:8px;}
 .doc-ribbon .eyebrow{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; opacity:.8; margin-bottom:6px;}
 .doc-ribbon h2{margin:0 0 4px; font-size:16.5px; font-weight:600; color:#ffffff;}
 .doc-ribbon .sub{font-size:12.5px; opacity:.9;}
@@ -1032,6 +1069,7 @@ document.querySelectorAll('.add-link').forEach(btn=>{
 async function init(){
   document.getElementById('docPreview').innerHTML = `<div class="doc-body"><p class="doc-empty">${t('emptyPreviewHint')}</p></div>`;
   await loadSaved();
+  if(!plan.lessonNumber){ plan.lessonNumber = nextLessonNumber(); }
   bindSimpleFields();
   renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
   renderSaved();
