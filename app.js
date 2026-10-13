@@ -1034,7 +1034,7 @@ function setTheme(theme){
   const icon = document.getElementById('themeIcon');
   icon.innerHTML = theme==='dark' ? ICONS.moon : ICONS.sun;
 }
-let theme = 'dark';
+let theme = 'light';
 setTheme(theme);
 document.getElementById('themeToggle').onclick = ()=>{
   theme = theme==='dark' ? 'light' : 'dark';
