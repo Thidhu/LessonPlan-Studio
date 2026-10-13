@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-lang="en">
+<html lang="en" data-theme="light" data-lang="dz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -320,8 +320,8 @@
     </div>
     <div class="controls">
       <div class="toggle" id="langToggle">
-        <button data-val="en" class="active">EN</button>
-        <button data-val="dz">རྫོང་ཁ</button>
+        <button data-val="en">EN</button>
+        <button data-val="dz" class="active">རྫོང་ཁ</button>
       </div>
       <div class="icon-btn" id="themeToggle" title="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
@@ -557,7 +557,7 @@ const I18N = {
     searchPlaceholder:"འཆར་གཞི་འཚོལ་..."
   }
 };
-let lang = 'en';
+let lang = 'dz';
 function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
 function applyI18n(){
   document.documentElement.setAttribute('data-lang', lang);
@@ -1237,8 +1237,7 @@ async function init(){
   await loadSaved();
   if(!plan.lessonNumber){ plan.lessonNumber = nextLessonNumber(); }
   bindSimpleFields();
-  renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
-  renderSaved();
+  applyI18n();
 }
 init();
 
