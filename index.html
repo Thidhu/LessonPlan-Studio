@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-lang="en">
+<html lang="en" data-theme="light" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1200,7 +1200,7 @@ function setTheme(theme){
   const icon = document.getElementById('themeIcon');
   icon.innerHTML = theme==='dark' ? ICONS.moon : ICONS.sun;
 }
-let theme = 'dark';
+let theme = 'light';
 setTheme(theme);
 document.getElementById('themeToggle').onclick = ()=>{
   theme = theme==='dark' ? 'light' : 'dark';
