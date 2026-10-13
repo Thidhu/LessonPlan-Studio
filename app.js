@@ -93,7 +93,7 @@ const I18N = {
     creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། "
   }
 };
-let lang = 'en';
+let lang = 'dz';
 function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
 function applyI18n(){
   document.documentElement.setAttribute('data-lang', lang);
@@ -1071,8 +1071,7 @@ async function init(){
   await loadSaved();
   if(!plan.lessonNumber){ plan.lessonNumber = nextLessonNumber(); }
   bindSimpleFields();
-  renderObjectives(); renderPhases(); renderDzRows(); renderPreview();
-  renderSaved();
+  applyI18n();
 }
 init();
 
