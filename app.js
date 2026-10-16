@@ -57,7 +57,9 @@ const I18N = {
     docGNH:"GNH Principles and Values", docVenue:"Venue", docReflection:"Teaching Reflection",
     emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
     searchPlaceholder:"Search saved plans...",
-    creditLine:"From Lesson Plan Studio"
+    creditLine:"From Lesson Plan Studio",
+    addOwn:"+ Add", ownPlaceholder:"Type and press Enter", removeOpt:"Remove this option",
+    gnhDomains:"GNH Domains", gnhValues:"Values", today:"Today", tomorrow:"Tomorrow"
   },
   dz:{
     appTitle:"སློབ་སྟོན་འཆར་གཞི།", appTagline:"སློབ་སྟོན་པ་ཚུ་གི་དོན་ལུ་བཟོ་ཡོད་ཡོདཔ་ཨིན།",
@@ -90,7 +92,9 @@ const I18N = {
     docPlanType:"ཉིན་བསྟར་སློབ་སྟོན་འཆར་གཞི།",
     emptyPreviewHint:"འཆར་གཞི་བཟོ་ནིའི་དོན་ལུ་ གནད་དོན་དང་འཁྲིལ་ ཐིག་ཁྲམ་བཀང་དགོ།",
     searchPlaceholder:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི་འཚོལ།",
-    creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། "
+    creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། ",
+    addOwn:"+ ཁ་སྐོང་།", ownPlaceholder:"ཡིག་བཀོད་ཏེ་ Enter ཨེབ།", removeOpt:"གདམ་ཀ་འདི་བསུབ།",
+    gnhDomains:"དགའ་སྐྱིད་ཀྱི་ཁྱབ་ཁོངས་དགུ།", gnhValues:"རིན་ཐང་།", today:"དེ་རིང་།", tomorrow:"ནངས་པ།"
   }
 };
 let lang = 'dz';
@@ -121,7 +125,7 @@ function blankPlan(){
   return {
     id: 'lp_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7),
     format: lang,
-    title:'', subject:'', className:'', duration:'', date:'', strand:'', teacher:'',
+    title:'', subject:'', className:'', duration:'', date:isoLocal(new Date()), strand:'', teacher:'',
     competency:'', topic:'', gnh:'',
     objectives:[''],
     // English-only
@@ -178,19 +182,18 @@ async function persistSaved(){
 }
 
 /* ---------------- form <-> plan sync ---------------- */
-const simpleFields = ['title','className','duration','strand','teacher','competency','topic','gnh',
-  'lessonNumber','period','pedagogy','teachingStrategies','prior','resources','venue','reflection','resourcesDz'];
+/* Only these are typed. Everything else (class, duration, strand, GNH, period, pedagogy,
+   strategies, resources, venue, stage names/times, activities, assessment) is tap-to-select. */
+const simpleFields = ['title','teacher','competency','topic','lessonNumber','prior','reflection'];
 const fieldIdMap = {
-  title:'f_title',className:'f_class',duration:'f_duration',strand:'f_strand',
-  teacher:'f_teacher',competency:'f_competency',topic:'f_topic',gnh:'f_gnh',
-  lessonNumber:'f_lessonNumber',period:'f_period',pedagogy:'f_pedagogy',teachingStrategies:'f_teachingStrategies',
-  prior:'f_prior',resources:'f_resources',venue:'f_venue',reflection:'f_reflection',resourcesDz:'f_resourcesDz'
+  title:'f_title', teacher:'f_teacher', competency:'f_competency', topic:'f_topic',
+  lessonNumber:'f_lessonNumber', prior:'f_prior', reflection:'f_reflection'
 };
 
 /* Subjects taught from PP through Class XII in the Bhutanese curriculum (REC) — English format only. */
 const BHUTAN_SUBJECTS = [
   'Dzongkha','English','Mathematics','Additional Mathematics','Science','Physics','Chemistry','Biology',
-  'Environmental Studies (EVS)','Social Studies','History','Geography','Economics','Accountancy',
+  'DTI (Digital Technology and Innovation)','Environmental Studies (EVS)','Social Studies','History','Geography','Economics','Accountancy',
   'Business Studies / Commerce','Bhutan History, Civics & Citizenship Education',
   'ICT (Information & Communication Technology)','Computer Science','Agriculture / Food Science (AgFS)',
   'Arts Education','Health & Physical Education','Design and Technology','Media Studies','Statistics'
@@ -198,63 +201,59 @@ const BHUTAN_SUBJECTS = [
 const OTHER_SUBJECT_VALUE = '__other__';
 const DZONGKHA_SUBJECT_LABEL = 'རྫོང་ཁ།';
 
-/* The Dzongkha-format lesson plan is always for the Dzongkha subject itself,
-   so it gets a fixed pre-filled text field instead of a dropdown. The
-   English-format plan keeps the full subject dropdown. */
+/* Subject field.
+   - Dzongkha format: locked to Dzongkha only (shown as one fixed chip, no other options).
+   - English format: a dropdown of subjects (+ "Other" fallback). */
 function setupSubjectField(){
-  const existing = document.getElementById('f_subject');
-  if(!existing) return;
+  const wrap = document.getElementById('subjectWrap');
+  if(!wrap) return;
+  wrap.innerHTML = '';
 
   if(lang === 'dz'){
-    if(existing.tagName !== 'INPUT'){
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = 'f_subject';
-      existing.replaceWith(input);
-      const otherEl = document.getElementById('f_subject_other');
-      if(otherEl) otherEl.remove();
-    }
-    const input = document.getElementById('f_subject');
-    if(!plan.subject) plan.subject = DZONGKHA_SUBJECT_LABEL;
-    input.value = plan.subject;
-    input.oninput = ()=>{ plan.subject = input.value; renderPreview(); };
+    plan.subject = DZONGKHA_SUBJECT_LABEL;
+    const box = document.createElement('div');
+    box.className = 'chips';
+    const chip = document.createElement('span');
+    chip.className = 'chip on locked';
+    chip.textContent = DZONGKHA_SUBJECT_LABEL;
+    box.appendChild(chip);
+    wrap.appendChild(box);
     return;
   }
 
-  // English format: dropdown + "Other" fallback
-  let select = document.getElementById('f_subject');
-  if(!select || select.tagName !== 'SELECT'){
-    const oldInput = document.getElementById('f_subject');
-    select = document.createElement('select');
-    select.id = 'f_subject';
-    select.innerHTML = '<option value=""></option>' +
-      BHUTAN_SUBJECTS.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('') +
-      `<option value="${OTHER_SUBJECT_VALUE}">Other (please specify)</option>`;
-    oldInput.replaceWith(select);
+  // coming back from the Dzongkha format: map the Dzongkha label to the English subject
+  if(plan.subject === DZONGKHA_SUBJECT_LABEL) plan.subject = 'Dzongkha';
 
-    const otherInput = document.createElement('input');
-    otherInput.type = 'text';
-    otherInput.id = 'f_subject_other';
-    otherInput.placeholder = 'Enter subject name';
-    otherInput.style.marginTop = '8px';
-    otherInput.style.display = 'none';
-    select.insertAdjacentElement('afterend', otherInput);
+  const select = document.createElement('select');
+  select.id = 'f_subject';
+  select.innerHTML = '<option value=""></option>' +
+    BHUTAN_SUBJECTS.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('') +
+    `<option value="${OTHER_SUBJECT_VALUE}">Other (please specify)</option>`;
 
-    select.onchange = ()=>{
-      const other = document.getElementById('f_subject_other');
-      if(select.value === OTHER_SUBJECT_VALUE){
-        other.style.display = '';
-        other.value = '';
-        plan.subject = '';
-        other.focus();
-      } else {
-        other.style.display = 'none';
-        plan.subject = select.value;
-      }
-      renderPreview();
-    };
-    otherInput.oninput = ()=>{ plan.subject = otherInput.value; renderPreview(); };
-  }
+  const otherInput = document.createElement('input');
+  otherInput.type = 'text';
+  otherInput.id = 'f_subject_other';
+  otherInput.placeholder = 'Enter subject name';
+  otherInput.style.marginTop = '8px';
+  otherInput.style.display = 'none';
+
+  wrap.appendChild(select);
+  wrap.appendChild(otherInput);
+
+  select.onchange = ()=>{
+    if(select.value === OTHER_SUBJECT_VALUE){
+      otherInput.style.display = '';
+      otherInput.value = '';
+      plan.subject = '';
+      otherInput.focus();
+    } else {
+      otherInput.style.display = 'none';
+      plan.subject = select.value;
+    }
+    renderStrand();
+    renderPreview();
+  };
+  otherInput.oninput = ()=>{ plan.subject = otherInput.value; renderStrand(); renderPreview(); };
   syncSubjectField();
 }
 
@@ -278,6 +277,282 @@ function syncSubjectField(){
 const TIB_DIGITS = ['༠','༡','༢','༣','༤','༥','༦','༧','༨','༩'];
 function toTibetanNumeral(n){
   return String(n).split('').map(ch => /[0-9]/.test(ch) ? TIB_DIGITS[+ch] : ch).join('');
+}
+
+/* =====================================================================
+   OPTION LISTS  — edit these to change what appears as tap-to-select chips.
+   (Dzongkha wording below is a draft: please review and correct as needed.)
+   ===================================================================== */
+const dzMin = n => 'སྐར་མ་ ' + toTibetanNumeral(n);
+const STRANDS_EN = {
+  'English': ['Listening and Speaking','Reading and Literature','Writing','Grammar'],
+  'Mathematics': ['Number','Measurement','Geometry','Algebra','Data and Statistics'],
+  'Science': ['Living Things','Matter and Materials','Energy and Forces','Earth and Space'],
+  'DTI (Digital Technology and Innovation)': ['Digital Literacy','Safety and Ethics','Computational Thinking','Productivity Tools'],
+  'ICT (Information & Communication Technology)': ['Digital Literacy','Safety and Ethics','Computational Thinking','Productivity Tools']
+};
+const OPTIONS = {
+  en:{
+    classes:['PP','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'],
+    durations:['30 minutes','35 minutes','40 minutes','45 minutes','50 minutes','60 minutes'],
+    periods:['1st','2nd','3rd','4th','5th','6th','7th','8th','Extra'],
+    pedagogy:['Collaborative','Inquiry-based','Experiential','Place-based','Project-based','Problem-based','Learner-centred','Differentiated','Reflective'],
+    strategies:['Discussion','Group work','Pair work','Think-Pair-Share','Demonstration','Brainstorming','Role play','Storytelling','Question and answer','Gallery walk','Games','Presentation'],
+    resources:['Board and chalk','Textbook','Worksheet','Laptop / computer','Projector','Charts / posters','Flashcards','Real objects','Internet','Audio / video','Storybook','Dictionary'],
+    gnhDomains:['Psychological Wellbeing','Health','Education','Cultural Diversity and Resilience','Time Use','Good Governance','Community Vitality','Ecological Diversity and Resilience','Living Standards'],
+    gnhValues:['Mindfulness','Compassion','Respect','Honesty and Integrity','Responsibility','Cooperation','Interdependence','Gratitude','Tha-damtshig','Ley-judrey','Environmental Care'],
+    stageNames:['Introduction','Presentation','Learning Experience / Activities','Practice','Consolidation','Assessment / Closure'],
+    stageTimes:['5 mins','10 mins','15 mins','20 mins','25 mins','30 mins','35 mins'],
+    stems:['identify','define','explain','describe','list','compare','apply','demonstrate','solve','create','discuss','classify']
+      .map(v=>({label:v, text:'Students will be able to '+v+' |'}))
+  },
+  dz:{
+    classes:['སྔོན་འགྲོ།','དང་པོ།','གཉིས་པ།','གསུམ་པ།','བཞི་པ།','ལྔ་པ།','དྲུག་པ།','བདུན་པ།','བརྒྱད་པ།','དགུ་པ།','བཅུ་པ།','བཅུ་གཅིག་པ།','བཅུ་གཉིས་པ།'],
+    durations:[30,35,40,45,50,60].map(dzMin),
+    venues:['སློབ་ཁང་།','གློག་རིག་ཁང་།','དཔེ་མཛོད།','རྩེད་ཐང་།','སློབ་གྲྭའི་ཕྱི་ཁར།','ཚན་རིག་བརྟག་ཞིབ་ཁང་།'],
+    resources:['སློབ་དེབ།','ལས་ཡིག།','པར་རིས།','ཤོག་བྱང་།','ཚིག་མཛོད།','གློག་ཀླད།','ཡིག་ལེབ།'],
+    gnhDomains:['སེམས་ཀྱི་བདེ་སྐྱིད།','འཕྲོད་བསྟེན།','སློབ་གསོ།','རིག་གཞུང་གི་སྣ་ཚོགས་དང་བརྟན་ཚུགས།','དུས་ཚོད་ལག་ལེན།','སྲིད་འཛིན་ལེགས་ཤོམ།','ཡུལ་མི་ཚོགས་སྡེའི་འཚོ་སྟོབས།','མཐའ་འཁོར་གྱི་སྣ་ཚོགས་དང་བརྟན་ཚུགས།','འཚོ་བའི་ཚད་གཞི།'],
+    gnhValues:['དྲན་ཤེས།','སྙིང་རྗེ།','གུས་བརྩི།','དྲང་བདེན།','འགན་འཁུར།','མཉམ་འབྲེལ།','རྟེན་འབྲེལ།','དྲིན་ཤེས།','ཐ་དམ་ཚིག།','ལས་འབྲས།','མཐའ་འཁོར་སྲུང་སྐྱོབ།'],
+    strands:['ཉན་ནི་དང་ཁ་བཤད།','ཀློག་ནི།','འབྲི་ནི།','བརྡ་སྤྲོད།','སྒྲུང་དང་ཚིག་ཕྲེང་།'],
+    stageNames:['སྔོན་འགྲོ།','སློབ་སྟོན།','ལག་ལེན།','མཇུག་བསྡུ།','དབྱེ་ཞིབ།'],
+    stageTimes:[5,10,15,20,25,30,35,40].map(dzMin),
+    skill:['ཉན་ནི།','ཁ་བཤད་ནི།','ཀློག་ནི།','འབྲི་ནི།','བསམ་བློ་གཏོང་ནི།','མཉམ་འབྲེལ་འབད་ནི།'],
+    teacher:['འགྲེལ་བཤད་འབད་ནི།','ལྟ་སྟོན་འབད་ནི།','དྲི་བ་དྲི་ནི།','ཚོགས་སྡེ་བགོ་ནི།','སྒྲུང་བཤད་ནི།','ཀློག་སྟོན་ནི།','ལྟ་རྟོག་འབད་ནི།'],
+    student:['ཉན་ནི།','ལན་འདེབས་ནི།','ཀློག་ནི།','འབྲི་ནི།','ཚོགས་སྡེའི་ནང་གླེང་ནི།','ལག་ལེན་འབད་ནི།'],
+    assessment:['ལྟ་རྟོག།','དྲི་བ་དྲི་ནི།','ཁ་ཐོག་བརྟག་དཔྱད།','འབྲི་ཐོག་བརྟག་དཔྱད།','ལས་ཡིག།','ཚོགས་སྡེ་ལས་འགུལ།'],
+    stems:[{label:'སློབ་ཕྲུག་ཚུ་གིས་ … ཚུགསཔ་འོང་།', text:'སློབ་ཕྲུག་ཚུ་གིས་|ཚུགསཔ་འོང་།'}]
+  }
+};
+function opt(name){ return (OPTIONS[lang] && OPTIONS[lang][name]) || []; }
+function ck(name){ return name + ':' + lang; }   // custom-option key (kept per language)
+
+/* ---------------- custom options the teacher adds with "+ Add" (remembered) ---------------- */
+let customLib = {};
+async function loadCustom(){
+  try{
+    let raw = null;
+    if(hasArtifactStorage){ const r = await window.storage.get('lp_custom_options', false); raw = r && r.value; }
+    else raw = localStorage.getItem('lp_custom_options');
+    customLib = raw ? JSON.parse(raw) : {};
+  }catch(e){ customLib = {}; }
+}
+async function persistCustom(){
+  try{
+    const str = JSON.stringify(customLib);
+    if(hasArtifactStorage) await window.storage.set('lp_custom_options', str, false);
+    else localStorage.setItem('lp_custom_options', str);
+  }catch(e){ console.error('custom options storage error', e); }
+}
+
+/* ---------------- value helpers ---------------- */
+function lineText(l){ return l.trim().replace(/^[-•]\s+/,''); }
+function bulletLines(v){ return (v||'').split('\n').map(lineText).filter(Boolean); }
+function hasLine(v,label){ return bulletLines(v).includes(label); }
+function addLine(v,label){ return ((v && v.trim()) ? v.replace(/\s+$/,'') + '\n' : '') + '- ' + label; }
+function removeLine(v,label){ return (v||'').split('\n').filter(l=>lineText(l)!==label).join('\n'); }
+function splitList(v){ return (v||'').split(',').map(x=>x.trim()).filter(Boolean); }
+function isoLocal(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+/* ---------------- the chip group (tap to select) ----------------
+   cfg: { options[], key (custom-option key or null), isOn(label), toggle(label), extraOn() } */
+function chipGroup(host, cfg){
+  if(!host) return {render(){}};
+  host.classList.add('chips');
+  function render(){
+    host.innerHTML = '';
+    const lib = cfg.key ? (customLib[cfg.key] || []) : [];
+    const base = cfg.options.slice();
+    const libOnly = lib.filter(x=>!base.includes(x));
+    const known = base.concat(libOnly);
+    const extra = (cfg.extraOn ? cfg.extraOn() : []).filter(x=>!known.includes(x));
+
+    known.concat(extra).forEach(label=>{
+      const removable = libOnly.includes(label) || extra.includes(label);
+      const b = document.createElement('button');
+      b.type = 'button';
+      const on = cfg.isOn(label);
+      b.className = 'chip' + (on ? ' on' : '');
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.appendChild(document.createTextNode(label));
+      b.onclick = ()=>{ cfg.toggle(label); render(); };
+      if(removable){
+        const x = document.createElement('span');
+        x.className = 'chip-x'; x.textContent = '×'; x.title = t('removeOpt');
+        x.onclick = e=>{
+          e.stopPropagation();
+          if(libOnly.includes(label)){
+            customLib[cfg.key] = (customLib[cfg.key]||[]).filter(v=>v!==label);
+            persistCustom();
+          }
+          if(cfg.isOn(label)) cfg.toggle(label);
+          render();
+        };
+        b.appendChild(x);
+      }
+      host.appendChild(b);
+    });
+
+    if(cfg.key){
+      const add = document.createElement('button');
+      add.type = 'button'; add.className = 'chip chip-add'; add.textContent = t('addOwn');
+      add.onclick = ()=>{
+        const wrap = document.createElement('span');
+        wrap.className = 'chip-input';
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.placeholder = t('ownPlaceholder');
+        wrap.appendChild(inp);
+        add.replaceWith(wrap);
+        inp.focus();
+        let done = false;
+        const commit = ()=>{
+          if(done) return; done = true;
+          const val = inp.value.replace(/,/g,' ').trim();
+          if(val){
+            const all = cfg.options.concat(customLib[cfg.key] || []);
+            if(!all.includes(val)){
+              (customLib[cfg.key] = customLib[cfg.key] || []).push(val);
+              persistCustom();
+            }
+            if(!cfg.isOn(val)) cfg.toggle(val);
+          }
+          render();
+        };
+        inp.onkeydown = e=>{
+          if(e.key === 'Enter'){ e.preventDefault(); commit(); }
+          else if(e.key === 'Escape'){ done = true; render(); }
+        };
+        inp.onblur = ()=>setTimeout(commit, 120);
+      };
+      host.appendChild(add);
+    }
+  }
+  render();
+  return {render};
+}
+
+/* ---------------- chip configs for each kind of stored value ---------------- */
+// one value in plan[field] (class, duration, strand, venue, period)
+function singleCfg(field, options, key){
+  return { options, key,
+    isOn: l => plan[field] === l,
+    toggle: l => { plan[field] = (plan[field] === l) ? '' : l; renderPreview(); },
+    extraOn: () => (plan[field] && !options.includes(plan[field])) ? [plan[field]] : [] };
+}
+// several values joined with ", " (pedagogy, teaching strategies)
+function commaCfg(field, options, key){
+  return { options, key,
+    isOn: l => splitList(plan[field]).includes(l),
+    toggle: l => {
+      const a = splitList(plan[field]); const i = a.indexOf(l);
+      if(i >= 0) a.splice(i,1); else a.push(l);
+      plan[field] = a.join(', '); renderPreview();
+    },
+    extraOn: () => splitList(plan[field]).filter(x=>!options.includes(x)) };
+}
+// several values stored as "- item" lines (GNH, resources, activities, assessment)
+function linesCfg(get, set, options, key, knownExtra, showUnknown){
+  const known = options.concat(knownExtra || []);
+  return { options, key,
+    isOn: l => hasLine(get(), l),
+    toggle: l => { set(hasLine(get(), l) ? removeLine(get(), l) : addLine(get(), l)); },
+    extraOn: showUnknown ? (()=>bulletLines(get()).filter(x=>!known.includes(x))) : null };
+}
+// single value tied to a text box (stage name / time)
+function textCfg(get, set, options){
+  return { options, key:null,
+    isOn: l => get() === l,
+    toggle: l => { set(get() === l ? '' : l); renderPreview(); },
+    extraOn: null };
+}
+
+/* ---------------- render all the tap-to-select fields ---------------- */
+function renderStrand(){
+  const host = document.getElementById('c_strand');
+  if(!host) return;
+  if(lang === 'dz'){
+    chipGroup(host, singleCfg('strand', opt('strands'), ck('strand')));
+  } else {
+    const list = STRANDS_EN[plan.subject] || [];
+    chipGroup(host, singleCfg('strand', list, ck('strand') + ':' + (plan.subject || '')));
+  }
+}
+
+function renderGnh(){
+  const host = document.getElementById('c_gnh');
+  if(!host) return;
+  host.innerHTML = '';
+  host.classList.remove('chips');
+  const get = ()=>plan.gnh, set = v=>{ plan.gnh = v; renderPreview(); };
+  const domains = opt('gnhDomains'), values = opt('gnhValues');
+
+  const sub1 = document.createElement('div'); sub1.className = 'chip-sub'; sub1.textContent = t('gnhDomains');
+  const g1 = document.createElement('div');
+  const sub2 = document.createElement('div'); sub2.className = 'chip-sub'; sub2.textContent = t('gnhValues');
+  const g2 = document.createElement('div');
+  host.appendChild(sub1); host.appendChild(g1); host.appendChild(sub2); host.appendChild(g2);
+
+  chipGroup(g1, linesCfg(get, set, domains, null, null, false));
+  // second group also shows (and lets you remove) any older free-text GNH lines + "+ Add"
+  chipGroup(g2, linesCfg(get, set, values, ck('gnh'), domains, true));
+}
+
+function renderDateQuick(){
+  const host = document.getElementById('dateQuick');
+  if(!host) return;
+  host.innerHTML = '';
+  [[t('today'),0],[t('tomorrow'),1]].forEach(([label,off])=>{
+    const d = new Date(); d.setDate(d.getDate() + off);
+    const iso = isoLocal(d);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (plan.date === iso ? ' on' : '');
+    b.textContent = label;
+    b.onclick = ()=>{ plan.date = iso; setupDateField(); renderDateQuick(); renderPreview(); };
+    host.appendChild(b);
+  });
+}
+
+function renderChipFields(){
+  const $ = id => document.getElementById(id);
+  chipGroup($('c_class'), singleCfg('className', opt('classes'), null));
+  chipGroup($('c_duration'), singleCfg('duration', opt('durations'), ck('duration')));
+  renderStrand();
+  renderGnh();
+  renderDateQuick();
+  if(lang === 'dz'){
+    chipGroup($('c_venue'), singleCfg('venue', opt('venues'), ck('venue')));
+    chipGroup($('c_resourcesDz'), linesCfg(()=>plan.resourcesDz, v=>{ plan.resourcesDz = v; renderPreview(); }, opt('resources'), ck('resources'), null, true));
+  } else {
+    chipGroup($('c_period'), singleCfg('period', opt('periods'), null));
+    chipGroup($('c_pedagogy'), commaCfg('pedagogy', opt('pedagogy'), ck('pedagogy')));
+    chipGroup($('c_strategies'), commaCfg('teachingStrategies', opt('strategies'), ck('strategies')));
+    chipGroup($('c_resources'), linesCfg(()=>plan.resources, v=>{ plan.resources = v; renderPreview(); }, opt('resources'), ck('resources'), null, true));
+  }
+}
+
+/* When the language is switched, drop tap-selected values that belong to the other
+   language's option lists (so e.g. a Dzongkha strand doesn't linger in the English plan).
+   Typed text (title, topic, competency, objectives, notes) is never touched. */
+function pruneForLang(){
+  if(lang === 'en' && plan.subject === DZONGKHA_SUBJECT_LABEL) plan.subject = 'Dzongkha';
+  if(lang === 'dz') plan.subject = DZONGKHA_SUBJECT_LABEL;
+  const inLib = (k,v)=>(customLib[k]||[]).includes(v);
+  const single = (field, list, key)=>{ if(plan[field] && !list.includes(plan[field]) && !(key && inLib(key, plan[field]))) plan[field] = ''; };
+  const lines = (field, list, key)=>{
+    bulletLines(plan[field]).forEach(l=>{ if(!list.includes(l) && !(key && inLib(key,l))) plan[field] = removeLine(plan[field], l); });
+  };
+  single('className', opt('classes'), null);
+  single('duration', opt('durations'), ck('duration'));
+  lines('gnh', opt('gnhDomains').concat(opt('gnhValues')), ck('gnh'));
+  if(lang === 'dz'){
+    single('strand', opt('strands'), ck('strand'));
+    single('venue', opt('venues'), ck('venue'));
+    lines('resourcesDz', opt('resources'), ck('resources'));
+  } else {
+    single('strand', STRANDS_EN[plan.subject] || [], ck('strand') + ':' + (plan.subject || ''));
+    single('period', opt('periods'), null);
+    lines('resources', opt('resources'), ck('resources'));
+  }
 }
 
 function buildDzDateSelects(oldEl){
@@ -319,6 +594,7 @@ function buildDzDateSelects(oldEl){
   const commit = ()=>{
     const d = daySel.value, m = monthSel.value, y = yearSel.value;
     plan.date = (d && m && y) ? (y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0')) : '';
+    renderDateQuick();
     renderPreview();
   };
   daySel.onchange = commit; monthSel.onchange = commit; yearSel.onchange = commit;
@@ -361,7 +637,7 @@ function setupDateField(){
     if(existing.tagName !== 'INPUT'){ buildEnDateInput(existing); }
     const input = document.getElementById('f_date');
     input.value = plan.date || '';
-    input.onchange = ()=>{ plan.date = input.value; renderPreview(); };
+    input.onchange = ()=>{ plan.date = input.value; renderDateQuick(); renderPreview(); };
   }
 }
 
@@ -377,6 +653,7 @@ function bindSimpleFields(){
     else{ el.oninput = handler; }
   });
   bindLessonNumberDz();
+  renderChipFields();
 }
 
 /* The Lesson Plan Number can be shown in both the English and Dzongkha
@@ -392,7 +669,30 @@ function syncLessonNumberInputs(){
   document.querySelectorAll('.mirror-lessonNumber').forEach(el=>{ el.value = plan.lessonNumber || ''; });
 }
 
-function renderObjectives(){ renderStringList('objectivesList','objectives'); }
+function renderObjectives(){ renderStringList('objectivesList','objectives'); renderStems(); }
+
+/* Tap a starter to begin a new objective, then just finish the sentence. */
+function renderStems(){
+  const host = document.getElementById('objStems');
+  if(!host) return;
+  host.innerHTML = '';
+  opt('stems').forEach(st=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = st.label;
+    b.onclick = ()=>{
+      const caret = st.text.indexOf('|');
+      const val = st.text.replace('|','');
+      let idx = plan.objectives.findIndex(o=>!o.trim());
+      if(idx < 0){ plan.objectives.push(''); idx = plan.objectives.length - 1; }
+      plan.objectives[idx] = val;
+      renderStringList('objectivesList','objectives');
+      renderPreview();
+      const inp = document.querySelectorAll('#objectivesList input')[idx];
+      if(inp){ inp.focus(); inp.setSelectionRange(caret, caret); }
+    };
+    host.appendChild(b);
+  });
+}
 
 function renderStringList(containerId, key){
   const wrap = document.getElementById(containerId);
@@ -413,7 +713,7 @@ function renderStringList(containerId, key){
   });
 }
 
-/* English free-form phase cards */
+/* English free-form phase cards (name + time are tap-to-select) */
 function renderPhases(){
   const wrap = document.getElementById('phasesList');
   wrap.innerHTML = '';
@@ -426,17 +726,24 @@ function renderPhases(){
         <div class="field time-field"><label>${t('stageTime')}</label><input type="text" class="ph-time" value="${escAttr(ph.time)}" placeholder="10 mins"></div>
         <button class="mini-btn ph-del" type="button" title="${t('del')}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
       </div>
-      <div class="field"><label>${t('stageContent')}</label><textarea class="ph-content" style="min-height:110px" placeholder="- point one&#10;## Activity 1: ...&#10;1. question one">${escHtml(ph.content)}</textarea></div>
+      <div class="chips chips-tight ph-name-chips"></div>
+      <div class="chips chips-tight ph-time-chips" style="margin-top:8px"></div>
+      <div class="field" style="margin-top:12px"><label>${t('stageContent')}</label><textarea class="ph-content" style="min-height:110px" placeholder="- point one&#10;## Activity 1: ...&#10;1. question one">${escHtml(ph.content)}</textarea></div>
     `;
-    card.querySelector('.ph-name').oninput = e=>{ plan.phasesEn[i].name = e.target.value; renderPreview(); };
-    card.querySelector('.ph-time').oninput = e=>{ plan.phasesEn[i].time = e.target.value; renderPreview(); };
+    const nameIn = card.querySelector('.ph-name'), timeIn = card.querySelector('.ph-time');
+    const nameG = chipGroup(card.querySelector('.ph-name-chips'),
+      textCfg(()=>plan.phasesEn[i].name, v=>{ plan.phasesEn[i].name = v; nameIn.value = v; }, opt('stageNames')));
+    const timeG = chipGroup(card.querySelector('.ph-time-chips'),
+      textCfg(()=>plan.phasesEn[i].time, v=>{ plan.phasesEn[i].time = v; timeIn.value = v; }, opt('stageTimes')));
+    nameIn.oninput = e=>{ plan.phasesEn[i].name = e.target.value; nameG.render(); renderPreview(); };
+    timeIn.oninput = e=>{ plan.phasesEn[i].time = e.target.value; timeG.render(); renderPreview(); };
     card.querySelector('.ph-content').oninput = e=>{ plan.phasesEn[i].content = e.target.value; renderPreview(); };
     card.querySelector('.ph-del').onclick = ()=>{ plan.phasesEn.splice(i,1); renderPhases(); renderPreview(); };
     wrap.appendChild(card);
   });
 }
 
-/* Dzongkha colour-coded table-row editor */
+/* Dzongkha colour-coded table-row editor (everything is tap-to-select; the boxes stay open for extra notes) */
 function renderDzRows(){
   const wrap = document.getElementById('dzRowsList');
   wrap.innerHTML = '';
@@ -446,24 +753,42 @@ function renderDzRows(){
     card.innerHTML = `
       <div class="phase-head">
         <div class="field"><label>${t('colTopic')}</label><input type="text" class="dz-name" value="${escAttr(row.name)}"></div>
-        <div class="field time-field dz-tint dz-tint-time"><label>${t('colTime')}</label><input type="text" class="dz-time" value="${escAttr(row.time)}" placeholder="15 mins"></div>
+        <div class="field time-field dz-tint dz-tint-time"><label>${t('colTime')}</label><input type="text" class="dz-time" value="${escAttr(row.time)}" placeholder="${escAttr(dzMin(15))}"></div>
         <button class="mini-btn dz-del" type="button" title="${t('del')}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.trash}</svg></button>
       </div>
-      <div class="row2">
-        <div class="field dz-tint dz-tint-skill"><label>${t('colSkill')}</label><textarea class="dz-skill">${escHtml(row.skillFocus)}</textarea></div>
-        <div class="field dz-tint dz-tint-assess"><label>${t('colAssessment')}</label><textarea class="dz-assess">${escHtml(row.assessment)}</textarea></div>
+      <div class="chips chips-tight g-name"></div>
+      <div class="chips chips-tight g-time" style="margin-top:8px"></div>
+      <div class="row2" style="margin-top:12px">
+        <div class="field dz-tint dz-tint-skill"><label>${t('colSkill')}</label><div class="g-skill"></div><textarea class="dz-skill" style="margin-top:8px">${escHtml(row.skillFocus)}</textarea></div>
+        <div class="field dz-tint dz-tint-assess"><label>${t('colAssessment')}</label><div class="g-assess"></div><textarea class="dz-assess" style="margin-top:8px">${escHtml(row.assessment)}</textarea></div>
       </div>
       <div class="row2">
-        <div class="field dz-tint dz-tint-teacher"><label>${t('colTeacher')}</label><textarea class="dz-teacher">${escHtml(row.teacherActivity)}</textarea></div>
-        <div class="field dz-tint dz-tint-student"><label>${t('colStudent')}</label><textarea class="dz-student">${escHtml(row.studentActivity)}</textarea></div>
+        <div class="field dz-tint dz-tint-teacher"><label>${t('colTeacher')}</label><div class="g-teacher"></div><textarea class="dz-teacher" style="margin-top:8px">${escHtml(row.teacherActivity)}</textarea></div>
+        <div class="field dz-tint dz-tint-student"><label>${t('colStudent')}</label><div class="g-student"></div><textarea class="dz-student" style="margin-top:8px">${escHtml(row.studentActivity)}</textarea></div>
       </div>
     `;
-    card.querySelector('.dz-name').oninput = e=>{ plan.phasesDz[i].name = e.target.value; renderPreview(); };
-    card.querySelector('.dz-time').oninput = e=>{ plan.phasesDz[i].time = e.target.value; renderPreview(); };
-    card.querySelector('.dz-skill').oninput = e=>{ plan.phasesDz[i].skillFocus = e.target.value; renderPreview(); };
-    card.querySelector('.dz-assess').oninput = e=>{ plan.phasesDz[i].assessment = e.target.value; renderPreview(); };
-    card.querySelector('.dz-teacher').oninput = e=>{ plan.phasesDz[i].teacherActivity = e.target.value; renderPreview(); };
-    card.querySelector('.dz-student').oninput = e=>{ plan.phasesDz[i].studentActivity = e.target.value; renderPreview(); };
+    const R = ()=>plan.phasesDz[i];
+    const nameIn = card.querySelector('.dz-name'), timeIn = card.querySelector('.dz-time');
+
+    const nameG = chipGroup(card.querySelector('.g-name'),
+      textCfg(()=>R().name, v=>{ R().name = v; nameIn.value = v; }, opt('stageNames')));
+    const timeG = chipGroup(card.querySelector('.g-time'),
+      textCfg(()=>R().time, v=>{ R().time = v; timeIn.value = v; }, opt('stageTimes')));
+    nameIn.oninput = e=>{ R().name = e.target.value; nameG.render(); renderPreview(); };
+    timeIn.oninput = e=>{ R().time = e.target.value; timeG.render(); renderPreview(); };
+
+    // chips that add/remove "- item" lines in a box; typing in the box keeps them in sync
+    function bindArea(groupSel, areaSel, field, optName){
+      const ta = card.querySelector(areaSel);
+      const g = chipGroup(card.querySelector(groupSel),
+        linesCfg(()=>R()[field], v=>{ R()[field] = v; ta.value = v; renderPreview(); }, opt(optName), ck('dz_'+optName), null, false));
+      ta.oninput = e=>{ R()[field] = e.target.value; g.render(); renderPreview(); };
+    }
+    bindArea('.g-skill',   '.dz-skill',   'skillFocus',      'skill');
+    bindArea('.g-assess',  '.dz-assess',  'assessment',      'assessment');
+    bindArea('.g-teacher', '.dz-teacher', 'teacherActivity', 'teacher');
+    bindArea('.g-student', '.dz-student', 'studentActivity', 'student');
+
     card.querySelector('.dz-del').onclick = ()=>{ plan.phasesDz.splice(i,1); renderDzRows(); renderPreview(); };
     wrap.appendChild(card);
   });
@@ -1045,6 +1370,7 @@ document.getElementById('langToggle').querySelectorAll('button').forEach(btn=>{
   btn.onclick = ()=>{
     lang = btn.getAttribute('data-val');
     plan.format = lang;
+    pruneForLang();
     document.getElementById('langToggle').querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
     applyI18n();
   };
@@ -1069,6 +1395,7 @@ document.querySelectorAll('.add-link').forEach(btn=>{
 async function init(){
   document.getElementById('docPreview').innerHTML = `<div class="doc-body"><p class="doc-empty">${t('emptyPreviewHint')}</p></div>`;
   await loadSaved();
+  await loadCustom();
   if(!plan.lessonNumber){ plan.lessonNumber = nextLessonNumber(); }
   bindSimpleFields();
   applyI18n();
