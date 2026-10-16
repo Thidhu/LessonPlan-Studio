@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lesson Plan Studio</title>
+<title>SherigSpace Lesson Plan Studio</title>
+<link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
@@ -14,12 +15,16 @@
 
   <header class="top">
     <div class="brand">
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- LOGO SLOT: put your logo file next to index.html and name it logo.png.
+           Until it exists, the small flower mark below is shown instead. -->
+      <img id="brandLogo" class="brand-logo" src="logo.png" alt="SherigSpace" hidden
+           onload="this.hidden=false; document.getElementById('brandMark').style.display='none';">
+      <svg id="brandMark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
         <path d="M24 10c-3 4-3 6 0 8c3-2 3-4 0-8Z M24 30c-3 4-3 6 0 8c3-2 3-4 0-8Z M10 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M30 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M17 17c1 4 3 5 6 3c-1-4-3-5-6-3Z M31 17c-1 4-3 5-6 3c1-4 3-5 6-3Z M17 31c1-4 3-5 6-3c-1 4-3 5-6 3Z M31 31c-1-4-3-5-6-3c1 4 3 5 6 3Z" fill="currentColor"/>
       </svg>
       <div class="brand-text">
-        <h1 data-i18n="appTitle">Lesson Plan Studio</h1>
+        <h1 data-i18n="appTitle">SherigSpace Lesson Plan Studio</h1>
         <span data-i18n="appTagline">Crafted for the classroom</span>
       </div>
     </div>
