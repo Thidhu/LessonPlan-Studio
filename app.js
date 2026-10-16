@@ -28,7 +28,7 @@ injectDzFont();
 /* ---------------- i18n ---------------- */
 const I18N = {
   en:{
-    appTitle:"Lesson Plan Studio", appTagline:"Crafted for the classroom",
+    appTitle:"SherigSpace Lesson Plan Studio", appTagline:"Crafted for the classroom",
     tabNew:"New Plan", tabSaved:"Saved Plans",
     secBasics:"Lesson Details", lessonTitle:"Lesson Title", subject:"Subject", class:"Class", duration:"Duration",
     date:"Date", strand:"Strand", teacher:"Teacher", competency:"Competency", topic:"Topic", gnh:"GNH Principles and Values",
@@ -57,12 +57,12 @@ const I18N = {
     docGNH:"GNH Principles and Values", docVenue:"Venue", docReflection:"Teaching Reflection",
     emptyPreviewHint:"Fill in the form to see your lesson plan take shape here.",
     searchPlaceholder:"Search saved plans...",
-    creditLine:"From Lesson Plan Studio",
+    creditLine:"From SherigSpace Lesson Plan Studio",
     addOwn:"+ Add", ownPlaceholder:"Type and press Enter", removeOpt:"Remove this option",
     gnhDomains:"GNH Domains", gnhValues:"Values", today:"Today", tomorrow:"Tomorrow"
   },
   dz:{
-    appTitle:"སློབ་སྟོན་འཆར་གཞི།", appTagline:"སློབ་སྟོན་པ་ཚུ་གི་དོན་ལུ་བཟོ་ཡོད་ཡོདཔ་ཨིན།",
+    appTitle:"SherigSpace Lesson Plan Studio", appTagline:"སློབ་སྟོན་པ་ཚུ་གི་དོན་ལུ་བཟོ་ཡོད་ཡོདཔ་ཨིན།",
     tabNew:"འཆར་གཞི་གསརཔ།", tabSaved:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི།",
     secBasics:"སྤྱིར་བཏང་གནས་ཚུལ།", lessonTitle:"སློབ་སྟོན་གྱི་དོན་ཚན་ངོ་མ།", subject:"ཆོས་ཚན།", class:"སློབ་རིམ།", duration:"དུས་ཡུན།",
     date:"སྤྱི་ཚེས།", strand:"ཡན་ལག", teacher:"སློབ་དཔོན།", competency:"ལྕོགས་གྲུབ།", topic:"དོན་ཚན་/བརྗོད་དོན།", gnh:"རྒྱལ་ཡོངས་དགའ་སྐྱིད་དཔལ་འཛོམས་ཀྱི་གཞི་རྩ་/ལྟ་བ།",
@@ -93,8 +93,8 @@ const I18N = {
     emptyPreviewHint:"འཆར་གཞི་བཟོ་ནིའི་དོན་ལུ་ གནད་དོན་དང་འཁྲིལ་ ཐིག་ཁྲམ་བཀང་དགོ།",
     searchPlaceholder:"གསོག་འཇོག་འབད་ཡོད་མི་འཆར་གཞི་འཚོལ།",
     creditLine:"བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག། ",
-    addOwn:"+ ཁ་སྐོང་།", ownPlaceholder:"ཡིག་བཀོད་ཏེ་ Enter ཨེབ།", removeOpt:"གདམ་ཀ་འདི་བསུབ།",
-    gnhDomains:"དགའ་སྐྱིད་ཀྱི་ཁྱབ་ཁོངས་དགུ།", gnhValues:"རིན་ཐང་།", today:"དེ་རིང་།", tomorrow:"ནངས་པ།"
+    addOwn:"+ གཞན་/ཁ་སྐོང་།", ownPlaceholder:"ཡི་གུ་ Type འབད་ཞིན་ན་ Enter ཨེབ།", removeOpt:"གདམ་ཁ་རྐྱབ།།",
+    gnhDomains:"དོན་ཚན་དང་འབྲེལ་བའི་ གཞི་རྩ་གདམ་ཁ་རྐྱབ།", gnhValues:"བརྩི་མཐོང་།", today:"ད་རིས།", tomorrow:"ནངས་པ།"
   }
 };
 let lang = 'dz';
@@ -307,20 +307,20 @@ const OPTIONS = {
       .map(v=>({label:v, text:'Students will be able to '+v+' |'}))
   },
   dz:{
-    classes:['སྔོན་འགྲོ།','དང་པོ།','གཉིས་པ།','གསུམ་པ།','བཞི་པ།','ལྔ་པ།','དྲུག་པ།','བདུན་པ།','བརྒྱད་པ།','དགུ་པ།','བཅུ་པ།','བཅུ་གཅིག་པ།','བཅུ་གཉིས་པ།'],
+    classes:['བློ་གསར།','དང་པ།','གཉིས་པ།','གསུམ་པ།','བཞི་པ།','ལྔ་པ།','དྲུག་པ།','བདུན་པ།','བརྒྱད་པ།','དགུ་པ།','བཅུ་པ།','བཅུ་གཅིག་པ།','བཅུ་གཉིས་པ།'],
     durations:[30,35,40,45,50,60].map(dzMin),
-    venues:['སློབ་ཁང་།','གློག་རིག་ཁང་།','དཔེ་མཛོད།','རྩེད་ཐང་།','སློབ་གྲྭའི་ཕྱི་ཁར།','ཚན་རིག་བརྟག་ཞིབ་ཁང་།'],
-    resources:['སློབ་དེབ།','ལས་ཡིག།','པར་རིས།','ཤོག་བྱང་།','ཚིག་མཛོད།','གློག་ཀླད།','ཡིག་ལེབ།'],
-    gnhDomains:['སེམས་ཀྱི་བདེ་སྐྱིད།','འཕྲོད་བསྟེན།','སློབ་གསོ།','རིག་གཞུང་གི་སྣ་ཚོགས་དང་བརྟན་ཚུགས།','དུས་ཚོད་ལག་ལེན།','སྲིད་འཛིན་ལེགས་ཤོམ།','ཡུལ་མི་ཚོགས་སྡེའི་འཚོ་སྟོབས།','མཐའ་འཁོར་གྱི་སྣ་ཚོགས་དང་བརྟན་ཚུགས།','འཚོ་བའི་ཚད་གཞི།'],
-    gnhValues:['དྲན་ཤེས།','སྙིང་རྗེ།','གུས་བརྩི།','དྲང་བདེན།','འགན་འཁུར།','མཉམ་འབྲེལ།','རྟེན་འབྲེལ།','དྲིན་ཤེས།','ཐ་དམ་ཚིག།','ལས་འབྲས།','མཐའ་འཁོར་སྲུང་སྐྱོབ།'],
-    strands:['ཉན་ནི་དང་ཁ་བཤད།','ཀློག་ནི།','འབྲི་ནི།','བརྡ་སྤྲོད།','སྒྲུང་དང་ཚིག་ཕྲེང་།'],
+    venues:['སློབ་ཁང་།','གློག་རིག་ཁང་།','དཔེ་མཛོད།','རྩེད་ཐང་།','སློབ་གྲྭའི་ཕྱི་ཁར།','ཚན་རིག་བརྟག་ཞིབ་ཁང་།', 'ཡིག་ཚང་',],
+    resources:['སློབ་དེབ།','འཕར་གཟུགས་སྟོན་འཕྲུལ།','ལཱ་ཤོག།','པར་རིས།','ཤོག་བྱང་།','ཚིག་མཛོད།','གློག་རིག་ཀམ་པིའུ་ཊར།','ཤོག་ཁྲམ།'],
+    gnhDomains:['སེམས་ཀྱི་བདེ་སྐྱིད།','འཕྲོད་བསྟེན།','ཤེས་རིག་ཡོན་ཏན།','སྐད་ཡིག་དང་ལམ་སྲོལ།','དུས་ཚོད་ལག་ལེན།','མི་སྡེ་དང་མཐུན་ལམ།','བློ་སྤོབས།','མཐའ་འཁོར་གནས་སྟངས་ལུ་དག་སྣང་།','འཚོ་བའི་གནས་སྟངས།'],
+    gnhValues:['དྲན་ཤེས།','བྱམས་པ་དང་སྙིང་རྗེ།','གུས་བཀུར།','དྲང་བདེན།','འགན་འཁུར།','མཉམ་འབྲེལ།','རྟེན་འབྲེལ།','དྲིན་ཤེས།','ཐ་དམ་ཚིག།','ལས་འབྲས།','མཐའ་འཁོར་སྲུང་སྐྱོབ།'],
+    strands:['ཉན་སླབ།','འབྲི་ལྷག།','བརྡ་སྤྲོད།',],
     stageNames:['སྔོན་འགྲོ།','སློབ་སྟོན།','ལག་ལེན།','མཇུག་བསྡུ།','དབྱེ་ཞིབ།'],
     stageTimes:[5,10,15,20,25,30,35,40].map(dzMin),
-    skill:['ཉན་ནི།','ཁ་བཤད་ནི།','ཀློག་ནི།','འབྲི་ནི།','བསམ་བློ་གཏོང་ནི།','མཉམ་འབྲེལ་འབད་ནི།'],
-    teacher:['འགྲེལ་བཤད་འབད་ནི།','ལྟ་སྟོན་འབད་ནི།','དྲི་བ་དྲི་ནི།','ཚོགས་སྡེ་བགོ་ནི།','སྒྲུང་བཤད་ནི།','ཀློག་སྟོན་ནི།','ལྟ་རྟོག་འབད་ནི།'],
-    student:['ཉན་ནི།','ལན་འདེབས་ནི།','ཀློག་ནི།','འབྲི་ནི།','ཚོགས་སྡེའི་ནང་གླེང་ནི།','ལག་ལེན་འབད་ནི།'],
-    assessment:['ལྟ་རྟོག།','དྲི་བ་དྲི་ནི།','ཁ་ཐོག་བརྟག་དཔྱད།','འབྲི་ཐོག་བརྟག་དཔྱད།','ལས་ཡིག།','ཚོགས་སྡེ་ལས་འགུལ།'],
-    stems:[{label:'སློབ་ཕྲུག་ཚུ་གིས་ … ཚུགསཔ་འོང་།', text:'སློབ་ཕྲུག་ཚུ་གིས་|ཚུགསཔ་འོང་།'}]
+    skill:['ཉན་ནིའི་རིག་རྩལ།','སླབ་ནིའི་རིག་རྩལ།','བྲི་ནིའི་རིག་རྩལ།','ལྷག་ནིའི་རིག་རྩལ','བསམ་ཞིབ།','མཉམ་འབྲེལ་འབད་ནི།'],
+    teacher:['འགྲེལ་བཤད་རྐྱབ་ནི།','བཤད་པ་རྐྱབ་ནི།','དྲི་བ་དྲི་ནི།','སྡེ་ཚན་བཟོ་ནི།','དཔེ་སྟོན་འབད་ནི།','ལྷག་བྱིན་ནི།','ལྟ་རྟོག་འབད་ནི།'],
+    student:['ཉན་ནི།','ལན་སླབ་ནི།','ལྷག་ནི།','བྲི་ནི།','སྡེ་ཚན་ནང་བཅའ་མར་གཏོགས་ནི།','བསམ་འཆར་བཤད་ནི།','བསམ་ཞིབ་འདབ་ནི།','གྲོས་བསྡུར་འབད་ནི།'],
+    assessment:['ལྟ་རྟོག།','དྲི་བ་དྲི་ནི།','སྤྱན་ཞུ་འབད་བཅུག་ནི།','འབྲི་བཅུག་ནི།','སྡེ་ཚན་སྦྱོང་ལཱ།'],
+    stems:[{label:'སློབ་སྟོན་འདི་མཇུག་བསྡུཝ་ད་ སློབ་ཕྲུག་རེ་རེ་བཞིན་དུ་གིས་', text:'སློབ་ཕྲུག་ཚུ་གིས་|ཚུགསཔ་འོང་།'}]
   }
 };
 function opt(name){ return (OPTIONS[lang] && OPTIONS[lang][name]) || []; }
@@ -832,18 +832,29 @@ function linkify(text){
 function inlineBold(text){
   return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
-function renderContentBlock(raw){
+// Joins several selected items into one flowing line (English: commas; Dzongkha: shad "།")
+function joinInline(items, fmt){
+  if(fmt === 'dz') return items.map(s=>s.replace(/[།\s]+$/,'')).join('། ') + '།';
+  return items.join(', ');
+}
+function renderContentBlock(raw, inlineFmt){
   if(!raw || !raw.trim()) return `<p class="doc-empty">—</p>`;
   const lines = raw.split('\n');
   let html = ''; let listMode = null; // null | 'ul' | 'ol'
+  let run = [];
   const closeList = ()=>{ if(listMode){ html += listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
+  const flushRun = ()=>{ if(run.length){ html += `<p class="doc-p doc-inline">${inlineBold(linkify(escHtml(joinInline(run, inlineFmt))))}</p>`; run=[]; } };
   lines.forEach(line=>{
     const trimmed = line.trim();
+    const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('• ');
+    if(!(inlineFmt && isBullet)) flushRun();
     if(trimmed === ''){ closeList(); return; }
     if(trimmed.startsWith('## ')){
       closeList();
       html += `<div class="doc-sub">${inlineBold(linkify(escHtml(trimmed.slice(3))))}</div>`;
-    } else if(trimmed.startsWith('- ') || trimmed.startsWith('• ')){
+    } else if(isBullet && inlineFmt){
+      closeList(); run.push(trimmed.slice(2));
+    } else if(isBullet){
       if(listMode!=='ul'){ closeList(); html += '<ul class="doc-ul">'; listMode='ul'; }
       html += `<li>${inlineBold(linkify(escHtml(trimmed.slice(2))))}</li>`;
     } else if(/^\d+[.)]\s+/.test(trimmed)){
@@ -854,7 +865,7 @@ function renderContentBlock(raw){
       html += `<p class="doc-p">${inlineBold(linkify(escHtml(trimmed)))}</p>`;
     }
   });
-  closeList();
+  flushRun(); closeList();
   return html;
 }
 function renderBulletArray(arr){
@@ -862,6 +873,21 @@ function renderBulletArray(arr){
   if(items.length===0) return `<p class="doc-empty">—</p>`;
   return `<ul class="doc-ul">${items.map(i=>`<li>${inlineBold(linkify(escHtml(i)))}</li>`).join('')}</ul>`;
 }
+
+/* ---------------- logo (optional: logo.png next to index.html) ---------------- */
+let LOGO_SRC = '';
+(function loadLogo(){
+  const im = new Image();
+  im.onload = ()=>{
+    try{
+      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      c.getContext('2d').drawImage(im,0,0); LOGO_SRC = c.toDataURL('image/png');   // works in print tab too
+    }catch(e){ LOGO_SRC = 'logo.png'; }
+    if(typeof renderPreview === 'function') renderPreview();
+  };
+  im.src = 'logo.png';
+})();
+function logoTag(){ return LOGO_SRC ? `<img class="doc-logo" src="${LOGO_SRC}" alt="">` : ''; }
 
 /* ---------------- preview ---------------- */
 function renderPreview(){
@@ -871,6 +897,7 @@ function renderPreview(){
 function previewEn(p){
   return `
     <div class="doc-ribbon">
+      ${logoTag()}
       <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
       <h2>${escHtml(p.title) || t('docUntitled')}</h2>
       <div class="sub">${escHtml(p.topic || '')}</div>
@@ -892,7 +919,7 @@ function previewEn(p){
       ${renderContentBlock(p.competency)}
 
       <div class="doc-h">${t('docGNH')}</div>
-      ${renderContentBlock(p.gnh)}
+      ${renderContentBlock(p.gnh, 'en')}
 
       <div class="doc-h">${t('docObjectives')}</div>
       ${renderBulletArray(p.objectives)}
@@ -901,7 +928,7 @@ function previewEn(p){
       ${renderContentBlock(p.prior)}
 
       <div class="doc-h">${t('docResources')}</div>
-      ${renderContentBlock(p.resources)}
+      ${renderContentBlock(p.resources, 'en')}
 
       ${p.phasesEn.map(ph=>`
         <div class="doc-h"><span>${escHtml(ph.name)||'—'}</span>${ph.time? `<span class="time">${escHtml(ph.time)}</span>`:''}</div>
@@ -916,16 +943,17 @@ function previewDz(p){
   const tableRows = (rows.length? rows : p.phasesDz).map(r=>`
     <tr>
       <td class="dzc-0"><strong>${escHtml(r.name)||'—'}</strong></td>
-      <td class="dzc-1">${renderContentBlock(r.skillFocus)}</td>
-      <td class="dzc-2">${renderContentBlock(r.teacherActivity)}</td>
-      <td class="dzc-3">${renderContentBlock(r.studentActivity)}</td>
+      <td class="dzc-1">${renderContentBlock(r.skillFocus, 'dz')}</td>
+      <td class="dzc-2">${renderContentBlock(r.teacherActivity, 'dz')}</td>
+      <td class="dzc-3">${renderContentBlock(r.studentActivity, 'dz')}</td>
       <td class="dzc-4">${escHtml(r.time)||'—'}</td>
-      <td class="dzc-5">${renderContentBlock(r.assessment)}</td>
+      <td class="dzc-5">${renderContentBlock(r.assessment, 'dz')}</td>
     </tr>
   `).join('');
 
   return `
     <div class="doc-ribbon">
+      ${logoTag()}
       <div class="doc-plantype">${escHtml(t('docPlanType'))}</div>
       <div class="eyebrow">${escHtml(p.subject || t('subject'))} · ${escHtml(p.className? (t('class')+' '+p.className): '')}</div>
       <h2>${escHtml(p.title) || t('docUntitled')}</h2>
@@ -949,10 +977,10 @@ function previewDz(p){
       ${renderBulletArray(p.objectives)}
 
       <div class="doc-h">${t('docGNH')}</div>
-      ${renderContentBlock(p.gnh)}
+      ${renderContentBlock(p.gnh, 'dz')}
 
       <div class="doc-h">${t('docResourcesDz')}</div>
-      ${renderContentBlock(p.resourcesDz)}
+      ${renderContentBlock(p.resourcesDz, 'dz')}
 
       <div class="doc-h">${t('secStagesDz')}</div>
       <table class="doc-dz-table">
@@ -1081,19 +1109,23 @@ function renderSaved(){
 }
 
 /* ---------------- word export ---------------- */
-function contentToWordHtml(raw){
+function contentToWordHtml(raw, inlineFmt){
   if(!raw || !raw.trim()) return '<p>—</p>';
-  const lines = raw.split('\n'); let html=''; let listMode=null;
+  const lines = raw.split('\n'); let html=''; let listMode=null; let run=[];
   const closeList = ()=>{ if(listMode){ html+= listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
+  const flushRun = ()=>{ if(run.length){ html+=`<p>${inlineBold(escHtml(joinInline(run, inlineFmt)))}</p>`; run=[]; } };
   lines.forEach(line=>{
     const trimmed = line.trim();
+    const isBullet = trimmed.startsWith('- ')||trimmed.startsWith('• ');
+    if(!(inlineFmt && isBullet)) flushRun();
     if(trimmed===''){ closeList(); return; }
     if(trimmed.startsWith('## ')){ closeList(); html+=`<div class="sub-h">${inlineBold(escHtml(trimmed.slice(3)))}</div>`; }
-    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
+    else if(isBullet && inlineFmt){ closeList(); run.push(trimmed.slice(2)); }
+    else if(isBullet){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
     else if(/^\d+[.)]\s+/.test(trimmed)){ if(listMode!=='ol'){closeList();html+='<ol>';listMode='ol';} html+=`<li>${inlineBold(escHtml(trimmed.replace(/^\d+[.)]\s+/,'')))}</li>`; }
     else { closeList(); html+=`<p>${inlineBold(escHtml(trimmed))}</p>`; }
   });
-  closeList();
+  flushRun(); closeList();
   return html;
 }
 function bulletArrayToWordHtml(arr){
@@ -1173,7 +1205,7 @@ function planToDocHtmlEN(p){
     ${contentToWordHtml(p.competency)}
 
     <div class="sec-title">${L.docGNH}</div>
-    ${contentToWordHtml(p.gnh)}
+    ${contentToWordHtml(p.gnh, 'en')}
 
     <div class="sec-title">${L.docObjectives}</div>
     ${bulletArrayToWordHtml(p.objectives)}
@@ -1182,7 +1214,7 @@ function planToDocHtmlEN(p){
     ${contentToWordHtml(p.prior)}
 
     <div class="sec-title">${L.docResources}</div>
-    ${contentToWordHtml(p.resources)}
+    ${contentToWordHtml(p.resources, 'en')}
 
     <div class="sec-title">${L.secStages}</div>
     <table>${phasesHtml}</table>
@@ -1199,11 +1231,11 @@ function planToDocHtmlDZ(p){
   const tableRows = src.map(r=>`
     <tr>
       <td class="c0"><strong>${escHtml(r.name)||'—'}</strong></td>
-      <td class="c1">${contentToWordHtml(r.skillFocus)}</td>
-      <td class="c2">${contentToWordHtml(r.teacherActivity)}</td>
-      <td class="c3">${contentToWordHtml(r.studentActivity)}</td>
+      <td class="c1">${contentToWordHtml(r.skillFocus, 'dz')}</td>
+      <td class="c2">${contentToWordHtml(r.teacherActivity, 'dz')}</td>
+      <td class="c3">${contentToWordHtml(r.studentActivity, 'dz')}</td>
       <td class="c4">${escHtml(r.time)||'—'}</td>
-      <td class="c5">${contentToWordHtml(r.assessment)}</td>
+      <td class="c5">${contentToWordHtml(r.assessment, 'dz')}</td>
     </tr>
   `).join('');
 
@@ -1220,10 +1252,10 @@ function planToDocHtmlDZ(p){
     ${bulletArrayToWordHtml(p.objectives)}
 
     <div class="sec-title">${L.docGNH}</div>
-    ${contentToWordHtml(p.gnh)}
+    ${contentToWordHtml(p.gnh, 'dz')}
 
     <div class="sec-title">${L.docResourcesDz}</div>
-    ${contentToWordHtml(p.resourcesDz)}
+    ${contentToWordHtml(p.resourcesDz, 'dz')}
 
     <div class="sec-title">${L.secStagesDz}</div>
     <table class="dz-table">
@@ -1257,6 +1289,7 @@ const PRINT_CSS = `${dzFontFaceCss()}
 .doc-ribbon::after{content:''; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%;
     background:radial-gradient(circle, rgba(255,255,255,.30), transparent 70%);}
 .doc-ribbon .doc-plantype{font-size:11px; letter-spacing:.13em; text-transform:uppercase; font-weight:700; opacity:.92; margin-bottom:8px;}
+.doc-logo{height:38px; width:auto; margin:0 0 10px; display:block; background:#fff; padding:4px 8px; border-radius:8px;}
 .doc-ribbon .eyebrow{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; opacity:.8; margin-bottom:6px;}
 .doc-ribbon h2{margin:0 0 4px; font-size:16.5px; font-weight:600; color:#ffffff;}
 .doc-ribbon .sub{font-size:12.5px; opacity:.9;}
