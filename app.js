@@ -4,7 +4,7 @@
    Place the font file next to index.html/app.js and name it "DDCJoyig.ttf"
    (or edit DZ_FONT_FILENAME below to match whatever filename you upload). */
 const DZ_FONT_FAMILY = 'DDC Joyig';
-const DZ_FONT_FILENAME = 'DDC Joyig.ttf';
+const DZ_FONT_FILENAME = 'DDC_Joyig.woff2';
 const DZ_FONT_URL = (function(){
   try{ return new URL(DZ_FONT_FILENAME, document.baseURI).href; }catch(e){ return DZ_FONT_FILENAME; }
 })();
