@@ -11,7 +11,7 @@ html[data-theme="light"]{
     --accent-b: #38BDF8;
     --accent-grad: linear-gradient(120deg, #2563EB, #38BDF8);
     --shadow: 0 20px 50px rgba(37,99,235,0.14);
-    --field-bg: rgba(233, 237, 248, 0.6);
+    --field-bg: rgba(255,255,255,0.60);
     --field-border: rgba(37,99,235,0.14);
     --field-focus: #2563EB;
     --text-on-accent: #F7FAFF;
