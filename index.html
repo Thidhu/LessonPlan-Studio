@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SherigSpace Lesson Plan Studio</title>
-<link rel="icon" href="logo.png">
+<title>Lesson Plan Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -15,16 +14,12 @@
 
   <header class="top">
     <div class="brand">
-      <!-- LOGO SLOT: put your logo file next to index.html and name it logo.png.
-           Until it exists, the small flower mark below is shown instead. -->
-      <img id="brandLogo" class="brand-logo" src="logo.png" alt="SherigSpace" hidden
-           onload="this.hidden=false; document.getElementById('brandMark').style.display='none';">
-      <svg id="brandMark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="1.4" opacity="0.5"/>
         <path d="M24 10c-3 4-3 6 0 8c3-2 3-4 0-8Z M24 30c-3 4-3 6 0 8c3-2 3-4 0-8Z M10 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M30 24c4-3 6-3 8 0c-2 3-4 3-8 0Z M17 17c1 4 3 5 6 3c-1-4-3-5-6-3Z M31 17c-1 4-3 5-6 3c1-4 3-5 6-3Z M17 31c1-4 3-5 6-3c-1 4-3 5-6 3Z M31 31c-1-4-3-5-6-3c1 4 3 5 6 3Z" fill="currentColor"/>
       </svg>
       <div class="brand-text">
-        <h1 data-i18n="appTitle">SherigSpace Lesson Plan Studio</h1>
+        <h1 data-i18n="appTitle">Lesson Plan Studio</h1>
         <span data-i18n="appTagline">Crafted for the classroom</span>
       </div>
     </div>
@@ -42,6 +37,8 @@
   <div class="tabs">
     <button class="tab active" data-tab="new" data-i18n="tabNew">New Plan</button>
     <button class="tab" data-tab="saved" data-i18n="tabSaved">Saved Plans</button>
+    <button class="tab" data-tab="syllabus" data-i18n="tabSyllabus">Syllabus</button>
+    <button class="tab" data-tab="week" data-i18n="tabWeek">Week Planner</button>
   </div>
 
   <!-- ============ NEW PLAN VIEW ============ -->
@@ -51,7 +48,12 @@
       <!-- FORM -->
       <div class="glass" id="formPane">
 
+        <div class="chip-sub" data-i18n="templates">Templates</div>
+        <div id="tplBar" class="chips chips-tight" style="margin-bottom:14px"></div>
+
         <div class="section-title"><span data-i18n="secBasics">Lesson Details</span><span class="rule"></span></div>
+
+        <div id="synPick" class="chips chips-tight" style="margin-bottom:12px;display:none"></div>
 
         <div class="field">
           <label data-i18n="lessonTitle">Lesson Title</label>
@@ -98,6 +100,7 @@
         <div class="field">
           <label data-i18n="competency">Competency</label>
           <textarea id="f_competency" placeholder="Exhibit good practices of..."></textarea>
+          <div id="libComp" class="chips chips-tight" style="margin-top:8px;display:none"></div>
         </div>
 
         <!-- GNH principles: tap to select (shown as options, not a dropdown) -->
@@ -150,6 +153,7 @@
 
         <div class="section-title"><span data-i18n="secObjectives">Objectives</span><span class="rule"></span></div>
         <div id="objStems" class="chips chips-tight" style="margin-bottom:10px"></div>
+        <div id="libObj" class="chips chips-tight" style="margin-bottom:10px;display:none"></div>
         <div id="objectivesList"></div>
         <button class="add-link" data-add="objectives">+ <span data-i18n="addObjective">Add objective</span></button>
 
@@ -186,9 +190,17 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
             <span data-i18n="save">Save Plan</span>
           </button>
+          <button class="btn btn-ghost" id="btnNext">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            <span data-i18n="nextLesson">Next lesson</span>
+          </button>
           <button class="btn btn-ghost" id="btnExport">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
             <span data-i18n="exportWord">Export to Word</span>
+          </button>
+          <button class="btn btn-ghost" id="btnImport">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+            <span data-i18n="importBtn">Import</span>
           </button>
           <button class="btn btn-ghost" id="btnPrint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
@@ -214,14 +226,56 @@
   <div id="view-saved" style="display:none">
     <div class="saved-toolbar">
       <input type="text" id="searchSaved" placeholder="Search saved plans...">
+      <div class="toolbar-btns">
+        <button class="btn btn-ghost" id="btnSelAll"><span data-i18n="selectAll">Select all</span></button>
+        <button class="btn btn-primary" id="btnExportSel"><span data-i18n="exportSel">Export selected as one Word file</span></button>
+        <button class="btn btn-ghost" id="btnBackup"><span data-i18n="backup">Backup</span></button>
+        <button class="btn btn-ghost" id="btnImportSaved"><span data-i18n="importBtn">Import</span></button>
+      </div>
     </div>
     <div id="savedGrid" class="card-grid"></div>
+  </div>
+
+  <!-- ============ SYLLABUS VIEW ============ -->
+  <div id="view-syllabus" style="display:none">
+    <div class="glass narrow">
+      <div class="section-title" style="margin-top:0"><span data-i18n="tabSyllabus">Syllabus</span><span class="rule"></span></div>
+      <div id="synStatus" style="margin-bottom:12px"></div>
+      <div class="field"><label data-i18n="class">Class</label><div id="synClass"></div></div>
+      <div class="field" id="synSubjectWrap"><label data-i18n="subject">Subject</label><select id="synSubject"></select></div>
+      <div class="syn-add">
+        <input type="text" id="synTopic" placeholder="Topic / unit">
+        <input type="text" id="synStrand" placeholder="Strand (optional)">
+        <button class="btn btn-primary" id="synAdd" type="button"><span data-i18n="addTopicBtn">Add topic</span></button>
+      </div>
+      <div class="btn-row" style="margin:12px 0 4px">
+        <button class="btn btn-ghost" id="synImport" type="button"><span data-i18n="importSyl">Import list (CSV, Excel, Word, text)</span></button>
+        <button class="btn btn-ghost" id="synCsv" type="button"><span data-i18n="exportCsv">Export CSV</span></button>
+      </div>
+      <div id="synList"></div>
+    </div>
+  </div>
+
+  <!-- ============ WEEK PLANNER VIEW ============ -->
+  <div id="view-week" style="display:none">
+    <div class="glass narrow">
+      <div class="section-title" style="margin-top:0"><span data-i18n="tabWeek">Week Planner</span><span class="rule"></span></div>
+      <div class="phase-hint" data-i18n="weekHint">Tap the periods you teach.</div>
+      <div id="weekSummary" class="week-summary"></div>
+      <div class="field" style="max-width:240px"><label data-i18n="weekStart">Week starting (Monday)</label><input type="date" id="weekStart"></div>
+      <div id="weekGrid"></div>
+      <label class="check-row"><input type="checkbox" id="weekSyl" checked> <span data-i18n="weekFill">Fill topics from the syllabus</span></label>
+      <div class="btn-row"><button class="btn btn-primary" id="btnWeekGo" type="button"><span data-i18n="weekGo">Create draft plans</span></button></div>
+      <div id="weekResult"></div>
+    </div>
   </div>
 
 </div>
 
 <div class="toast" id="toast"></div>
+<input type="file" id="fileImport" accept=".json,.doc,.docx,.html,.htm,.txt,.md" multiple hidden>
+<input type="file" id="synFile" accept=".csv,.xlsx,.xls,.txt,.md,.docx" hidden>
 
-<script src="app.js"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
