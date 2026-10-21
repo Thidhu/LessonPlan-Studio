@@ -44,7 +44,7 @@ const I18N = {
     save:"Save Plan", exportWord:"Export to Word", printBtn:"Print", newBtn:"Clear",
     preview:"Preview",
     stageName:"Stage name", stageTime:"Time", stageContent:"Content",
-    colTopic:"Main Topic / Stage", colSkill:"Skill & Objective Focus", colTeacher:"Teacher's Activity & Method",
+    colTopic:"Main Topic / Stage", colSkill:"Skill & Objective Focus", colTeacher:"Teacher's Activity & Method", mediaHead:"Links & images", pasteLinkPh:"Paste a link (https://…)", linkLabelPh:"Name for the link (optional)", addLink:"Add link", addImage:"Upload image", imgCapPh:"Caption (optional)", removeMedia:"Remove", badLink:"That does not look like a web link. Please check it.", imgBad:"Could not use that file. Please choose a photo (JPG, PNG, WEBP).", imgLimit:"You can add up to 6 images in one activity.", storageFull:"Browser storage is full. Remove some images or export a backup, then try again.",
     colStudent:"Student's Activity / Learning Experience", colTime:"Duration", colAssessment:"Assessment Tools & Method",
     savedEmpty:"No saved lesson plans yet — save one from “New Plan” to see it here.",
     open:"Open", duplicate:"Duplicate", del:"Delete", exportShort:"Word",
@@ -95,7 +95,7 @@ const I18N = {
     save:"Save།", exportWord:"Wordན་ལུ་བཏོན།", printBtn:"དཔར་བསྐྲུན།", newBtn:"གསར་བསྐྲུན།",
     preview:"སྔོན་ལྟ།",
     stageName:"གནས་རིམ།", stageTime:"དུས་ཚོད།", stageContent:"ནང་དོན།",
-    colTopic:"དོན་ཚན་གཙོ་བོ།", colSkill:"རིག་རྩལ་དང་དམིགས་གཏད།", colTeacher:"སློབ་དཔོན་གྱི་སྦྱོང་ལཱ་དང་ཐབས་ཤེས།<br>(སློབ་སྟོན་ཐབས་ལམ།)",
+    colTopic:"དོན་ཚན་གཙོ་བོ།", colSkill:"རིག་རྩལ་དང་དམིགས་གཏད།", colTeacher:"སློབ་དཔོན་གྱི་སྦྱོང་ལཱ་དང་ཐབས་ཤེས།<br>(སློབ་སྟོན་ཐབས་ལམ།)", mediaHead:"སྦྲེལ་ཐག་དང་པར་རིས།", pasteLinkPh:"སྦྲེལ་ཐག་ (https://…) འདི་ལུ་བཀོག་གནང་།", linkLabelPh:"སྦྲེལ་ཐག་གི་མིང་། (མེདཔ་ཡང་འགྱོཝ་ཨིན།)", addLink:"སྦྲེལ་ཐག་བསྣན།", addImage:"པར་རིས་ཡར་སྤྲོད།", imgCapPh:"པར་རིས་ཀྱི་འགྲེལ་བཤད། (མེདཔ་ཡང་འགྱོཝ་ཨིན།)", removeMedia:"རྩ་བསྐྲད།", badLink:"འདི་ཝེབ་སྦྲེལ་ཐག་བཟུམ་མ་མཐོང་། ལོག་ཞིབ་དཔྱད་འབད།", imgBad:"ཡིག་ཆ་འདི་ལག་ལེན་འཐབ་མ་ཚུགས། པར་ (JPG, PNG, WEBP) གདམ་ཁ་འབད།", imgLimit:"སྦྱོང་ལཱ་གཅིག་ལུ་པར་རིས་ ༦ ཚུན་བསྣན་ཚུགས།", storageFull:"བརྡ་འཚེར་གསོག་འཇོག་ཁྱབ་ཚར་ཡི། པར་རིས་ལ་ལོ་རྩ་བསྐྲད་དེ་ ཡང་ན་ གྲབས་ཁ་རྩིས་ཕྱིར་འདྲེན་འབད་དེ་ ལོག་གཡོག་འབད།",
     colStudent:"སློབ་ཕྲུག་གི་སྦྱོང་ལཱ།", colTime:"དུས་ཡུན།", colAssessment:"དབྱེ་ཞིབ་ཀྱི་མཁོ་ཆས་དང་ཐབས་རིག།",
     savedEmpty:"ད་ལྟོ་ འཆར་གཞི་བསག་བཞག་བཞགཔ་མིན་འདུག། \u201cའཆར་གཞི་གསརཔ\u201dའདི་Saveའབད་བཞག།.",
     open:"ཁ་ཕྱེ།", duplicate:"འདྲ་བཤུས་རྐྱབ།", del:"བཏོད་གཏང་/Delete", exportShort:"Word",
@@ -157,7 +157,8 @@ const ICONS = {
 /* ---------------- state ---------------- */
 function newDzRow(){
   return {name:'', skillFocus:'', teacherActivity:'', studentActivity:'', time:'', assessment:'',
-          skillSel:[], teacherSel:[], studentSel:[], assessSel:[]};
+          skillSel:[], teacherSel:[], studentSel:[], assessSel:[],
+          teacherLinks:[], teacherImages:[]};
 }
 function blankPlan(){
   return {
@@ -800,7 +801,7 @@ function renderDzRows(){
         <div class="field dz-tint dz-tint-assess"><label>${t('colAssessment')}</label><div class="g-assess"></div><textarea class="dz-assess" style="margin-top:8px">${escHtml(row.assessment)}</textarea></div>
       </div>
       <div class="row2">
-        <div class="field dz-tint dz-tint-teacher"><label>${t('colTeacher')}</label><div class="g-teacher"></div><textarea class="dz-teacher" style="margin-top:8px">${escHtml(row.teacherActivity)}</textarea></div>
+        <div class="field dz-tint dz-tint-teacher"><label>${t('colTeacher')}</label><div class="g-teacher"></div><textarea class="dz-teacher" style="margin-top:8px">${escHtml(row.teacherActivity)}</textarea><div class="media-box g-tmedia"></div></div>
         <div class="field dz-tint dz-tint-student"><label>${t('colStudent')}</label><div class="g-student"></div><textarea class="dz-student" style="margin-top:8px">${escHtml(row.studentActivity)}</textarea></div>
       </div>
     `;
@@ -824,6 +825,7 @@ function renderDzRows(){
     bindArea('.g-skill',   '.dz-skill',   'skillSel',   'skillFocus',      'skill');
     bindArea('.g-assess',  '.dz-assess',  'assessSel',  'assessment',      'assessment');
     bindArea('.g-teacher', '.dz-teacher', 'teacherSel', 'teacherActivity', 'teacher');
+    mountMediaBox(card.querySelector('.g-tmedia'), R);
     bindArea('.g-student', '.dz-student', 'studentSel', 'studentActivity', 'student');
 
     card.querySelector('.dz-del').onclick = ()=>{ plan.phasesDz.splice(i,1); renderDzRows(); renderPreview(); };
@@ -865,7 +867,12 @@ function nextLessonNumber(){ return String(maxLessonNumber()+1); }
 
 /* ---------------- content parsing for preview/export ---------------- */
 function linkify(text){
-  return text.replace(/(https?:\/\/[^\s]+)/g, url=>`<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+  return text.replace(/(https?:\/\/[^\s<>"།༎]+)/g, m=>{
+    let url = m, tail = '';
+    const mm = url.match(/[.,;:!?)\]]+$/);
+    if(mm){ url = url.slice(0, url.length - mm[0].length); tail = mm[0]; }
+    return `<a href="${url}" target="_blank" rel="noopener">${url}</a>${tail}`;
+  });
 }
 function inlineBold(text){
   return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -901,6 +908,202 @@ function renderBulletArray(arr){
   return `<ul class="doc-ul">${items.map(i=>`<li>${inlineBold(linkify(escHtml(i)))}</li>`).join('')}</ul>`;
 }
 
+
+/* =====================================================================
+   LINKS & IMAGES inside "Teacher's Activity"
+   - links are clickable in the preview, print / Save-as-PDF and Word
+   - photos are shrunk (max 900px, JPEG) so they fit in browser storage
+   ===================================================================== */
+const MAX_IMAGES_PER_ROW = 6;
+function cleanUrl(raw){
+  let u = (raw || '').trim();
+  if(!u || /\s/.test(u)) return '';
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(u)) u = 'https://' + u;
+  if(!/^https?:\/\//i.test(u)) return '';            // only web links (blocks javascript: etc.)
+  try{
+    const x = new URL(u);
+    if(!x.hostname.includes('.') && x.hostname !== 'localhost') return '';
+    return x.href;
+  }catch(e){ return ''; }
+}
+function shortUrl(u){
+  const s = String(u).replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+  return s.length > 42 ? s.slice(0, 40) + '…' : s;
+}
+function linkText(l){ return (l.label && l.label.trim()) || shortUrl(l.url); }
+
+function compressImage(file, maxSide, quality){
+  maxSide = maxSide || 900; quality = quality || 0.75;
+  return new Promise((res, rej)=>{
+    const url = URL.createObjectURL(file); const im = new Image();
+    im.onload = ()=>{
+      try{
+        let w = im.naturalWidth, h = im.naturalHeight;
+        if(!w || !h) throw new Error('size');
+        const s = Math.min(1, maxSide / Math.max(w, h));
+        w = Math.round(w * s); h = Math.round(h * s);
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const g = c.getContext('2d'); g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); g.drawImage(im, 0, 0, w, h);
+        let src = c.toDataURL('image/jpeg', quality);
+        if(src.length > 260000) src = c.toDataURL('image/jpeg', 0.55);
+        res({src, w, h});
+      }catch(e){ rej(e); }
+      finally{ URL.revokeObjectURL(url); }
+    };
+    im.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error('load')); };
+    im.src = url;
+  });
+}
+
+function mountMediaBox(host, R){
+  if(!host) return;
+  const row0 = R(); row0.teacherLinks = row0.teacherLinks || []; row0.teacherImages = row0.teacherImages || [];
+  host.innerHTML = `
+    <div class="mb-head">${t('mediaHead')}</div>
+    <div class="mb-line">
+      <input type="url" inputmode="url" class="mb-url" placeholder="${escAttr(t('pasteLinkPh'))}">
+      <input type="text" class="mb-label" placeholder="${escAttr(t('linkLabelPh'))}">
+      <button type="button" class="mini-btn mb-addlink">${t('addLink')}</button>
+    </div>
+    <div class="mb-links"></div>
+    <div class="mb-line">
+      <label class="mini-btn mb-upload">${t('addImage')}<input type="file" accept="image/*" multiple hidden></label>
+    </div>
+    <div class="mb-imgs"></div>`;
+  const urlIn = host.querySelector('.mb-url'), labIn = host.querySelector('.mb-label');
+  const linksEl = host.querySelector('.mb-links'), imgsEl = host.querySelector('.mb-imgs');
+  const fileIn = host.querySelector('input[type=file]');
+
+  function draw(){
+    const row = R();
+    linksEl.innerHTML = '';
+    row.teacherLinks.forEach((l, i)=>{
+      const d = document.createElement('div'); d.className = 'mb-item';
+      const a = document.createElement('a'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = linkText(l);
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'mb-x'; x.textContent = '×'; x.title = t('removeMedia');
+      x.onclick = ()=>{ row.teacherLinks.splice(i, 1); draw(); renderPreview(); };
+      d.appendChild(a); d.appendChild(x); linksEl.appendChild(d);
+    });
+    imgsEl.innerHTML = '';
+    row.teacherImages.forEach((im, i)=>{
+      const d = document.createElement('div'); d.className = 'mb-img';
+      const img = document.createElement('img'); img.src = im.src; img.alt = '';
+      const cap = document.createElement('input'); cap.type = 'text'; cap.placeholder = t('imgCapPh'); cap.value = im.caption || '';
+      cap.oninput = ()=>{ im.caption = cap.value; renderPreview(); };
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'mb-x mb-x-img'; x.textContent = '×'; x.title = t('removeMedia');
+      x.onclick = ()=>{ row.teacherImages.splice(i, 1); draw(); renderPreview(); };
+      d.appendChild(img); d.appendChild(cap); d.appendChild(x); imgsEl.appendChild(d);
+    });
+  }
+  function addLink(){
+    const raw = urlIn.value.trim();
+    if(!raw) return;
+    const url = cleanUrl(raw);
+    if(!url){ toast(t('badLink')); return; }
+    R().teacherLinks.push({url, label: labIn.value.trim()});
+    urlIn.value = ''; labIn.value = '';
+    draw(); renderPreview();
+  }
+  host.querySelector('.mb-addlink').onclick = addLink;
+  [urlIn, labIn].forEach(el=> el.onkeydown = e=>{ if(e.key === 'Enter'){ e.preventDefault(); addLink(); } });
+
+  fileIn.onchange = async ()=>{
+    const files = Array.from(fileIn.files || []); fileIn.value = '';
+    const row = R();
+    for(const f of files){
+      if(row.teacherImages.length >= MAX_IMAGES_PER_ROW){ toast(t('imgLimit')); break; }
+      if(!/^image\//i.test(f.type)){ toast(t('imgBad')); continue; }
+      try{ const im = await compressImage(f); row.teacherImages.push({src: im.src, w: im.w, h: im.h, caption: ''}); }
+      catch(e){ toast(t('imgBad')); }
+    }
+    draw(); renderPreview();
+    if(draftEnabled){ const ok = await kvSet('lp_draft', {plan, lang, ts: Date.now()}); if(!ok) toast(t('storageFull')); }
+  };
+  draw();
+}
+
+/* how the links + images of one row look in the preview / print (PDF) */
+function mediaHtml(r){
+  const links = (r.teacherLinks || []).filter(l=>l && l.url);
+  const imgs = (r.teacherImages || []).filter(i=>i && i.src);
+  if(!links.length && !imgs.length) return '';
+  let h = '<div class="doc-media">';
+  if(links.length) h += '<div class="doc-links">' + links.map(l=>`<a class="doc-link" href="${escAttr(l.url)}" target="_blank" rel="noopener">${escHtml(linkText(l))}</a>`).join('') + '</div>';
+  imgs.forEach(i=>{
+    h += `<figure class="doc-fig"><img src="${i.src}" alt="${escAttr(i.caption || '')}">${(i.caption && i.caption.trim()) ? `<figcaption>${escHtml(i.caption)}</figcaption>` : ''}</figure>`;
+  });
+  return h + '</div>';
+}
+/* same thing for Word (explicit image sizes, plain paragraphs) */
+function mediaWord(r){
+  const links = (r.teacherLinks || []).filter(l=>l && l.url);
+  const imgs = (r.teacherImages || []).filter(i=>i && i.src);
+  let h = '';
+  links.forEach(l=>{ h += `<p><a href="${escAttr(l.url)}">${escHtml(linkText(l))}</a></p>`; });
+  imgs.forEach(i=>{
+    const w = Math.min(i.w || 150, 150), hh = Math.round((i.h || w) * w / (i.w || w));
+    h += `<p><img src="${i.src}" width="${w}" height="${hh}" alt="${escAttr(i.caption || '')}"></p>`;
+    if(i.caption && i.caption.trim()) h += `<p style="font-size:8.5pt;color:#64748B">${escHtml(i.caption)}</p>`;
+  });
+  return h;
+}
+function teacherCell(r){
+  const media = mediaHtml(r);
+  const has = (r.teacherSel && r.teacherSel.length) || (r.teacherActivity && r.teacherActivity.trim());
+  return ((has || !media) ? renderSel(r.teacherSel, r.teacherActivity, 'dz') : '') + media;
+}
+function teacherCellWord(r){
+  const media = mediaWord(r);
+  const has = (r.teacherSel && r.teacherSel.length) || (r.teacherActivity && r.teacherActivity.trim());
+  return ((has || !media) ? selToWord(r.teacherSel, r.teacherActivity, 'dz') : '') + media;
+}
+
+/* Word cannot show pictures that are written straight into HTML, so when a plan
+   has images the .doc is saved as a "web archive" (MHTML) with the pictures attached. */
+function finalizeWord(html){
+  const imgs = [];
+  const out = html.replace(/src="data:(image\/(?:jpeg|png|gif|webp));base64,([A-Za-z0-9+\/=]+)"/g, (m, mime, b64)=>{
+    const ext = mime.split('/')[1].replace('jpeg', 'jpg');
+    const loc = 'file:///C:/LessonPlanStudio/image' + String(imgs.length + 1).padStart(3, '0') + '.' + ext;
+    imgs.push({mime, b64, loc});
+    return 'src="' + loc + '"';
+  });
+  if(!imgs.length) return {text: html, mht: false};
+  const wrap = s => s.replace(/(.{76})/g, '$1\r\n');
+  const B = '----=_NextPart_LPS_' + Date.now().toString(36);
+  const htmlB64 = btoa(unescape(encodeURIComponent(out)));
+  let m = 'MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="' + B + '"; type="text/html"\r\n\r\n';
+  m += '--' + B + '\r\nContent-Location: file:///C:/LessonPlanStudio/plan.htm\r\nContent-Transfer-Encoding: base64\r\nContent-Type: text/html; charset="utf-8"\r\n\r\n' + wrap(htmlB64) + '\r\n\r\n';
+  imgs.forEach(im=>{
+    m += '--' + B + '\r\nContent-Location: ' + im.loc + '\r\nContent-Transfer-Encoding: base64\r\nContent-Type: ' + im.mime + '\r\n\r\n' + wrap(im.b64) + '\r\n\r\n';
+  });
+  m += '--' + B + '--\r\n';
+  return {text: m, mht: true};
+}
+/* reading such a file back in (import) */
+function unwrapMht(txt){
+  if(!/^\s*MIME-Version:/i.test(txt)) return txt;
+  const bm = txt.match(/boundary="?([^"\r\n;]+)"?/i); if(!bm) return txt;
+  for(const part of txt.split('--' + bm[1])){
+    const sep = part.search(/\r?\n\r?\n/); if(sep < 0) continue;
+    const head = part.slice(0, sep), body = part.slice(sep).trim();
+    if(!/Content-Type:\s*text\/html/i.test(head)) continue;
+    try{
+      if(/base64/i.test(head)) return decodeURIComponent(escape(atob(body.replace(/\s+/g, ''))));
+      if(/quoted-printable/i.test(head)){
+        const s = body.replace(/=\r?\n/g, ''); const bytes = [];
+        for(let i = 0; i < s.length; i++){
+          if(s[i] === '=' && /^[0-9A-Fa-f]{2}$/.test(s.substr(i + 1, 2))){ bytes.push(parseInt(s.substr(i + 1, 2), 16)); i += 2; }
+          else bytes.push(s.charCodeAt(i) & 255);
+        }
+        return new TextDecoder('utf-8').decode(new Uint8Array(bytes));
+      }
+    }catch(e){}
+    return body;
+  }
+  return txt;
+}
+
 /* ---------------- preview ---------------- */
 function renderPreview(){
   document.getElementById('docPreview').innerHTML = (lang==='dz') ? previewDz(plan) : previewEn(plan);
@@ -922,7 +1125,8 @@ function renderSel(sel, notes, L){
 }
 function rowHas(r){
   return !!(r.name || r.time || r.skillFocus || r.teacherActivity || r.studentActivity || r.assessment ||
-    (r.skillSel&&r.skillSel.length) || (r.teacherSel&&r.teacherSel.length) || (r.studentSel&&r.studentSel.length) || (r.assessSel&&r.assessSel.length));
+    (r.skillSel&&r.skillSel.length) || (r.teacherSel&&r.teacherSel.length) || (r.studentSel&&r.studentSel.length) || (r.assessSel&&r.assessSel.length) ||
+    (r.teacherLinks&&r.teacherLinks.length) || (r.teacherImages&&r.teacherImages.length));
 }
 
 function previewEn(p){
@@ -977,7 +1181,7 @@ function previewDz(p){
     <tr>
       <td class="dzc-0"><strong>${escHtml(r.name)||'—'}</strong></td>
       <td class="dzc-1">${renderSel(r.skillSel, r.skillFocus, 'dz')}</td>
-      <td class="dzc-2">${renderSel(r.teacherSel, r.teacherActivity, 'dz')}</td>
+      <td class="dzc-2">${teacherCell(r)}</td>
       <td class="dzc-3">${renderSel(r.studentSel, r.studentActivity, 'dz')}</td>
       <td class="dzc-4">${escHtml(r.time)||'—'}</td>
       <td class="dzc-5">${renderSel(r.assessSel, r.assessment, 'dz')}</td>
@@ -1052,6 +1256,7 @@ async function savePlan(){
   markSyllabusTaught();
   const ok = await persistSaved();
   if(ok){ toast(t('savedToast')); renderSaved(); renderSyllabus(); }
+  else toast(t('storageFull'));
   return ok;
 }
 
@@ -1158,15 +1363,16 @@ function renderSaved(){
 /* ---------------- word export ---------------- */
 function contentToWordHtml(raw){
   if(!raw || !raw.trim()) return '<p>—</p>';
+  const W = s => inlineBold(linkify(escHtml(s)));
   const lines = raw.split('\n'); let html=''; let listMode=null;
   const closeList = ()=>{ if(listMode){ html+= listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
   lines.forEach(line=>{
     const trimmed = line.trim();
     if(trimmed===''){ closeList(); return; }
-    if(trimmed.startsWith('## ')){ closeList(); html+=`<div class="sub-h">${inlineBold(escHtml(trimmed.slice(3)))}</div>`; }
-    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${inlineBold(escHtml(trimmed.slice(2)))}</li>`; }
-    else if(/^\d+[.)]\s+/.test(trimmed)){ if(listMode!=='ol'){closeList();html+='<ol>';listMode='ol';} html+=`<li>${inlineBold(escHtml(trimmed.replace(/^\d+[.)]\s+/,'')))}</li>`; }
-    else { closeList(); html+=`<p>${inlineBold(escHtml(trimmed))}</p>`; }
+    if(trimmed.startsWith('## ')){ closeList(); html+=`<div class="sub-h">${W(trimmed.slice(3))}</div>`; }
+    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${W(trimmed.slice(2))}</li>`; }
+    else if(/^\d+[.)]\s+/.test(trimmed)){ if(listMode!=='ol'){closeList();html+='<ol>';listMode='ol';} html+=`<li>${W(trimmed.replace(/^\d+[.)]\s+/,''))}</li>`; }
+    else { closeList(); html+=`<p>${W(trimmed)}</p>`; }
   });
   closeList();
   return html;
@@ -1174,7 +1380,7 @@ function contentToWordHtml(raw){
 function bulletArrayToWordHtml(arr){
   const items = (arr||[]).filter(x=>x && x.trim());
   if(items.length===0) return '<p>—</p>';
-  return `<ul>${items.map(i=>`<li>${inlineBold(escHtml(i))}</li>`).join('')}</ul>`;
+  return `<ul>${items.map(i=>`<li>${inlineBold(linkify(escHtml(i)))}</li>`).join('')}</ul>`;
 }
 /* selections on one line + typed notes */
 function selToWord(sel, notes, L){
@@ -1202,6 +1408,8 @@ const WORD_STYLE = `
   li{ margin-bottom:2px; }
   .sub-h{ font-weight:700; color:#1E3A8A; margin:4px 0 2px; }
   p{ margin:0 0 3px; }
+  a{ color:#1D4ED8; text-decoration:underline; }
+  img{ border:0; }
   .dz-table th, .dz-table td{ font-size:9.5pt; }
   .dz-table .c0{ background:#F8FAFC; } .dz-table th.c0{ background:#EEF2F8; }
   .dz-table .c1{ background:#E4F3FC; } .dz-table th.c1{ background:#B9E1F7; }
@@ -1267,7 +1475,7 @@ function wordBodyDZ(p){
     <tr>
       <td class="c0"><strong>${escHtml(r.name)||'—'}</strong></td>
       <td class="c1">${selToWord(r.skillSel, r.skillFocus, 'dz')}</td>
-      <td class="c2">${selToWord(r.teacherSel, r.teacherActivity, 'dz')}</td>
+      <td class="c2">${teacherCellWord(r)}</td>
       <td class="c3">${selToWord(r.studentSel, r.studentActivity, 'dz')}</td>
       <td class="c4">${escHtml(r.time)||'—'}</td>
       <td class="c5">${selToWord(r.assessSel, r.assessment, 'dz')}</td>
@@ -1369,7 +1577,9 @@ const PRINT_CSS = `${dzFontFaceCss()}
 .doc-ol li{margin-bottom:5px;}
 .doc-sub{font-weight:700; color:#1E3A8A; margin:8px 0 4px;}
 .doc-empty{color:#94A3B8; font-style:italic;}
-.doc a{color:#2563EB;}
+.doc a{color:#2563EB; text-decoration:underline;}
+.doc-links a{display:block; margin:0 0 4px; word-break:break-all;}
+.doc-fig{margin:6px 0 4px;} .doc-fig img{max-width:100%; height:auto; display:block; border-radius:4px;} .doc-fig figcaption{font-size:10.5px; color:#64748B; margin-top:2px;}
 /* Dzongkha colour-coded stage table (mirrors the DDC template) */
   .doc-dz-table{width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:12.6px;}
 .doc-dz-table th, .doc-dz-table td{border:1px solid #C3D3EA; padding:9px 10px; vertical-align:top; text-align:left;}
@@ -1434,12 +1644,14 @@ function downloadBlob(blob, filename){
 }
 function safeFileName(s, fb){ return ((s || fb || 'lesson-plan').replace(/[^\w\-]+/g,'_').slice(0,60)) || 'lesson-plan'; }
 function exportWord(p){
-  downloadBlob(new Blob(['\ufeff', planToDocHtml(p)], {type:'application/msword'}), safeFileName(p.title) + '.doc');
+  const f = finalizeWord(planToDocHtml(p));
+  downloadBlob(new Blob([f.mht ? '' : '\ufeff', f.text], {type:'application/msword'}), safeFileName(p.title) + '.doc');
 }
 /* several plans in ONE Word file (sorted by date, then lesson number) */
 function exportWordMany(plans, name){
   const sorted = plans.slice().sort((a,b)=> String(a.date||'').localeCompare(String(b.date||'')) || ((parseInt(a.lessonNumber,10)||0)-(parseInt(b.lessonNumber,10)||0)));
-  downloadBlob(new Blob(['\ufeff', plansToDocHtml(sorted)], {type:'application/msword'}), safeFileName(name, 'lesson-plans') + '.doc');
+  const f = finalizeWord(plansToDocHtml(sorted));
+  downloadBlob(new Blob([f.mht ? '' : '\ufeff', f.text], {type:'application/msword'}), safeFileName(name, 'lesson-plans') + '.doc');
 }
 
 /* =====================================================================
@@ -1493,6 +1705,8 @@ function normPlan(p){
   if(!Array.isArray(p.objectives) || !p.objectives.length) p.objectives = [''];
   p.syllabusId = p.syllabusId || '';
   p.phasesDz.forEach(r=>{
+    if(!Array.isArray(r.teacherLinks)) r.teacherLinks = [];
+    if(!Array.isArray(r.teacherImages)) r.teacherImages = [];
     [['skillSel','skillFocus','skill'],['teacherSel','teacherActivity','teacher'],['studentSel','studentActivity','student'],['assessSel','assessment','assessment']]
     .forEach(([sel, txt, optName])=>{
       if(!Array.isArray(r[sel])){
@@ -1539,7 +1753,7 @@ function cloneForNext(src){
   const n = JSON.parse(JSON.stringify(src));
   n.id = newId(); n.title = ''; n.topic = ''; n.objectives = ['']; n.prior = ''; n.reflection = ''; n.syllabusId = '';
   (n.phasesEn||[]).forEach(ph=>{ ph.content = ''; });
-  (n.phasesDz||[]).forEach(r=>{ r.skillFocus = ''; r.teacherActivity = ''; r.studentActivity = ''; r.assessment = ''; });
+  (n.phasesDz||[]).forEach(r=>{ r.skillFocus = ''; r.teacherActivity = ''; r.studentActivity = ''; r.assessment = ''; r.teacherLinks = []; r.teacherImages = []; });
   n.createdAt = n.updatedAt = Date.now();
   return n;
 }
@@ -1598,6 +1812,7 @@ function saveTemplate(name){
     gnhSel: (plan.gnhSel||[]).slice(), resSel: (plan.resSel||[]).slice(), resDzSel: (plan.resDzSel||[]).slice(),
     phasesEn: JSON.parse(JSON.stringify(plan.phasesEn||[])), phasesDz: JSON.parse(JSON.stringify(plan.phasesDz||[]))
   };
+  (data.phasesDz||[]).forEach(r=>{ r.teacherLinks = []; r.teacherImages = []; });
   templates.push({ id:newId('tpl'), format:lang, name, data });
   kvSet('lp_templates', templates);
   renderTemplates();
@@ -1715,7 +1930,8 @@ function hasContent(p){
   return !!(p.title || p.topic || p.competency ||
     (p.objectives||[]).some(o=>o && o.trim()) ||
     (p.phasesEn||[]).some(x=>x.content && x.content.trim()) ||
-    (p.phasesDz||[]).some(r=>r.name || r.skillFocus || r.teacherActivity || r.studentActivity || r.assessment));
+    (p.phasesDz||[]).some(r=>r.name || r.skillFocus || r.teacherActivity || r.studentActivity || r.assessment ||
+      (r.teacherLinks&&r.teacherLinks.length) || (r.teacherImages&&r.teacherImages.length)));
 }
 function stripVol(p){ const c = JSON.parse(JSON.stringify(p)); delete c.updatedAt; delete c.createdAt; return JSON.stringify(normPlan(c)); }
 function sameAsSaved(p){ const sv = savedPlans.find(x=>x.id === p.id); return !!sv && stripVol(sv) === stripVol(p); }
@@ -2174,8 +2390,8 @@ async function parseImportFile(file){
   const ext = file.name.toLowerCase().split('.').pop();
   if(ext === 'json') return { json: JSON.parse(await readText(file)) };
   if(ext === 'docx') return { plans: [planFromBlocks(htmlToBlocks(await docxToHtml(file)), file.name)] };
-  if(ext === 'doc' || ext === 'html' || ext === 'htm'){
-    const txt = await readText(file);
+  if(ext === 'doc' || ext === 'html' || ext === 'htm' || ext === 'mht' || ext === 'mhtml'){
+    const txt = unwrapMht(await readText(file));
     const emb = Array.from(txt.matchAll(/LPS-DATA:([A-Za-z0-9+\/=]+)/g));
     if(emb.length){ const plans = []; emb.forEach(m=>decodePlans(m[1]).forEach(x=>plans.push(x))); return { plans }; }
     if(!/<html|<body|<table|<p[ >]/i.test(txt)) throw new Error('binary');
