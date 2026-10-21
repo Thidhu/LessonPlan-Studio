@@ -377,3 +377,31 @@ html[data-theme="light"]{
 html[data-theme="dark"] .glass .chip-sub{ color:#FCD34D; border-left-color:#FBBF24; }
 .glass .chip-sub:first-child{ margin-top:0; }
 .glass .field > label, .glass .phase-card label, .glass .dzrow-card label{ font-size:13px; font-weight:700; color:var(--text); }
+
+/* ---------- Teacher's Activity: links & images ---------- */
+.media-box{ margin-top:12px; padding:10px 12px; border:1.5px dashed var(--chip-border); border-radius:12px; background:var(--field-bg); }
+.mb-head{ font-size:12px; font-weight:700; color:var(--h-sub); letter-spacing:.05em; text-transform:uppercase; margin-bottom:8px; }
+.mb-line{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+.mb-line input[type=url]{ flex:2 1 220px; min-width:0; }
+.mb-line input[type=text]{ flex:1 1 140px; min-width:0; }
+.mb-upload{ cursor:pointer; display:inline-flex; align-items:center; }
+.mb-links{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.mb-item{ display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid var(--chip-border); border-radius:10px; background:var(--chip-bg); }
+.mb-item a{ flex:1; min-width:0; color:var(--accent-a, #2563EB); font-weight:600; font-size:13px; text-decoration:underline; overflow-wrap:anywhere; }
+.mb-x{ border:none; background:transparent; color:var(--text-dim); font-size:18px; line-height:1; cursor:pointer; padding:0 4px; }
+.mb-x:hover{ color:#DC2626; }
+.mb-imgs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:10px; }
+.mb-img{ position:relative; border:1px solid var(--chip-border); border-radius:10px; padding:6px; background:var(--chip-bg); }
+.mb-img img{ width:100%; height:92px; object-fit:cover; border-radius:6px; display:block; }
+.mb-img input{ margin-top:6px; font-size:12px; padding:5px 8px; width:100%; }
+.mb-x-img{ position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:rgba(15,23,42,.72); color:#fff; font-size:15px; display:flex; align-items:center; justify-content:center; padding:0; }
+.doc-links a{ display:block; margin:0 0 4px; word-break:break-all; }
+.doc-fig{ margin:6px 0 4px; } .doc-fig img{ max-width:100%; height:auto; display:block; border-radius:4px; }
+.doc-fig figcaption{ font-size:10.5px; color:#64748B; margin-top:2px; }
+.media-box input[type=url], .media-box input[type=text]{
+  width:100%; padding:9px 12px; border:1px solid var(--field-border); border-radius:10px; background:var(--field-bg); color:var(--text); font:inherit; font-size:13px;
+}
+.media-box input:focus{ outline:none; border-color:var(--accent-a, #2563EB); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+.mb-line input[type=url], .mb-line input[type=text]{ flex:1 1 100%; }
+.mb-line .mini-btn{ white-space:nowrap; padding:8px 14px; }
+.mb-img img{ height:110px; }
