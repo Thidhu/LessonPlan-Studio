@@ -76,7 +76,7 @@ const I18N = {
     importFail:"Could not read this file", importBinary:"This looks like an old binary .doc — open it in Word, Save As .docx, then import again",
     nextReady:"Next lesson ready", savedTpl:"Template saved", tplApplied:"Template applied",
     confirmTpl:"Replace the lesson stages with this template?", importedMany:"plans imported", restored:"Backup restored",
-    needNet:"The Word reader needs an internet connection the first time", topicsAdded:"topics added", dropHint:"Tip: you can also drop a Word / .json file on this form to import it."
+    needNet:"The Word reader needs an internet connection the first time", exportFail:"Could not create the Word file. Please check your internet connection and try again.", topicsAdded:"topics added", dropHint:"Tip: you can also drop a Word / .json file on this form to import it."
   },
   dz:{
     appTitle:"སློབ་སྟོན་འཆར་གཞི།", appTagline:"སློབ་སྟོན་པ་ཚུ་གི་དོན་ལུ་བཟོ་ཡོད་ཡོདཔ་ཨིན།",
@@ -1034,51 +1034,10 @@ function mediaHtml(r){
   });
   return h + '</div>';
 }
-/* same thing for Word (explicit image sizes, plain paragraphs) */
-function mediaWord(r){
-  const links = (r.teacherLinks || []).filter(l=>l && l.url);
-  const imgs = (r.teacherImages || []).filter(i=>i && i.src);
-  let h = '';
-  links.forEach(l=>{ h += `<p><a href="${escAttr(l.url)}">${escHtml(linkText(l))}</a></p>`; });
-  imgs.forEach(i=>{
-    const w = Math.min(i.w || 150, 150), hh = Math.round((i.h || w) * w / (i.w || w));
-    h += `<p><img src="${i.src}" width="${w}" height="${hh}" alt="${escAttr(i.caption || '')}"></p>`;
-    if(i.caption && i.caption.trim()) h += `<p style="font-size:8.5pt;color:#64748B">${escHtml(i.caption)}</p>`;
-  });
-  return h;
-}
 function teacherCell(r){
   const media = mediaHtml(r);
   const has = (r.teacherSel && r.teacherSel.length) || (r.teacherActivity && r.teacherActivity.trim());
   return ((has || !media) ? renderSel(r.teacherSel, r.teacherActivity, 'dz') : '') + media;
-}
-function teacherCellWord(r){
-  const media = mediaWord(r);
-  const has = (r.teacherSel && r.teacherSel.length) || (r.teacherActivity && r.teacherActivity.trim());
-  return ((has || !media) ? selToWord(r.teacherSel, r.teacherActivity, 'dz') : '') + media;
-}
-
-/* Word cannot show pictures that are written straight into HTML, so when a plan
-   has images the .doc is saved as a "web archive" (MHTML) with the pictures attached. */
-function finalizeWord(html){
-  const imgs = [];
-  const out = html.replace(/src="data:(image\/(?:jpeg|png|gif|webp));base64,([A-Za-z0-9+\/=]+)"/g, (m, mime, b64)=>{
-    const ext = mime.split('/')[1].replace('jpeg', 'jpg');
-    const loc = 'file:///C:/LessonPlanStudio/image' + String(imgs.length + 1).padStart(3, '0') + '.' + ext;
-    imgs.push({mime, b64, loc});
-    return 'src="' + loc + '"';
-  });
-  if(!imgs.length) return {text: html, mht: false};
-  const wrap = s => s.replace(/(.{76})/g, '$1\r\n');
-  const B = '----=_NextPart_LPS_' + Date.now().toString(36);
-  const htmlB64 = btoa(unescape(encodeURIComponent(out)));
-  let m = 'MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="' + B + '"; type="text/html"\r\n\r\n';
-  m += '--' + B + '\r\nContent-Location: file:///C:/LessonPlanStudio/plan.htm\r\nContent-Transfer-Encoding: base64\r\nContent-Type: text/html; charset="utf-8"\r\n\r\n' + wrap(htmlB64) + '\r\n\r\n';
-  imgs.forEach(im=>{
-    m += '--' + B + '\r\nContent-Location: ' + im.loc + '\r\nContent-Transfer-Encoding: base64\r\nContent-Type: ' + im.mime + '\r\n\r\n' + wrap(im.b64) + '\r\n\r\n';
-  });
-  m += '--' + B + '--\r\n';
-  return {text: m, mht: true};
 }
 /* reading such a file back in (import) */
 function unwrapMht(txt){
@@ -1360,185 +1319,232 @@ function renderSaved(){
   });
 }
 
-/* ---------------- word export ---------------- */
-function contentToWordHtml(raw){
-  if(!raw || !raw.trim()) return '<p>—</p>';
-  const W = s => inlineBold(linkify(escHtml(s)));
-  const lines = raw.split('\n'); let html=''; let listMode=null;
-  const closeList = ()=>{ if(listMode){ html+= listMode==='ul' ? '</ul>' : '</ol>'; listMode=null; } };
-  lines.forEach(line=>{
-    const trimmed = line.trim();
-    if(trimmed===''){ closeList(); return; }
-    if(trimmed.startsWith('## ')){ closeList(); html+=`<div class="sub-h">${W(trimmed.slice(3))}</div>`; }
-    else if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){ if(listMode!=='ul'){closeList();html+='<ul>';listMode='ul';} html+=`<li>${W(trimmed.slice(2))}</li>`; }
-    else if(/^\d+[.)]\s+/.test(trimmed)){ if(listMode!=='ol'){closeList();html+='<ol>';listMode='ol';} html+=`<li>${W(trimmed.replace(/^\d+[.)]\s+/,''))}</li>`; }
-    else { closeList(); html+=`<p>${W(trimmed)}</p>`; }
-  });
-  closeList();
-  return html;
-}
-function bulletArrayToWordHtml(arr){
-  const items = (arr||[]).filter(x=>x && x.trim());
-  if(items.length===0) return '<p>—</p>';
-  return `<ul>${items.map(i=>`<li>${inlineBold(linkify(escHtml(i)))}</li>`).join('')}</ul>`;
-}
-/* selections on one line + typed notes */
-function selToWord(sel, notes, L){
-  const j = joinSel(sel, L);
-  const hasNotes = notes && notes.trim();
-  if(!j && !hasNotes) return '<p>—</p>';
-  return (j ? `<p>${escHtml(j)}</p>` : '') + (hasNotes ? contentToWordHtml(notes) : '');
-}
-
-const WORD_STYLE = `
-  ${dzFontFaceCss()}
-  @page WordSection1{ size:21.0cm 29.7cm; margin:1.4cm 1.5cm 1.4cm 1.5cm; }
-  div.WordSection1{ page:WordSection1; }
-  body{ font-family:Calibri, 'Noto Sans Tibetan', sans-serif; font-size:10.5pt; color:#101B34; }
-  .dz-doc, .dz-doc .sec-title, .dz-doc .sub-h, .dz-doc .dz-table th, .dz-doc h1, .dz-doc .meta-table{ font-family:'${DZ_FONT_FAMILY}', 'Noto Sans Tibetan', sans-serif; }
-  table{ border-collapse:collapse; width:100%; margin-bottom:8px; }
-  td, th{ border:1px solid #93C5FD; padding:4px 7px; vertical-align:top; }
-  .hero{ background:#2563EB; color:#F7FAFF; padding:9px 14px; }
-  .hero .plan-type{ font-size:9.5pt; letter-spacing:.1em; text-transform:uppercase; font-weight:700; margin-bottom:3px; }
-  .hero h1{ font-family:Georgia,serif; font-size:16pt; margin:0 0 2px; }
-  .hero .sub{ font-size:10pt; }
-  .meta-table td{ font-size:10pt; }
-  .sec-title{ font-family:Georgia,serif; font-weight:700; color:#1D4ED8; font-size:11.5pt; margin:8px 0 3px; border-bottom:1px solid #38BDF8; padding-bottom:2px; }
-  ul,ol{ margin:2px 0 4px; padding-left:18px; }
-  li{ margin-bottom:2px; }
-  .sub-h{ font-weight:700; color:#1E3A8A; margin:4px 0 2px; }
-  p{ margin:0 0 3px; }
-  a{ color:#1D4ED8; text-decoration:underline; }
-  img{ border:0; }
-  .dz-table th, .dz-table td{ font-size:9.5pt; }
-  .dz-table .c0{ background:#F8FAFC; } .dz-table th.c0{ background:#EEF2F8; }
-  .dz-table .c1{ background:#E4F3FC; } .dz-table th.c1{ background:#B9E1F7; }
-  .dz-table .c2{ background:#FDEEDA; } .dz-table th.c2{ background:#FBD9A2; }
-  .dz-table .c3{ background:#E3F7E6; } .dz-table th.c3{ background:#BBEAC4; }
-  .dz-table .c4{ background:#EDE4FA; } .dz-table th.c4{ background:#D3C0F2; }
-  .dz-table .c5{ background:#DCF6F2; } .dz-table th.c5{ background:#AEE9E1; }
-  .reflect-box{ min-height:34px; border:1px dashed #B7C6DE; background:#F8FAFC; }
-  .credit-line{ text-align:center; font-size:8.5pt; color:#94A3B8; margin-top:12px; }
-`;
-
 function encodePlans(plans){ return btoa(unescape(encodeURIComponent(JSON.stringify(plans)))); }
 function decodePlans(b64){
   const v = JSON.parse(decodeURIComponent(escape(atob(b64))));
   return Array.isArray(v) ? v : [v];
 }
 
-function wordBodyEN(p){
-  const L = I18N.en;
-  const phasesHtml = (p.phasesEn||[]).map(ph=>`
-    <tr>
-      <td style="width:80%;">
-        <div style="font-family:Georgia,serif;font-weight:700;color:#1D4ED8;font-size:11pt;margin-bottom:2px;">${escHtml(ph.name)}</div>
-        ${contentToWordHtml(ph.content)}
-      </td>
-      <td style="width:20%;color:#0369A1;font-weight:600;">${escHtml(ph.time)||''}</td>
-    </tr>
-  `).join('');
-  return `<div class="plan-block">
-    <div class="hero"><h1>${escHtml(p.title)||L.docUntitled}</h1><div class="sub">${escHtml(p.topic)||''}</div></div>
-    <table class="meta-table">
-      <tr><td><b>${L.docLessonNo}:</b> ${escHtml(p.lessonNumber)||'—'}</td><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td></tr>
-      <tr><td><b>${L.docPeriod}:</b> ${escHtml(p.period)||'—'}</td><td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td><td><b>${L.docDate}:</b> ${escHtml(formatDateDisplay(p.date,'en'))||'—'}</td></tr>
-      <tr><td><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td><td><b>${L.docPedagogy}:</b> ${escHtml(p.pedagogy)||'—'}</td><td><b>${L.docTeachingStrategies}:</b> ${escHtml(p.teachingStrategies)||'—'}</td></tr>
-    </table>
-
-    <div class="sec-title">${L.docCompetency}</div>
-    ${contentToWordHtml(p.competency)}
-
-    <div class="sec-title">${L.docGNH}</div>
-    ${selToWord(p.gnhSel, p.gnh, 'en')}
-
-    <div class="sec-title">${L.docObjectives}</div>
-    ${bulletArrayToWordHtml(p.objectives)}
-
-    <div class="sec-title">${L.docPrior}</div>
-    ${contentToWordHtml(p.prior)}
-
-    <div class="sec-title">${L.docResources}</div>
-    ${selToWord(p.resSel, p.resources, 'en')}
-
-    <div class="sec-title">${L.secStages}</div>
-    <table>${phasesHtml}</table>
-  </div>`;
+/* =====================================================================
+   WORD EXPORT  (.docx)
+   Builds a genuine Word document (not an HTML file renamed to .doc) with the
+   "docx" library, loaded from a CDN the first time you export.
+   - real tables, colours, bullet / numbered lists
+   - links stay clickable, photos are embedded
+   - the plan data is stored inside the file so "Import" restores it exactly
+   ===================================================================== */
+const DOCX_URLS = ['https://cdn.jsdelivr.net/npm/docx@9.0.3/build/index.umd.js', 'https://unpkg.com/docx@9.0.3/build/index.umd.js'];
+const JSZIP_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+async function loadDocxLib(){
+  if(window.docx) return window.docx;
+  let last;
+  for(const u of DOCX_URLS){ try{ await loadScriptOnce(u); if(window.docx) return window.docx; }catch(e){ last = e; } }
+  throw last || new Error('load');
 }
 
-function wordBodyDZ(p){
-  const L = I18N.dz;
-  const all = p.phasesDz || [];
-  const rows = all.filter(rowHas);
-  const src = rows.length ? rows : all;
-  const tableRows = src.map(r=>`
-    <tr>
-      <td class="c0"><strong>${escHtml(r.name)||'—'}</strong></td>
-      <td class="c1">${selToWord(r.skillSel, r.skillFocus, 'dz')}</td>
-      <td class="c2">${teacherCellWord(r)}</td>
-      <td class="c3">${selToWord(r.studentSel, r.studentActivity, 'dz')}</td>
-      <td class="c4">${escHtml(r.time)||'—'}</td>
-      <td class="c5">${selToWord(r.assessSel, r.assessment, 'dz')}</td>
-    </tr>
-  `).join('');
-  return `<div class="plan-block dz-doc">
-    <div class="hero">${L.docPlanType ? `<div class="plan-type">${escHtml(L.docPlanType)}</div>` : ''}<h1>${escHtml(p.title)||L.docUntitled}</h1><div class="sub">${escHtml(p.topic)||''}</div></div>
-    <table class="meta-table">
-      <tr><td><b>${L.docLessonNo}:</b> ${escHtml(p.lessonNumber)||'—'}</td><td><b>${L.docClass}:</b> ${escHtml(p.className)||'—'}</td><td><b>${L.docSubject}:</b> ${escHtml(p.subject)||'—'}</td></tr>
-      <tr><td><b>${L.docDate}:</b> ${escHtml(formatDateDisplay(p.date,'dz'))||'—'}</td><td><b>${L.docDuration}:</b> ${escHtml(p.duration)||'—'}</td><td><b>${L.docVenue}:</b> ${escHtml(p.venue)||'—'}</td></tr>
-      <tr><td colspan="3"><b>${L.docStrand}:</b> ${escHtml(p.strand)||'—'}</td></tr>
-    </table>
+async function buildDocxBlob(plans){
+  const D = await loadDocxLib();
+  const BLUE = '2563EB', BLUE_D = '1D4ED8', SKY = '38BDF8', NAVY = '101B34', LINE = '93C5FD', GREY = '94A3B8';
+  const DZ_BG   = ['F8FAFC','E4F3FC','FDEEDA','E3F7E6','EDE4FA','DCF6F2'];
+  const DZ_HEAD = ['EEF2F8','B9E1F7','FBD9A2','BBEAC4','D3C0F2','AEE9E1'];
+  const FONT = { ascii:'Calibri', hAnsi:'Calibri', cs:DZ_FONT_FAMILY, eastAsia:DZ_FONT_FAMILY };
+  const SERIF = { ascii:'Georgia', hAnsi:'Georgia', cs:DZ_FONT_FAMILY, eastAsia:DZ_FONT_FAMILY };
+  const FULL = 10205;                                   // text width in twips (A4, 1.5 cm side margins)
+  let numInstance = 0;
 
-    <div class="sec-title">${L.docCompetency}</div>
-    ${contentToWordHtml(p.competency)}
+  const run = (text, o)=> new D.TextRun(Object.assign({ text: String(text), font: FONT }, o || {}));
+  const brRuns = (html, o)=> String(html).split(/<br\s*\/?>/i).map((part, i)=> run(part, Object.assign({}, o, i ? { break: 1 } : {})));
 
-    <div class="sec-title">${L.docObjectives}</div>
-    ${bulletArrayToWordHtml(p.objectives)}
+  /* text -> runs:  **bold**  and  https://links  (clickable) */
+  function inline(text, base){
+    base = base || {};
+    const out = [];
+    String(text).split(/(\*\*.+?\*\*|https?:\/\/[^\s<>"།༎]+)/g).forEach(part=>{
+      if(!part) return;
+      if(/^\*\*.+\*\*$/.test(part)){ out.push(run(part.slice(2, -2), Object.assign({}, base, { bold:true }))); return; }
+      if(/^https?:\/\//.test(part)){
+        let url = part, tail = '';
+        const mm = url.match(/[.,;:!?)\]]+$/);
+        if(mm){ url = url.slice(0, url.length - mm[0].length); tail = mm[0]; }
+        out.push(new D.ExternalHyperlink({ link:url, children:[ run(url, Object.assign({}, base, { color:BLUE_D, underline:{ type:D.UnderlineType.SINGLE } })) ] }));
+        if(tail) out.push(run(tail, base));
+        return;
+      }
+      out.push(run(part, base));
+    });
+    return out;
+  }
+  const para = (text, o, base)=> new D.Paragraph(Object.assign({ children: inline(text, base) }, o || {}));
+  const dash = ()=> new D.Paragraph({ children:[ run('—') ] });
 
-    <div class="sec-title">${L.docGNH}</div>
-    ${selToWord(p.gnhSel, p.gnh, 'dz')}
+  /* typed notes: "- bullet", "1. numbered", "## sub-heading", plain text */
+  function block(raw){
+    if(!raw || !raw.trim()) return [ dash() ];
+    const out = []; let mode = null;
+    raw.split('\n').forEach(line=>{
+      const s = line.trim();
+      if(!s){ mode = null; return; }
+      if(s.startsWith('## ')){ mode = null; out.push(para(s.slice(3), { spacing:{ before:80, after:30 }, keepNext:true }, { bold:true, color:'1E3A8A' })); }
+      else if(s.startsWith('- ') || s.startsWith('• ')){ mode = 'ul'; out.push(para(s.slice(2), { numbering:{ reference:'lps-bullet', level:0 } })); }
+      else if(/^\d+[.)]\s+/.test(s)){
+        if(mode !== 'ol'){ numInstance++; mode = 'ol'; }
+        out.push(para(s.replace(/^\d+[.)]\s+/, ''), { numbering:{ reference:'lps-num', level:0, instance:numInstance } }));
+      } else { mode = null; out.push(para(s)); }
+    });
+    return out.length ? out : [ dash() ];
+  }
+  const bullets = arr=>{
+    const items = (arr || []).filter(x=>x && x.trim());
+    return items.length ? items.map(i=>para(i, { numbering:{ reference:'lps-bullet', level:0 } })) : [ dash() ];
+  };
+  /* selections written on one line, then typed notes */
+  function sel(a, notes, L){
+    const j = joinSel(a, L), has = notes && notes.trim();
+    if(!j && !has) return [ dash() ];
+    return (j ? [ para(j) ] : []).concat(has ? block(notes) : []);
+  }
+  const secTitle = text=> new D.Paragraph({
+    children:[ run(text, { bold:true, color:BLUE_D, size:23, font:SERIF }) ],
+    border:{ bottom:{ style:D.BorderStyle.SINGLE, size:6, color:SKY, space:1 } },
+    spacing:{ before:200, after:70 }, keepNext:true });
 
-    <div class="sec-title">${L.docResourcesDz}</div>
-    ${selToWord(p.resDzSel, p.resourcesDz, 'dz')}
+  const bd = (color, style)=>{ const b = { style: style || D.BorderStyle.SINGLE, size:4, color }; return { top:b, bottom:b, left:b, right:b }; };
+  const NONE = (()=>{ const b = { style:D.BorderStyle.NONE, size:0, color:'FFFFFF' }; return { top:b, bottom:b, left:b, right:b }; })();
+  const cell = (children, w, o)=> new D.TableCell(Object.assign({
+    children: children && children.length ? children : [ new D.Paragraph('') ],
+    width:{ size:w, type:D.WidthType.DXA }, borders: bd(LINE),
+    margins:{ top:60, bottom:60, left:100, right:100 } }, o || {}));
+  const table = (rows, cols)=> new D.Table({ rows, columnWidths:cols, width:{ size:cols.reduce((a, b)=>a + b, 0), type:D.WidthType.DXA }, layout:D.TableLayoutType.FIXED });
+  const spacer = ()=> new D.Paragraph({ children:[], spacing:{ after:40 } });
 
-    <div class="sec-title">${L.secStagesDz}</div>
-    <table class="dz-table">
-      <tr>
-        <th class="c0">${L.colTopic}</th><th class="c1">${L.colSkill}</th><th class="c2">${L.colTeacher}</th>
-        <th class="c3">${L.colStudent}</th><th class="c4">${L.colTime}</th><th class="c5">${L.colAssessment}</th>
-      </tr>
-      ${tableRows}
-    </table>
+  const hero = (kicker, title, sub)=> table([ new D.TableRow({ children:[ new D.TableCell({
+    width:{ size:FULL, type:D.WidthType.DXA }, borders:NONE, shading:{ type:D.ShadingType.CLEAR, fill:BLUE, color:'auto' },
+    margins:{ top:140, bottom:140, left:220, right:220 },
+    children:[].concat(
+      kicker ? [ new D.Paragraph({ children:[ run(kicker, { color:'F7FAFF', bold:true, size:19 }) ], spacing:{ after:40 } }) ] : [],
+      [ new D.Paragraph({ children:[ run(title, { color:'FFFFFF', bold:true, size:32, font:SERIF }) ], spacing:{ after:30 } }) ],
+      sub ? [ new D.Paragraph({ children:[ run(sub, { color:'F7FAFF', size:20 }) ] }) ] : []) }) ] }) ], [FULL]);
 
-    <div class="sec-title">${L.docReflection}</div>
-    ${p.reflection && p.reflection.trim() ? contentToWordHtml(p.reflection) : '<div class="reflect-box"></div>'}
-  </div>`;
+  const metaCell = (label, value, w, span)=> cell([ new D.Paragraph({ children:[ run(label + ': ', { bold:true }), run(value || '—') ] }) ], w, span ? { columnSpan:span } : null);
+
+  /* ---------- the picture / link block inside Teacher's Activity ---------- */
+  function media(r){
+    const out = [];
+    (r.teacherLinks || []).filter(l=>l && l.url).forEach(l=>{
+      out.push(new D.Paragraph({ children:[ new D.ExternalHyperlink({ link:l.url, children:[ run(linkText(l), { color:BLUE_D, underline:{ type:D.UnderlineType.SINGLE } }) ] }) ] }));
+    });
+    (r.teacherImages || []).filter(i=>i && i.src).forEach(i=>{
+      const w = Math.min(i.w || 150, 150), h = Math.round((i.h || w) * w / (i.w || w));
+      const b64 = i.src.split(',')[1] || '';
+      const bin = atob(b64), data = new Uint8Array(bin.length);
+      for(let k = 0; k < bin.length; k++) data[k] = bin.charCodeAt(k);
+      out.push(new D.Paragraph({ children:[ new D.ImageRun({ data, type:'jpg', transformation:{ width:w, height:h } }) ], spacing:{ before:40, after:20 } }));
+      if(i.caption && i.caption.trim()) out.push(new D.Paragraph({ children:[ run(i.caption, { size:17, color:'64748B' }) ] }));
+    });
+    return out;
+  }
+
+  /* ---------- one lesson plan ---------- */
+  function planChildren(p){
+    const dz = p.format === 'dz', L = dz ? I18N.dz : I18N.en, ch = [];
+    if(!dz){
+      const W = [3400, 3400, 3405];
+      ch.push(hero('', p.title || L.docUntitled, p.topic || ''), spacer());
+      ch.push(table([
+        new D.TableRow({ children:[ metaCell(L.docLessonNo, p.lessonNumber, W[0]), metaCell(L.docClass, p.className, W[1]), metaCell(L.docSubject, p.subject, W[2]) ] }),
+        new D.TableRow({ children:[ metaCell(L.docPeriod, p.period, W[0]), metaCell(L.docDuration, p.duration, W[1]), metaCell(L.docDate, formatDateDisplay(p.date, 'en'), W[2]) ] }),
+        new D.TableRow({ children:[ metaCell(L.docStrand, p.strand, W[0]), metaCell(L.docPedagogy, p.pedagogy, W[1]), metaCell(L.docTeachingStrategies, p.teachingStrategies, W[2]) ] })
+      ], W));
+      ch.push(secTitle(L.docCompetency), ...block(p.competency));
+      ch.push(secTitle(L.docGNH), ...sel(p.gnhSel, p.gnh, 'en'));
+      ch.push(secTitle(L.docObjectives), ...bullets(p.objectives));
+      ch.push(secTitle(L.docPrior), ...block(p.prior));
+      ch.push(secTitle(L.docResources), ...sel(p.resSel, p.resources, 'en'));
+      ch.push(secTitle(L.secStages));
+      const rows = (p.phasesEn || []).map(ph=> new D.TableRow({ cantSplit:false, children:[
+        cell([ new D.Paragraph({ children:[ run(ph.name || '—', { bold:true, color:BLUE_D, size:22, font:SERIF }) ], spacing:{ after:30 } }) ].concat(block(ph.content)), 8160),
+        cell([ new D.Paragraph({ children:[ run(ph.time || '', { bold:true, color:'0369A1' }) ] }) ], 2045) ] }));
+      if(rows.length) ch.push(table(rows, [8160, 2045]));
+    } else {
+      const W = [3400, 3400, 3405];
+      ch.push(hero(L.docPlanType, p.title || L.docUntitled, p.topic || ''), spacer());
+      ch.push(table([
+        new D.TableRow({ children:[ metaCell(L.docLessonNo, p.lessonNumber, W[0]), metaCell(L.docClass, p.className, W[1]), metaCell(L.docSubject, p.subject, W[2]) ] }),
+        new D.TableRow({ children:[ metaCell(L.docDate, formatDateDisplay(p.date, 'dz'), W[0]), metaCell(L.docDuration, p.duration, W[1]), metaCell(L.docVenue, p.venue, W[2]) ] }),
+        new D.TableRow({ children:[ metaCell(L.docStrand, p.strand, FULL, 3) ] })
+      ], W));
+      ch.push(secTitle(L.docCompetency), ...block(p.competency));
+      ch.push(secTitle(L.docObjectives), ...bullets(p.objectives));
+      ch.push(secTitle(L.docGNH), ...sel(p.gnhSel, p.gnh, 'dz'));
+      ch.push(secTitle(L.docResourcesDz), ...sel(p.resDzSel, p.resourcesDz, 'dz'));
+      ch.push(secTitle(L.secStagesDz));
+      const CW = [1450, 1550, 2500, 2250, 900, 1555];
+      const keys = ['colTopic', 'colSkill', 'colTeacher', 'colStudent', 'colTime', 'colAssessment'];
+      const head = new D.TableRow({ tableHeader:true, children: keys.map((k, i)=> cell(
+        [ new D.Paragraph({ children: brRuns(L[k], { bold:true, size:19 }) }) ], CW[i], { shading:{ type:D.ShadingType.CLEAR, fill:DZ_HEAD[i], color:'auto' } })) });
+      const all = p.phasesDz || [], used = all.filter(rowHas), src = used.length ? used : all;
+      const cellBg = i => ({ shading:{ type:D.ShadingType.CLEAR, fill:DZ_BG[i], color:'auto' } });
+      const body = src.map(r=>{
+        const tMedia = media(r);
+        const tHas = (r.teacherSel && r.teacherSel.length) || (r.teacherActivity && r.teacherActivity.trim());
+        const tKids = ((tHas || !tMedia.length) ? sel(r.teacherSel, r.teacherActivity, 'dz') : []).concat(tMedia);
+        return new D.TableRow({ cantSplit:false, children:[
+          cell([ new D.Paragraph({ children:[ run(r.name || '—', { bold:true }) ] }) ], CW[0], cellBg(0)),
+          cell(sel(r.skillSel, r.skillFocus, 'dz'), CW[1], cellBg(1)),
+          cell(tKids, CW[2], cellBg(2)),
+          cell(sel(r.studentSel, r.studentActivity, 'dz'), CW[3], cellBg(3)),
+          cell([ new D.Paragraph({ children:[ run(r.time || '—') ] }) ], CW[4], cellBg(4)),
+          cell(sel(r.assessSel, r.assessment, 'dz'), CW[5], cellBg(5)) ] });
+      });
+      ch.push(table([head].concat(body), CW));
+      ch.push(secTitle(L.docReflection));
+      if(p.reflection && p.reflection.trim()) ch.push(...block(p.reflection));
+      else ch.push(table([ new D.TableRow({ height:{ value:760, rule:D.HeightRule.ATLEAST }, children:[ cell([ new D.Paragraph('') ], FULL, { borders: bd('B7C6DE', D.BorderStyle.DASHED), shading:{ type:D.ShadingType.CLEAR, fill:'F8FAFC', color:'auto' } }) ] }) ], [FULL]));
+    }
+    return ch;
+  }
+
+  const sections = plans.map((p, i)=>{
+    const children = planChildren(p);
+    if(i === plans.length - 1){
+      const credit = (plans.some(x=>x.format === 'dz') ? I18N.dz : I18N.en).creditLine;
+      children.push(new D.Paragraph({ alignment:D.AlignmentType.CENTER, spacing:{ before:240 }, children:[ run(credit, { size:17, color:GREY }) ] }));
+    }
+    return { properties:{ page:{ size:{ width:11906, height:16838 }, margin:{ top:794, bottom:794, left:850, right:850 } } }, children };
+  });
+
+  const doc = new D.Document({
+    creator:'SherigSpace Lesson Plan Studio',
+    title: plans.length === 1 ? (plans[0].title || 'Lesson plan') : 'Lesson plans',
+    description: 'LPS-DATA:' + encodePlans(plans),
+    styles:{ default:{ document:{ run:{ font:FONT, size:21, color:NAVY }, paragraph:{ spacing:{ after:60 } } } } },
+    numbering:{ config:[
+      { reference:'lps-bullet', levels:[ { level:0, format:D.LevelFormat.BULLET, text:'•', alignment:D.AlignmentType.LEFT, style:{ paragraph:{ indent:{ left:340, hanging:240 } } } } ] },
+      { reference:'lps-num', levels:[ { level:0, format:D.LevelFormat.DECIMAL, text:'%1.', alignment:D.AlignmentType.LEFT, style:{ paragraph:{ indent:{ left:360, hanging:300 } } } } ] }
+    ] },
+    sections
+  });
+  return D.Packer.toBlob(doc);
+}
+async function exportDocx(plans, filename){
+  try{
+    const blob = await buildDocxBlob(plans);
+    downloadBlob(blob, filename + '.docx');
+  }catch(e){
+    console.error(e);
+    toast(e && e.message === 'load' ? t('needNet') : t('exportFail'));
+  }
 }
 
-function wordPlanBody(p){ return (p.format==='dz') ? wordBodyDZ(p) : wordBodyEN(p); }
-
-function wrapWord(title, inner, plans){
-  const credit = (plans.some(p=>p.format==='dz') ? I18N.dz : I18N.en).creditLine;
-  return `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-  <head>
-    <meta charset="utf-8">
-    <title>${escHtml(title)}</title>
-    <!--LPS-DATA:${encodePlans(plans)}-->
-    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
-    <style>${WORD_STYLE}</style>
-  </head>
-  <body>
-    <div class="WordSection1">
-      ${inner}
-      <p class="credit-line">${escHtml(credit)}</p>
-    </div>
-  </body>
-  </html>`;
-}
-function planToDocHtml(p){ return wrapWord(p.title || 'Lesson plan', wordPlanBody(p), [p]); }
-function plansToDocHtml(plans){
-  const inner = plans.map(wordPlanBody).join(`<br clear="all" style="page-break-before:always">`);
-  return wrapWord('Lesson plans', inner, plans);
+/* reading our own .docx back in: the plan data lives in the file's properties */
+async function readEmbeddedDocxPlans(file){
+  try{
+    await loadScriptOnce(JSZIP_URL);
+    const z = await window.JSZip.loadAsync(await file.arrayBuffer());
+    const core = z.file('docProps/core.xml'); if(!core) return null;
+    const m = (await core.async('string')).match(/LPS-DATA:([A-Za-z0-9+\/=]+)/);
+    return m ? decodePlans(m[1]) : null;
+  }catch(e){ return null; }
 }
 
 /* ---------------- print ----------------
@@ -1615,7 +1621,7 @@ function printPlan(p){
   const L = (p.format==='dz') ? I18N.dz : I18N.en;
   const bodyHtml = (p.format==='dz') ? previewDz(p) : previewEn(p);
   const docHtml = `<!DOCTYPE html><html lang="${p.format==='dz'?'dz':'en'}"><head><meta charset="utf-8">
-<title>${escHtml(p.title)||'Lesson Plan'}</title>
+<title>${escHtml(planFileLabel(p))||'Lesson Plan'}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Tibetan:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${PRINT_CSS}</style>
@@ -1642,16 +1648,19 @@ function downloadBlob(blob, filename){
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(url), 4000);
 }
-function safeFileName(s, fb){ return ((s || fb || 'lesson-plan').replace(/[^\w\-]+/g,'_').slice(0,60)) || 'lesson-plan'; }
-function exportWord(p){
-  const f = finalizeWord(planToDocHtml(p));
-  downloadBlob(new Blob([f.mht ? '' : '\ufeff', f.text], {type:'application/msword'}), safeFileName(p.title) + '.doc');
-}
+function safeFileName(s, fb){ return ((s || fb || 'lesson-plan').replace(/[^\p{L}\p{M}\p{N}\u0F0B_\-]+/gu,'_').replace(/^_+|_+$/g,'').slice(0,60)) || 'lesson-plan'; }
+/* file names come from the lesson topic (falls back to the title, then a generic name) */
+function planFileLabel(p){ return ((p.topic || '').trim() || (p.title || '').trim()); }
+function exportWord(p){ return exportDocx([p], safeFileName(planFileLabel(p))); }
 /* several plans in ONE Word file (sorted by date, then lesson number) */
 function exportWordMany(plans, name){
   const sorted = plans.slice().sort((a,b)=> String(a.date||'').localeCompare(String(b.date||'')) || ((parseInt(a.lessonNumber,10)||0)-(parseInt(b.lessonNumber,10)||0)));
-  const f = finalizeWord(plansToDocHtml(sorted));
-  downloadBlob(new Blob([f.mht ? '' : '\ufeff', f.text], {type:'application/msword'}), safeFileName(name, 'lesson-plans') + '.doc');
+  const topics = [];
+  sorted.forEach(p=>{ const l = planFileLabel(p); if(l && !topics.includes(l)) topics.push(l); });
+  let label = name;
+  if(topics.length === 1) label = topics[0];
+  else if(topics.length > 1) label = topics[0] + ' + ' + (topics.length - 1) + ' more';
+  return exportDocx(sorted, safeFileName(label, 'lesson-plans'));
 }
 
 /* =====================================================================
@@ -2389,7 +2398,11 @@ function planFromBlocks(blocks, fname){
 async function parseImportFile(file){
   const ext = file.name.toLowerCase().split('.').pop();
   if(ext === 'json') return { json: JSON.parse(await readText(file)) };
-  if(ext === 'docx') return { plans: [planFromBlocks(htmlToBlocks(await docxToHtml(file)), file.name)] };
+  if(ext === 'docx'){
+    const emb = await readEmbeddedDocxPlans(file);
+    if(emb && emb.length) return { plans: emb };
+    return { plans: [planFromBlocks(htmlToBlocks(await docxToHtml(file)), file.name)] };
+  }
   if(ext === 'doc' || ext === 'html' || ext === 'htm' || ext === 'mht' || ext === 'mhtml'){
     const txt = unwrapMht(await readText(file));
     const emb = Array.from(txt.matchAll(/LPS-DATA:([A-Za-z0-9+\/=]+)/g));
